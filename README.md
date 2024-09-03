@@ -36,7 +36,7 @@ coding!
 
 - Suruchi Patki: [[GitHub](https://github.com/Supatki)] / [[LinkedIn](https://www.linkedin.com/in/suruchi-patki-b0710b195/)]
 - Julie Cheng: [GitHub](https://github.com/jucheng925) / [LinkedIn](https://www.linkedin.com/in/juliecheng925/)
-- Cody Miller: [GitHub](https://github.com/CJMiller17)) / [LinkedIn](https://www.linkedin.com/in/cjmiller17/)
+- Cody Miller: [GitHub](https://github.com/CJMiller17) / [LinkedIn](https://www.linkedin.com/in/cjmiller17/)
 
    ...
 - Teammate name #n: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
