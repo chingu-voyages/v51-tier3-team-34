@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import axios from "axios";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
-function App() {
-  const [count, setCount] = useState(0)
-  const [array, setArray] = useState([])
-
+const App = () => (
+  <APIProvider apiKey={"AIzaSyB7mJ6aADlsxkm2hy10OV5aW1Xh_WdOgio"}>
+    <h1 style={{ textAlign: "center", marginLeft: "28rem" }}>Hello Chingu!!</h1>
+    <Map
+      style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
+      defaultCenter={{ lat: 38.03, lng: -84.51 }}
+      defaultZoom={11.9}
+      mapId="90d6d90b957e9186"
+      gestureHandling={"cooperative"}
+      disableDefaultUI={true}
+    />
+  </APIProvider>
+);
 
   //TESTING - can be delete if needed
   const fetchAPI = async () => {
@@ -20,38 +27,10 @@ function App() {
     fetchAPI();
   }, [])
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        {
-          array.map((fruit, index) => (
-            <div key={index}>
-              <p>{fruit}</p>
-              <br></br>
-            </div>
-          ))
-        }
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default App
+const root = createRoot(document.querySelector("#root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+ export default App
