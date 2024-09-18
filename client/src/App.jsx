@@ -8,6 +8,8 @@ function App() {
   const [count, setCount] = useState(0)
   const [array, setArray] = useState([])
 
+
+  //TESTING - can be delete if needed
   const fetchAPI = async () => {
     const response = await axios.get("http://localhost:8080/api");
     setArray(response.data.fruits)
