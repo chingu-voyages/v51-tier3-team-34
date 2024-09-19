@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import axios from "axios";
+import {
+  APIProvider,
+  Map,
+} from "@vis.gl/react-google-maps";
 
 function App() {
   const [count, setCount] = useState(0)
   const [array, setArray] = useState([])
-
 
   //TESTING - can be delete if needed
   const fetchAPI = async () => {
@@ -22,36 +23,20 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        {
-          array.map((fruit, index) => (
-            <div key={index}>
-              <p>{fruit}</p>
-              <br></br>
-            </div>
-          ))
-        }
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <APIProvider
+        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+        onLoad={() => console.log("Maps API has loaded.")}
+      >
+        <Map
+          style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
+          defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
+          defaultZoom={11.9}
+          gestureHandling={"cooperative"}
+          disableDefaultUI={true}
+        />
+      </APIProvider>
     </>
-  )
+  );
 }
 
 export default App
