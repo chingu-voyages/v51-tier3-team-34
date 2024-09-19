@@ -16,8 +16,13 @@ function App() {
     console.log(response.data.fruits);
   };
 
+  const fetchLocationAPI = async () => {
+    const response = await axios.get("http://localhost:8080/historical-landmarks");
+    console.log(response.data);
+  };
+
   useEffect(()=> {
-    fetchAPI();
+    fetchLocationAPI();
   }, [])
 
   return (
@@ -38,14 +43,14 @@ function App() {
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
-        {
+        {/* {
           array.map((fruit, index) => (
             <div key={index}>
               <p>{fruit}</p>
               <br></br>
             </div>
           ))
-        }
+        } */}
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
