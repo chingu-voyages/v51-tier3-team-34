@@ -1,8 +1,10 @@
 const express = require("express")
 const { connectToDb, getDb } = require('./db')
-// require('dotenv').config()
+
 
 const app = express();
+app.use(express.json())
+
 const cors = require("cors");
 const corsOptions = {
   origin: ["http://localhost:5173"],
@@ -37,4 +39,17 @@ app.get('/landmarks', (req, res) => {
 		.catch(()=> {
 			res.status(500).json({error: "Could not fetch"})
 		})
+})
+
+app.post('/landmarks', (req, res) => {
+	const landmark = req.body
+
+	db.collection('landmarks')
+	.insertOne(landmark)
+	.then(result => {
+		res.status(201).json(result)
+	})
+	.catch(err => {
+		res.status(500).json({err: 'Could not create a new document'})
+	})
 })
