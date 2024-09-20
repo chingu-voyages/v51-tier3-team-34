@@ -1,34 +1,40 @@
-const express = require("express");
-// const axios = require("axios");
+const express = require("express")
+const { connectToDb, getDb } = require('./db')
 // require('dotenv').config()
 
 const app = express();
 const cors = require("cors");
 const corsOptions = {
-    origin: ["http://localhost:5173"],
-};
+  origin: ["http://localhost:5173"],
+}; 
 
 app.use(cors(corsOptions));
 
 
-//TESTING BELOW - CAN BE DELETED AS NEEDED
-app.get("/api", (req, res) => {
-    res.json({"fruits": ["apple", "orange", "banana"]})
-});
+//db connection - if successful, listen for any request
+let db
 
-// Below used for fetching information from google places api
-// app.get('/historical-landmarks', async (req, res) => {
-//     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-//     const location = '38.0406,-84.5037'; // Latitude and Longitude for Lexington, KY
-//     const radius = 10000; // Radius in meters (10 km)
-    
-//     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=point_of_interest&keyword=historic&key=${apiKey}`);
-//     res.json(response.data.results);
+connectToDb((err)=> {
+  if (!err) {
+    app.listen(8080, ()=> {
+      console.log("Server started on port 8080");
+    });
+		db = getDb()
+  }
+})
 
 
-// });
+// routes
+app.get('/landmarks', (req, res) => {
+	let landmarks = []
 
-
-app.listen(8080, ()=> {
-    console.log("Server started on port 8080");
-});
+	db.collection('landmarks')
+		.find()
+		.forEach(place => landmarks.push(place))
+		.then(() => {
+			res.status(200).json(landmarks)
+		})
+		.catch(()=> {
+			res.status(500).json({error: "Could not fetch"})
+		})
+})
