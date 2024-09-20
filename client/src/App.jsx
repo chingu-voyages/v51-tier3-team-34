@@ -6,6 +6,7 @@ import {
   Map,
   AdvancedMarker,
   Pin,
+  InfoWindow,
 } from "@vis.gl/react-google-maps";
 
 
@@ -75,6 +76,7 @@ const pointsOfInterest = [
 
 
 function App() {
+  const [selectedPoi, setSelectedPoi] = useState(null); // Track selected marker for InfoWindow
 
   //TESTING - can be delete if needed
   const fetchAPI = async () => {
@@ -100,14 +102,15 @@ function App() {
           mapId="90d6d90b957e9186" // This helps with styling default points of interest 
           gestureHandling={"cooperative"} 
           disableDefaultUI={true}
-        />
-        <PoiMarkers pois={pointsOfInterest} />
+        >
+        <PoiMarkers pois={pointsOfInterest} selectedPoi={selectedPoi} setSelectedPoi={setSelectedPoi} />
+        </Map>
       </APIProvider>
     </>
   );
 }
 
-const PoiMarkers = ({ pois }) => {
+const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
   return (
     // I (Cody) wasn't able to get this code block to work yet.
     // The idea is that if type = default then a regular marker will be displayed.
@@ -131,8 +134,21 @@ const PoiMarkers = ({ pois }) => {
               />
             )
           }
+          onClick={() => setSelectedPoi(poi)} // Set the selected marker on click
         ></AdvancedMarker>
       ))}
+
+      {selectedPoi && (
+        <InfoWindow
+          position={selectedPoi.location}
+          onCloseClick={() => setSelectedPoi(null)} // Close InfoWindow on Click
+        >
+          <div>
+            <h3>{selectedPoi.key.replace(/([A-Z])/g, ' $1')}</h3>
+            <p>Details about {selectedPoi.key.replace(/([A-Z])/g, ' $1')}...</p>
+          </div>
+        </InfoWindow>
+      )}
     </>
   );
 };
