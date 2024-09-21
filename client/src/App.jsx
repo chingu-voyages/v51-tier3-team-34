@@ -83,6 +83,11 @@ function App() {
     console.log(response.data.fruits);
   };
 
+  // const fetchLocationAPI = async () => {
+  //   const response = await axios.get("http://localhost:8080/historical-landmarks");
+  //   console.log(response.data);
+  // };
+
   useEffect(()=> {
     fetchAPI();
   }, [])
