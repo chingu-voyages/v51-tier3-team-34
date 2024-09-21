@@ -13,6 +13,16 @@ in your `readme` feel free to replace the text we've provided here.
 
 > Own it & Make it your Own!
 
+## How to Start
+IN DEVELOPMENT
+
+Client (front-end)
+Go into client folder, run `npm install`. Make sure there is an .env file in client folder with your google maps api key. To run `npm run dev`
+
+Server (back-end)
+Go into server folder, run `npm install`. Make sure there is an .env file in server folder with you mongodb username/password. To run server: 1. `npm run dev` using nodemon - changes to server file will restart server each time 2. `npm run start` using node - will need to restart server each time for change to be reflect
+
+
 ## Team Documents
 
 You may find these helpful as you work together to organize your project.
@@ -34,7 +44,7 @@ Everyone on your team should add their name along with a link to their GitHub
 your repo access and to practice PR'ing with your team *before* you start
 coding!
 
-- Suruchi Patki: [[GitHub](https://github.com/Supatki)] / [[LinkedIn](https://www.linkedin.com/in/suruchi-patki-b0710b195/)]
+- Suruchi Patki: [GitHub](https://github.com/Supatki) / [LinkedIn](https://www.linkedin.com/in/suruchi-patki-b0710b195/)
 - Julie Cheng: [GitHub](https://github.com/jucheng925) / [LinkedIn](https://www.linkedin.com/in/juliecheng925/)
 - Cody Miller: [GitHub](https://github.com/CJMiller17) / [LinkedIn](https://www.linkedin.com/in/cjmiller17/)
 - Tuyet Nguyen: [GitHub](https://github.com/hongtuyet91) / [LinkedIn](https://www.linkedin.com/in/nguyen-tuyet/)

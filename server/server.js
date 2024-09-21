@@ -27,7 +27,7 @@ connectToDb((err)=> {
 
 
 // routes
-app.get('/landmarks', (req, res) => {
+app.get('/api/landmarks', (req, res) => {
 	let landmarks = []
 
 	db.collection('landmarks')
@@ -41,7 +41,7 @@ app.get('/landmarks', (req, res) => {
 		})
 })
 
-app.post('/landmarks', (req, res) => {
+app.post('/api/landmarks', (req, res) => {
 	const landmark = req.body
 
 	db.collection('landmarks')
