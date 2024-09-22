@@ -53,10 +53,10 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
     <>
       {pois.map((poi) => (
         <AdvancedMarker
-          key={poi.key}
+          key={poi.id}
           position={poi.location}
           icon={
-            poi.type === "custom" ? (
+            poi.icontype === "custom" ? (
               {
                 url: marker, // Custom image
                 scaledSize: { width: 50, height: 50 },
