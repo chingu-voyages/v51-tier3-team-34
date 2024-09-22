@@ -24,7 +24,6 @@ function App() {
     .catch(err => console.error("Failed to fetch landmarks", err));
   }, []);
 
-
   return (
     <>
       <APIProvider
