@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import axios from "axios";
+import { useState, useEffect } from "react";
 import {
   APIProvider,
   Map,
@@ -9,41 +7,42 @@ import {
   InfoWindow,
 } from "@vis.gl/react-google-maps";
 
-
-function App() {
+const Home = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
 
-  useEffect(()=> {
+  useEffect(() => {
     fetch("/api/landmarks")
-    .then(resp => resp.json())
-    .then(data => {
-      console.log(data); 
-      setPointsOfInterest(data);
-    })
-    .catch(err => console.error("Failed to fetch landmarks", err));
+      .then((resp) => resp.json())
+      .then((data) => {
+        console.log(data);
+        setPointsOfInterest(data);
+      })
+      .catch((err) => console.error("Failed to fetch landmarks", err));
   }, []);
 
   return (
     <>
-      <APIProvider
-        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-      >
+      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <Map
           // This is the map component that can be customized
           style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
           defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
           defaultZoom={11.9}
-          mapId="90d6d90b957e9186" // This helps with styling default points of interest 
-          gestureHandling={"cooperative"} 
+          mapId="90d6d90b957e9186" // This helps with styling default points of interest
+          gestureHandling={"cooperative"}
           disableDefaultUI={true}
         >
-        <PoiMarkers pois={pointsOfInterest} selectedPoi={selectedPoi} setSelectedPoi={setSelectedPoi} />
+          <PoiMarkers
+            pois={pointsOfInterest}
+            selectedPoi={selectedPoi}
+            setSelectedPoi={setSelectedPoi}
+          />
         </Map>
       </APIProvider>
     </>
   );
-}
+};
 
 const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
   return (
@@ -81,7 +80,9 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
           <div>
             {/* Display the actual names and descriptions of the landmarks */}
             <h3>{selectedPoi.name || "Landmark Name"}</h3>
-            <p>Details about {selectedPoi.desctiption || "Landmark Description"}</p>
+            <p>
+              Details about {selectedPoi.desctiption || "Landmark Description"}
+            </p>
           </div>
         </InfoWindow>
       )}
@@ -89,5 +90,4 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
   );
 };
 
-
-export default App
+export default Home;
