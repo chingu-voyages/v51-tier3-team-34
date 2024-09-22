@@ -57,7 +57,7 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
           icon={
             poi.type === "custom" ? (
               {
-                url: poi.imgURL, // Custom image
+                url: "/assets/marker.png", // Custom image
                 scaledSize: { width: 50, height: 50 },
               }
             ) : (
