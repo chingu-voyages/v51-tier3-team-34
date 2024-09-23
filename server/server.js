@@ -7,19 +7,22 @@ app.use(express.json())
 
 const cors = require("cors");
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: "https://geodash-world-client-development.onrender.com"
 }; 
 
+//remove corsOptions in development
 app.use(cors(corsOptions));
 
 
 //db connection - if successful, listen for any request
 let db
 
+const port = process.env.PORT || 8080
+
 connectToDb((err)=> {
   if (!err) {
-    app.listen(8080, ()=> {
-      console.log("Server started on port 8080");
+    app.listen(port, ()=> {
+      console.log(`Server started on port ${port}`);
     });
 		db = getDb()
   }
