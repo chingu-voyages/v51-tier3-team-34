@@ -6,6 +6,7 @@ import {
   Pin,
   InfoWindow,
 } from "@vis.gl/react-google-maps";
+import marker from "../assets/marker.png";
 
 const Home = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
@@ -52,12 +53,12 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
     <>
       {pois.map((poi) => (
         <AdvancedMarker
-          key={poi.key}
+          key={poi.id}
           position={poi.location}
           icon={
-            poi.type === "custom" ? (
+            poi.icontype === "custom" ? (
               {
-                url: poi.imgURL, // Custom image
+                url: marker, // Custom image
                 scaledSize: { width: 50, height: 50 },
               }
             ) : (
@@ -80,9 +81,7 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
           <div>
             {/* Display the actual names and descriptions of the landmarks */}
             <h3>{selectedPoi.name || "Landmark Name"}</h3>
-            <p>
-              Details about {selectedPoi.desctiption || "Landmark Description"}
-            </p>
+            <p>{selectedPoi.description || "Landmark Description"}</p>
           </div>
         </InfoWindow>
       )}
