@@ -126,4 +126,4 @@ const landmarks = [
 
 ]
 
-export default landmarks
+module.exports = landmarks;
