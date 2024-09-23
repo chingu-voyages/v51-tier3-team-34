@@ -8,7 +8,7 @@ app.use(express.json())
 
 const cors = require("cors");
 const corsOptions = {
-  origin: "https://geodash-world-client-development.onrender.com"
+  origin: "https://geodash-world-client.onrender.com/"
 }; 
 
 //remove corsOptions in development
