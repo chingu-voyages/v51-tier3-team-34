@@ -6,7 +6,7 @@ import {
   Pin,
   InfoWindow,
 } from "@vis.gl/react-google-maps";
-import marker from "./assets/marker.png";
+import marker from "../assets/marker.png";
 
 const Home = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
