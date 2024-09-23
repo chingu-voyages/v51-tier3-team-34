@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import JSZip from 'jszip'
+import Papa from 'papaparse'
 import './App.css'
 import axios from "axios";
 import {
@@ -75,39 +77,83 @@ const pointsOfInterest = [
 
 
 function App() {
+  // This relates to the transit layer state
+  const [mapInstance, setMapInstance] = useState(null)
+
+  // This will be triggered on load
+  const onMapLoad = (map) => {
+    setMapInstance(map)
+
+    // This adds the transit layer when the map is loaded
+    const transitLayer = new google.maps.TransitLayer()
+    transitLayer.setMap(map)
+  }
+
+  // This is for creating our stops because the transit layer doesn't display them
+  const [stops, setStops] = useState([])
+
+  const fetchGTFSData = async () => {
+    const response = await axios.get("/google_transit.zip", { responseType: "arraybuffer" })
+    const zip = new JSZip()
+    const content = await zip.loadAsync(response.data)
+
+    // Extract stop.txt
+    const stopsFile = content.files["stops.txt"]
+    const stopsText = await stopsFile.async("text")
+
+    // Parse stops.txt
+    Papa.parse(stopsText, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const stopsData = results.data.map(stop => ({
+          id: stop.stop_id,
+          name: stop.stop_name,
+          lat: parseFloat(stop.stop_lat),
+          lon: parseFloat(stop.stop_lon)
+        }))
+        console.log("Parsed stops data: ", stopsData)
+        setStops(stopsData)
+      }
+    })
+  }
 
   //TESTING - can be delete if needed
-  const fetchAPI = async () => {
-    const response = await axios.get("http://localhost:8080/api");
-    setArray(response.data.fruits)
-    console.log(response.data.fruits);
-  };
+  // const fetchAPI = async () => {
+  //   const response = await axios.get("http://localhost:8080/api");
+  //   setArray(response.data.fruits)
+  //   console.log(response.data.fruits);
+  // };
 
   useEffect(()=> {
-    fetchAPI();
+    // fetchAPI();
+    fetchGTFSData()
   }, [])
+
+
 
   return (
     <>
-      <APIProvider
-        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-      >
+      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <Map
           // This is the map component that can be customized
           style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
           defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
           defaultZoom={11.9}
-          mapId="90d6d90b957e9186" // This helps with styling default points of interest 
-          gestureHandling={"cooperative"} 
-          disableDefaultUI={true}
+          mapId="90d6d90b957e9186" // This helps with styling default points of interest
+          gestureHandling={"cooperative"}
+          disableDefaultUI={false}
+          onLoad={onMapLoad}
         />
         <PoiMarkers pois={pointsOfInterest} />
+        <BusStops stops={stops} />
       </APIProvider>
     </>
   );
 }
 
 const PoiMarkers = ({ pois }) => {
+  console.log("POI's: ", pois)
   return (
     // I (Cody) wasn't able to get this code block to work yet.
     // The idea is that if type = default then a regular marker will be displayed.
@@ -136,6 +182,22 @@ const PoiMarkers = ({ pois }) => {
     </>
   );
 };
+
+const BusStops = ({ stops }) => {
+  console.log("Bus Stops: ", stops)
+  // This is where we can make custom markers for bus stops if we would like
+  return (
+    <>
+      {/* {stops.map((stop) => (
+        <AdvancedMarker
+          key={stop.id}
+          position={{ lat: stop.lat, lng: stop.lon }}
+          label={stop.name}
+        />
+      ))} */}
+    </>
+  )
+}
 
 
 export default App
