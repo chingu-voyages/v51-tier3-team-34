@@ -1,5 +1,6 @@
 const express = require("express")
 const { connectToDb, getDb } = require('./db')
+const { landmarks } = require('./data/landmarks')
 
 
 const app = express();
@@ -30,19 +31,23 @@ connectToDb((err)=> {
 
 
 // routes
-app.get('/api/landmarks', (req, res) => {
-	let landmarks = []
+// app.get('/api/landmarks', (req, res) => {
+// 	let landmarks = []
 
-	db.collection('landmarks')
-		.find()
-		.forEach(place => landmarks.push(place))
-		.then(() => {
-			res.status(200).json(landmarks)
-		})
-		.catch(()=> {
-			res.status(500).json({error: "Could not fetch"})
-		})
-})
+// 	db.collection('landmarks')
+// 		.find()
+// 		.forEach(place => landmarks.push(place))
+// 		.then(() => {
+// 			res.status(200).json(landmarks)
+// 		})
+// 		.catch(()=> {
+// 			res.status(500).json({error: "Could not fetch"})
+// 		})
+// })
+
+app.get('/api/landmarks', (req, res) => {
+    res.json(landmarks);
+});
 
 app.post('/api/landmarks', (req, res) => {
 	const landmark = req.body
