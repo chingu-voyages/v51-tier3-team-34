@@ -78,45 +78,71 @@ const pointsOfInterest = [
 
 function App() {
   // This relates to the transit layer state
-  const [mapInstance, setMapInstance] = useState(null)
+  const [mapInstance, setMapInstance] = useState(null);
+
+  // This is for creating our stops because the transit layer doesn't display them
+  const [stops, setStops] = useState([]);
+
+  // This is for creating the shapes, connecting the stops together into routes
+  const [shapes, setShapes] = useState([])
 
   // This will be triggered on load
   const onMapLoad = (map) => {
-    setMapInstance(map)
+    console.log("Map Loaded: ", map)
+    setMapInstance(map);
 
     // This adds the transit layer when the map is loaded
-    const transitLayer = new google.maps.TransitLayer()
-    transitLayer.setMap(map)
-  }
-
-  // This is for creating our stops because the transit layer doesn't display them
-  const [stops, setStops] = useState([])
+    const transitLayer = new google.maps.TransitLayer();
+    transitLayer.setMap(map);
+  };
 
   const fetchGTFSData = async () => {
-    const response = await axios.get("/google_transit.zip", { responseType: "arraybuffer" })
-    const zip = new JSZip()
-    const content = await zip.loadAsync(response.data)
+    const response = await axios.get("/google_transit.zip", {
+      responseType: "arraybuffer",
+    });
+    const zip = new JSZip();
+    const content = await zip.loadAsync(response.data);
 
     // Extract stop.txt
-    const stopsFile = content.files["stops.txt"]
-    const stopsText = await stopsFile.async("text")
+    const stopsFile = content.files["stops.txt"];
+    const stopsText = await stopsFile.async("text");
 
     // Parse stops.txt
     Papa.parse(stopsText, {
       header: true,
-      skipEmptyLines: true,
+      skipEmptyLines: true, // This is important because there is an empty line in the data that throws an error
       complete: (results) => {
-        const stopsData = results.data.map(stop => ({
+        const stopsData = results.data.map((stop) => ({
           id: stop.stop_id,
           name: stop.stop_name,
           lat: parseFloat(stop.stop_lat),
-          lon: parseFloat(stop.stop_lon)
-        }))
-        console.log("Parsed stops data: ", stopsData)
-        setStops(stopsData)
-      }
-    })
-  }
+          lon: parseFloat(stop.stop_lon),
+        }));
+        console.log("Parsed stops data: ", stopsData);
+        setStops(stopsData);
+      },
+    });
+
+    // Extract shapes.txt
+    const shapesFile = content.files["shapes.txt"];
+    const shapesText = await shapesFile.async("text");
+
+    // Parse shapes.txt
+    Papa.parse(shapesText, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const shapesData = results.data.map((shape) => ({
+          shape_id: shape.shape_id,
+          lat: parseFloat(shape.shape_pt_lat),
+          lng: parseFloat(shape.shape_pt_lon),
+          sequence: parseInt(shape.shape_pt_sequence, 10),
+        }));
+        console.log("Parsed shapes data: ", shapesData);
+        setShapes(shapesData);
+      },
+    });
+  };
 
   //TESTING - can be delete if needed
   // const fetchAPI = async () => {
@@ -125,12 +151,21 @@ function App() {
   //   console.log(response.data.fruits);
   // };
 
-  useEffect(()=> {
+  useEffect(() => {
     // fetchAPI();
-    fetchGTFSData()
-  }, [])
+    fetchGTFSData();
+  }, []);
 
-
+  useEffect(() => {
+    if (!mapInstance) {
+      console.log("Map instance is NOT ready yet...")
+      return
+    }
+    if (shapes.length > 0) {
+      console.log("drawing bus route with map instance: ", mapInstance)
+      drawBusRoute(mapInstance, shapes)
+    }
+  }, [mapInstance, shapes])
 
   return (
     <>
@@ -199,5 +234,54 @@ const BusStops = ({ stops }) => {
   )
 }
 
+function drawBusRoute(map, shapes) {
+
+  if (!map) {
+    console.log("Map instance is null or undefined.")
+    return
+  }
+  
+  // Grouping the shapes by their ID's in order to draw the correct route
+  const shapesByRoute = shapes.reduce((acc, shape) => {
+    console.log("Shapes used to to draw routes: ", shapesByRoute);
+
+    if (!acc[shape.shape_id]) {
+      acc[shape.shape_id] = []
+    }
+    
+    acc[shape.shape_id].push({ lat: shape.lat, lng: shape.lng })
+    return acc
+  }, {})
+
+  console.log("Shapes ALSO grouped by route:", shapesByRoute);
+
+  // Draws each route
+  Object.keys(shapesByRoute).forEach((routeId) => {
+    const routePath = shapesByRoute[routeId];
+    console.log("Drawing bus route:", routePath);
+
+    const routePolyLine = new google.maps.Polyline({
+      path: routePath,
+      geodesic: true,
+      strokeColor: "red",
+      strokeOpacity: 1,
+      strokeWeight: 6,
+    });
+
+    // Adds the polylines to the map
+    routePolyLine.setMap(map);
+    // });
+
+    // Adds an info window to the displayed route when clicked
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<strong>${routeName}</strong>`
+    })
+
+    routePolyLine.addListener("click", function () {
+      infoWindow.setPosition(routePath[0]) // Opens the window at the start of the route
+      infoWindow.open(map)
+    })
+  })
+}
 
 export default App
