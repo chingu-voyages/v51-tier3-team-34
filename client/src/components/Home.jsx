@@ -15,7 +15,9 @@ const Home = () => {
   const apiUrl = 
     import.meta.env.MODE === "development"
       ? "http://localhost:8080"
-      : import.meta.env.REACT_APP_BACKEND_URL
+      : import.meta.env.REACT_APP_BACKEND_URL || "https://geodash-world-server-development.onrender.com"
+  
+  console.log("API URL:", apiUrl);
 
       
   useEffect(() => {
