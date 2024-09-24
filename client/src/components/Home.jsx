@@ -13,16 +13,20 @@ const Home = () => {
   const [selectedPoi, setSelectedPoi] = useState(null);
 
   const apiUrl = 
-    import.meta.env.MODE === "development"
-      ? "http://localhost:8080"
-      : import.meta.env.REACT_APP_BACKEND_URL || "https://geodash-world-server-development.onrender.com"
-  
-  console.log("API URL:", apiUrl);
+  import.meta.env.MODE === "development"
+    ? "http://localhost:8080"
+    : import.meta.env.REACT_APP_BACKEND_URL || "https://geodash-world-server-development.onrender.com"
 
-      
+  console.log("API URL:", apiUrl);
+  
   useEffect(() => {
     fetch(`${apiUrl}/api/landmarks`)
-      .then((resp) => resp.json())
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error(`HTTP error! Status: ${resp.status}`);
+        }
+        return resp.json()
+      })
       .then((data) => {
         console.log(data);
         setPointsOfInterest(data);
@@ -31,54 +35,52 @@ const Home = () => {
   }, []);
 
   return (
-    <>
-      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-        <Map
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+      <Map
           // This is the map component that can be customized
-          style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
-          defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
-          defaultZoom={11.9}
-          mapId="90d6d90b957e9186" // This helps with styling default points of interest
-          gestureHandling={"cooperative"}
-          disableDefaultUI={true}
-        >
-          <PoiMarkers
-            pois={pointsOfInterest}
-            selectedPoi={selectedPoi}
-            setSelectedPoi={setSelectedPoi}
-          />
-        </Map>
-      </APIProvider>
-    </>
+        style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
+        defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
+        defaultZoom={11.9}
+        mapId="90d6d90b957e9186" // This helps with styling default points of interest
+        gestureHandling={"cooperative"}
+        disableDefaultUI={true}
+      >
+        <PoiMarkers
+          pois={pointsOfInterest}
+          selectedPoi={selectedPoi}
+          setSelectedPoi={setSelectedPoi}
+        />
+      </Map>
+    </APIProvider>
   );
 };
 
+
 const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
+
+  const customIcon = (poi) => {
+    if (poi.icontype !== "default"){
+      return <img src={marker} width={50} height={50}/> 
+    } else {
+      return (
+      <Pin
+        background={"gold"}
+        glyphColor={"black"}
+        borderColor={"black"}
+      />)
+    }
+  }
+  
   return (
-    // I (Cody) wasn't able to get this code block to work yet.
-    // The idea is that if type = default then a regular marker will be displayed.
-    // I was following this part of the google documentation: https://developers.google.com/maps/documentation/javascript/advanced-markers/overview
     <>
       {pois.map((poi) => (
         <AdvancedMarker
           key={poi._id}
           position={poi.location}
-          icon={
-            poi.icontype === "custom" ? (
-              {
-                url: marker, // Custom image
-                scaledSize: { width: 50, height: 50 },
-              }
-            ) : (
-              <Pin
-                background={"gold"}
-                glyphColor={"black"}
-                borderColor={"black"}
-              />
-            )
-          }
           onClick={() => setSelectedPoi(poi)} // Set the selected marker on click
-        ></AdvancedMarker>
+        > 
+            {customIcon(poi)}
+          </AdvancedMarker>
       ))}
 
       {selectedPoi && (
