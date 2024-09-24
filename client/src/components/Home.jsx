@@ -12,8 +12,12 @@ const Home = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
 
-  const apiUrl = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:8080"
-  
+  const apiUrl = 
+    import.meta.env.MODE === "development"
+      ? "http://localhost:8080"
+      : import.meta.env.REACT_APP_BACKEND_URL
+
+      
   useEffect(() => {
     fetch(`${apiUrl}/api/landmarks`)
       .then((resp) => resp.json())
