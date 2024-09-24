@@ -55,7 +55,7 @@ const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
     <>
       {pois.map((poi) => (
         <AdvancedMarker
-          key={poi.id}
+          key={poi._id}
           position={poi.location}
           icon={
             poi.icontype === "custom" ? (
