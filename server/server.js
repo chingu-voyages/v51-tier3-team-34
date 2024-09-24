@@ -8,15 +8,15 @@ app.use(express.json())
 
 const cors = require("cors");
 
-const corsOptions = {
-  origin: ["http://localhost:5173"],
+const corsOption = {
+  origin: "https://geodash-world-client-development.onrender.com"
 }; 
 
 //remove corsOptions in development
 app.use(cors());
-//use in deployment (development branch)
-//app.use(cors(corsOptions))
 
+//use during deployment (using for development branch)
+// app.use(cors(corsOption))
 
 //db connection - if successful, listen for any request
 let db
@@ -31,15 +31,15 @@ const port = process.env.PORT || 8080
 // 		db = getDb()
 //   }
 // })
+
+
 app.listen(port, ()=> {
 	console.log(`Server started on port ${port}`);
-})
+});
 
 // routes
-
 // app.get('/api/landmarks', (req, res) => {
 // 	let landmarks = []
-
 // 	db.collection('landmarks')
 // 		.find()
 // 		.forEach(place => landmarks.push(place))
@@ -50,6 +50,11 @@ app.listen(port, ()=> {
 // 			res.status(500).json({error: "Could not fetch"})
 // 		})
 // })
+
+app.get('/api/landmarks', (req, res) => {
+    res.json(landmarks);
+});
+
 
 app.post('/api/landmarks', (req, res) => {
 	const landmark = req.body
