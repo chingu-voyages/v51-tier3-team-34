@@ -1,9 +1,8 @@
 const express = require("express")
 const cors = require("cors");
 require('dotenv').config()
-const { connectToDb, getDb } = require('./db')
-const landmarks = require('./data/landmarks')
 
+const { connectToDb, getDb } = require('./db')
 
 const app = express();
 app.use(express.json())
@@ -45,10 +44,6 @@ app.get('/api/landmarks', (req, res) => {
 			res.status(500).json({error: "Could not fetch"})
 		})
 })
-
-app.get('/api/landmarks', (req, res) => {
-    res.json(landmarks);
-});
 
 
 app.post('/api/landmarks', (req, res) => {
