@@ -1,4 +1,6 @@
 const express = require("express")
+const cors = require("cors");
+require('dotenv').config()
 const { connectToDb, getDb } = require('./db')
 const landmarks = require('./data/landmarks')
 
@@ -6,50 +8,43 @@ const landmarks = require('./data/landmarks')
 const app = express();
 app.use(express.json())
 
-const cors = require("cors");
-
 const corsOption = {
-  origin: "https://geodash-world-client-development.onrender.com"
+  origin: process.env.NODE_ENV === "development"
+	? "*" //Allow all origins in development
+	: process.env.VITE_FRONTEND_URL, // Allow only specific frontend URL in production
 }; 
 
-//remove corsOptions in development
-app.use(cors());
-
-//use during deployment (using for development branch)
-// app.use(cors(corsOption))
-
-//db connection - if successful, listen for any request
-let db
+app.use(cors(corsOption));
 
 const port = process.env.PORT || 8080
 
-// connectToDb((err)=> {
-//   if (!err) {
-//     app.listen(port, ()=> {
-//       console.log(`Server started on port ${port}`);
-//     });
-// 		db = getDb()
-//   }
-// })
-
-
-app.listen(port, ()=> {
-	console.log(`Server started on port ${port}`);
+//db connection - if successful, listen for any request
+let db
+connectToDb((err)=> {
+  if (!err) {
+	db = getDb();
+    app.listen(port, ()=> {
+      console.log(`Server started on port ${port}`);
+    });
+  } else {
+	console.error("Failed to connect to the databse.")
+  }
 });
 
+
 // routes
-// app.get('/api/landmarks', (req, res) => {
-// 	let landmarks = []
-// 	db.collection('landmarks')
-// 		.find()
-// 		.forEach(place => landmarks.push(place))
-// 		.then(() => {
-// 			res.status(200).json(landmarks)
-// 		})
-// 		.catch(()=> {
-// 			res.status(500).json({error: "Could not fetch"})
-// 		})
-// })
+app.get('/api/landmarks', (req, res) => {
+	let landmarks = []
+	db.collection('landmarks')
+		.find()
+		.forEach(place => landmarks.push(place))
+		.then(() => {
+			res.status(200).json(landmarks)
+		})
+		.catch(()=> {
+			res.status(500).json({error: "Could not fetch"})
+		})
+})
 
 app.get('/api/landmarks', (req, res) => {
     res.json(landmarks);

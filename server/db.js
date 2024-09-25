@@ -7,16 +7,22 @@ const uri = process.env.MONGO_URI
 module.exports = {
   connectToDb: (cb) => {
     MongoClient.connect(uri)
-			.then((client)=> {
-				dbConnection = client.db()
-				return cb()
-			})
-			.catch(err => {
-				console.log(err)
-				return cb(err)
-			})
+		.then((client)=> {
+			dbConnection = client.db('geoworlddash')
+			return cb()
+		})
+		.catch(err => {
+			console.error('Failed to connect to MongoDB', err)
+			dbConnection = null;
+			return cb(err)
+		})
   },
-  getDb: () => dbConnection
+  getDb: () => {
+	if (!dbConnection) {
+		throw new Error('Database connection is not established');
+	}
+	return dbConnection;
+  }
 }
 
 // What these functions does
