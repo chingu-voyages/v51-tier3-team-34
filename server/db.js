@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config()
 
 let dbConnection
-const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@geoworlddash.zosfj.mongodb.net/geoworlddash?retryWrites=true&w=majority&appName=geoworlddash`
+const uri = process.env.MONGO_URI
 
 module.exports = {
   connectToDb: (cb) => {
