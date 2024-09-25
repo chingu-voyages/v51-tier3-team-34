@@ -15,7 +15,7 @@ const Home = () => {
   const apiUrl = 
   import.meta.env.MODE === "development"
     ? "http://localhost:8080"
-    : import.meta.env.REACT_APP_BACKEND_URL
+    : import.meta.env.VITE_BACKEND_URL
 
   console.log("API URL:", apiUrl);
   
