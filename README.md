@@ -37,7 +37,7 @@ MONGO_URI: mongodb+srv://<db_username>:<db_password>@geoworlddash.zosfj.mongodb.
 
 VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not necessary during development
 
-
+..
 
 ## Team Documents
 
