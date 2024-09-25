@@ -11,7 +11,7 @@ app.use(express.json())
 const corsOption = {
   origin: process.env.NODE_ENV === "development"
 	? "*" //Allow all origins in development
-	: process.env.VITE_FRONTEND_URL, // Allow only specific frontend URL in production
+	: process.env.VITE_FRONTEND_URI, // Allow only specific frontend URL in production
 }; 
 
 app.use(cors(corsOption));
