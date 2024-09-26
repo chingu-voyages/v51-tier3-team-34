@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import JSZip from 'jszip'
 import Papa from 'papaparse'
-import './App.css'
 import axios from "axios";
 import {
   AdvancedMarker,
@@ -140,12 +139,6 @@ function App() {
     });
   };
 
-  //TESTING - can be delete if needed
-  // const fetchAPI = async () => {
-  //   const response = await axios.get("http://localhost:8080/api");
-  //   setArray(response.data.fruits)
-  //   console.log(response.data.fruits);
-  // };
 
   useEffect(() => {
     // fetchAPI();
@@ -193,36 +186,6 @@ function App() {
     </>
   );
 }
-
-const PoiMarkers = ({ pois }) => {
-  return (
-    // I (Cody) wasn't able to get this code block to work yet.
-    // The idea is that if type = default then a regular marker will be displayed.
-    // I was following this part of the google documentation: https://developers.google.com/maps/documentation/javascript/advanced-markers/overview
-    <>
-      {pois.map((poi) => (
-        <AdvancedMarker
-          key={poi.key}
-          position={poi.location}
-          icon={
-            poi.type === "custom" ? (
-              {
-                url: poi.imgURL, // Custom image
-                scaledSize: { width: 50, height: 50 },
-              }
-            ) : (
-              <Pin
-                background={"gold"}
-                glyphColor={"black"}
-                borderColor={"black"}
-              />
-            )
-          }
-        ></AdvancedMarker>
-      ))}
-    </>
-  );
-};
 
 const BusStops = ({ stops }) => {
   // This is where we can make custom markers for bus stops if we would like
