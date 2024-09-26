@@ -4,12 +4,10 @@ import Papa from 'papaparse'
 import './App.css'
 import axios from "axios";
 import {
-  APIProvider,
-  Map,
   AdvancedMarker,
   Pin,
 } from "@vis.gl/react-google-maps";
-
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
 // LAT and LNG place markers where they should be. Type and imgURL are for implementing custom images or icons.  
 const pointsOfInterest = [
@@ -118,7 +116,6 @@ function App() {
           lat: parseFloat(stop.stop_lat),
           lon: parseFloat(stop.stop_lon),
         }));
-        console.log("Parsed stops data: ", stopsData);
         setStops(stopsData);
       },
     });
@@ -138,7 +135,6 @@ function App() {
           lng: parseFloat(shape.shape_pt_lon),
           sequence: parseInt(shape.shape_pt_sequence, 10),
         }));
-        console.log("Parsed shapes data: ", shapesData);
         setShapes(shapesData);
       },
     });
@@ -161,34 +157,44 @@ function App() {
       console.log("Map instance is NOT ready yet...")
       return
     }
-    if (shapes.length > 0) {
-      console.log("drawing bus route with map instance: ", mapInstance)
-      drawBusRoute(mapInstance, shapes)
-    }
+
+    const delayMapInstance = setTimeout(() => {
+      if (shapes.length > 0) {
+        console.log("drawing bus route with map instance: ", mapInstance)
+        drawBusRoute(mapInstance, shapes)
+      }
+    }, 1000)
+
+    return () => clearTimeout(delayMapInstance)
+
   }, [mapInstance, shapes])
 
   return (
     <>
-      <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-        <Map
-          // This is the map component that can be customized
-          style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
-          defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
-          defaultZoom={11.9}
-          mapId="90d6d90b957e9186" // This helps with styling default points of interest
-          gestureHandling={"cooperative"}
-          disableDefaultUI={false}
-          onLoad={onMapLoad}
-        />
-        <PoiMarkers pois={pointsOfInterest} />
-        <BusStops stops={stops} />
-      </APIProvider>
+      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+          <GoogleMap
+            // This is the map component that can be customized
+            mapContainerStyle={{
+              width: "70vh",
+              height: "70vh",
+              marginLeft: "26rem",
+            }}
+            center={{ lat: 38.0406, lng: -84.5037 }}
+            zoom={11.9}
+            mapId="90d6d90b957e9186" // This helps with styling default points of interest
+            gestureHandling={"cooperative"}
+            disableDefaultUI={false}
+            onLoad={onMapLoad}
+          >
+            <PoiMarkers pois={pointsOfInterest} />
+            <BusStops stops={stops} />
+          </GoogleMap>
+      </LoadScript>
     </>
   );
 }
 
 const PoiMarkers = ({ pois }) => {
-  console.log("POI's: ", pois)
   return (
     // I (Cody) wasn't able to get this code block to work yet.
     // The idea is that if type = default then a regular marker will be displayed.
@@ -219,7 +225,6 @@ const PoiMarkers = ({ pois }) => {
 };
 
 const BusStops = ({ stops }) => {
-  console.log("Bus Stops: ", stops)
   // This is where we can make custom markers for bus stops if we would like
   return (
     <>
@@ -243,8 +248,6 @@ function drawBusRoute(map, shapes) {
   
   // Grouping the shapes by their ID's in order to draw the correct route
   const shapesByRoute = shapes.reduce((acc, shape) => {
-    console.log("Shapes used to to draw routes: ", shapesByRoute);
-
     if (!acc[shape.shape_id]) {
       acc[shape.shape_id] = []
     }
@@ -253,19 +256,16 @@ function drawBusRoute(map, shapes) {
     return acc
   }, {})
 
-  console.log("Shapes ALSO grouped by route:", shapesByRoute);
-
   // Draws each route
   Object.keys(shapesByRoute).forEach((routeId) => {
     const routePath = shapesByRoute[routeId];
-    console.log("Drawing bus route:", routePath);
 
     const routePolyLine = new google.maps.Polyline({
       path: routePath,
       geodesic: true,
       strokeColor: "red",
-      strokeOpacity: 1,
-      strokeWeight: 6,
+      strokeOpacity: .1,
+      strokeWeight: 2,
     });
 
     // Adds the polylines to the map
@@ -274,7 +274,7 @@ function drawBusRoute(map, shapes) {
 
     // Adds an info window to the displayed route when clicked
     const infoWindow = new google.maps.InfoWindow({
-      content: `<strong>${routeName}</strong>`
+      content: `<strong>${routeId}</strong>`
     })
 
     routePolyLine.addListener("click", function () {
