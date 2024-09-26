@@ -4,7 +4,7 @@ import Error404 from "./components/Error404";
 import Home from "./components/Home";
 import Quiz from "./components/Quiz";
 import ScavengerHunt from "./components/ScavengerHunt";
-import Badges from "./components/Badges";
+import Achievements from "./components/Achievements";
 import Leaderboard from "./components/Leaderboard";
 
 const Router = () => {
@@ -26,8 +26,8 @@ const Router = () => {
           element: <ScavengerHunt />,
         },
         {
-          path: "/badges",
-          element: <Badges />,
+          path: "/achievements",
+          element: <Achievements />,
         },
         {
           path: "/leaderboard",
