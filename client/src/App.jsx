@@ -8,80 +8,13 @@ import {
 } from "@vis.gl/react-google-maps";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
-// LAT and LNG place markers where they should be. Type and imgURL are for implementing custom images or icons.  
-const pointsOfInterest = [
-  {
-    key: "maryToddHouse",
-    location: { lat: 38.05462, lng: -84.49666 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "ashland",
-    location: { lat: 38.030517, lng: -84.484004 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "huntMorganHouse",
-    location: { lat: 38.04965, lng: -84.49588 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "lexingtonCemetery",
-    location: { lat: 38.06149, lng: -84.49049 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "waveland",
-    location: { lat: 37.95511, lng: -84.54357 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "historicMorrisonHall",
-    location: { lat: 38.039401, lng: -84.501246 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "oldFayetteCountyCourthouse",
-    location: { lat: 38.04798, lng: -84.49688 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "gratzPark",
-    location: { lat: 38.05145, lng: -84.4963 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "cheapsidePark",
-    location: { lat: 38.04854, lng: -84.49685 },
-    type: "default",
-    imgURL: "",
-  },
-  {
-    key: "trianglePark",
-    location: { lat: 38.0492, lng: -84.4994 },
-    type: "default",
-    imgURL: "",
-  },
-];
+
 
 
 function App() {
   // This relates to the transit layer state
   const [mapInstance, setMapInstance] = useState(null);
 
-  // This is for creating our stops because the transit layer doesn't display them
-  const [stops, setStops] = useState([]);
-
-  // This is for creating the shapes, connecting the stops together into routes
-  const [shapes, setShapes] = useState([])
 
   // This will be triggered on load
   const onMapLoad = (map) => {
@@ -93,51 +26,7 @@ function App() {
     transitLayer.setMap(map);
   };
 
-  const fetchGTFSData = async () => {
-    const response = await axios.get("/google_transit.zip", {
-      responseType: "arraybuffer",
-    });
-    const zip = new JSZip();
-    const content = await zip.loadAsync(response.data);
 
-    // Extract stop.txt
-    const stopsFile = content.files["stops.txt"];
-    const stopsText = await stopsFile.async("text");
-
-    // Parse stops.txt
-    Papa.parse(stopsText, {
-      header: true,
-      skipEmptyLines: true, // This is important because there is an empty line in the data that throws an error
-      complete: (results) => {
-        const stopsData = results.data.map((stop) => ({
-          id: stop.stop_id,
-          name: stop.stop_name,
-          lat: parseFloat(stop.stop_lat),
-          lon: parseFloat(stop.stop_lon),
-        }));
-        setStops(stopsData);
-      },
-    });
-
-    // Extract shapes.txt
-    const shapesFile = content.files["shapes.txt"];
-    const shapesText = await shapesFile.async("text");
-
-    // Parse shapes.txt
-    Papa.parse(shapesText, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const shapesData = results.data.map((shape) => ({
-          shape_id: shape.shape_id,
-          lat: parseFloat(shape.shape_pt_lat),
-          lng: parseFloat(shape.shape_pt_lon),
-          sequence: parseInt(shape.shape_pt_sequence, 10),
-        }));
-        setShapes(shapesData);
-      },
-    });
-  };
 
 
   useEffect(() => {
@@ -187,64 +76,9 @@ function App() {
   );
 }
 
-const BusStops = ({ stops }) => {
-  // This is where we can make custom markers for bus stops if we would like
-  return (
-    <>
-      {/* {stops.map((stop) => (
-        <AdvancedMarker
-          key={stop.id}
-          position={{ lat: stop.lat, lng: stop.lon }}
-          label={stop.name}
-        />
-      ))} */}
-    </>
-  )
-}
 
-function drawBusRoute(map, shapes) {
 
-  if (!map) {
-    console.log("Map instance is null or undefined.")
-    return
-  }
-  
-  // Grouping the shapes by their ID's in order to draw the correct route
-  const shapesByRoute = shapes.reduce((acc, shape) => {
-    if (!acc[shape.shape_id]) {
-      acc[shape.shape_id] = []
-    }
-    
-    acc[shape.shape_id].push({ lat: shape.lat, lng: shape.lng })
-    return acc
-  }, {})
 
-  // Draws each route
-  Object.keys(shapesByRoute).forEach((routeId) => {
-    const routePath = shapesByRoute[routeId];
 
-    const routePolyLine = new google.maps.Polyline({
-      path: routePath,
-      geodesic: true,
-      strokeColor: "red",
-      strokeOpacity: .1,
-      strokeWeight: 2,
-    });
-
-    // Adds the polylines to the map
-    routePolyLine.setMap(map);
-    // });
-
-    // Adds an info window to the displayed route when clicked
-    const infoWindow = new google.maps.InfoWindow({
-      content: `<strong>${routeId}</strong>`
-    })
-
-    routePolyLine.addListener("click", function () {
-      infoWindow.setPosition(routePath[0]) // Opens the window at the start of the route
-      infoWindow.open(map)
-    })
-  })
-}
 
 export default App
