@@ -55,7 +55,7 @@ const Home = () => {
         setPointsOfInterest(data);
       })
       .catch((err) => console.error("Failed to fetch landmarks", err));
-  }, [mapInstance]);
+  }, []);
 
   const handleChange = () =>{
     setMapInstance(null)
