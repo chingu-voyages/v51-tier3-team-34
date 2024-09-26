@@ -1,3 +1,5 @@
+const landmarks = [
+
 {
 "name": "Kentucky Horse Park",
 "location": 
@@ -121,3 +123,7 @@
 "icontype": "default", 
 "imgUrl": "" 
 }
+
+]
+
+module.exports = landmarks;

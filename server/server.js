@@ -1,35 +1,39 @@
 const express = require("express")
-const { connectToDb, getDb } = require('./db')
+const cors = require("cors");
+require('dotenv').config()
 
+const { connectToDb, getDb } = require('./db')
 
 const app = express();
 app.use(express.json())
 
-const cors = require("cors");
-const corsOptions = {
-  origin: ["http://localhost:5173"],
+const corsOption = {
+  origin: process.env.NODE_ENV === "development"
+	? "*" //Allow all origins in development
+	: process.env.VITE_FRONTEND_URI, // Allow only specific frontend URL in production
 }; 
 
-app.use(cors(corsOptions));
+app.use(cors(corsOption));
 
+const port = process.env.PORT || 8080
 
 //db connection - if successful, listen for any request
 let db
-
 connectToDb((err)=> {
   if (!err) {
-    app.listen(8080, ()=> {
-      console.log("Server started on port 8080");
+	db = getDb();
+    app.listen(port, ()=> {
+      console.log(`Server started on port ${port}`);
     });
-		db = getDb()
+  } else {
+	console.error("Failed to connect to the databse.")
   }
-})
+});
 
 
 // routes
 app.get('/api/landmarks', (req, res) => {
 	let landmarks = []
-
 	db.collection('landmarks')
 		.find()
 		.forEach(place => landmarks.push(place))
@@ -40,6 +44,7 @@ app.get('/api/landmarks', (req, res) => {
 			res.status(500).json({error: "Could not fetch"})
 		})
 })
+
 
 app.post('/api/landmarks', (req, res) => {
 	const landmark = req.body
