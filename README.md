@@ -13,6 +13,32 @@ in your `readme` feel free to replace the text we've provided here.
 
 > Own it & Make it your Own!
 
+## How to Start
+IN DEVELOPMENT
+
+**Client (front-end)**
+Go into client folder, run `npm install`. Make sure there is an .env file in client folder with your google maps api key. To run `npm run dev`
+
+**Server (back-end)**
+Go into server folder, run `npm install`. Make sure there is an .env file in server folder with you mongodb username/password. To run server: 1. `npm run dev` using nodemon - changes to server file will restart server each time 2. `npm run start` using node - will need to restart server each time for change to be reflect
+
+## What to put on ENV.files
+**Client (using vite)**
+
+VITE_GOOGLE_MAPS_API_KEY: googlemaps api key
+
+VITE_BACKEND_URL: backend-render-url //This will only be for deployment, not necessary during development
+
+**Server**
+
+NODE_ENV: development or production  //Select one. Production should only be use in deployment
+
+MONGO_URI: mongodb+srv://<db_username>:<db_password>@geoworlddash.zosfj.mongodb.net/geoworlddash?retryWrites=true&w=majority&appName=geoworlddash       __replace db_username and db_password with what was sent to you__
+
+VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not necessary during development
+
+..
+
 ## Team Documents
 
 You may find these helpful as you work together to organize your project.
@@ -34,10 +60,11 @@ Everyone on your team should add their name along with a link to their GitHub
 your repo access and to practice PR'ing with your team *before* you start
 coding!
 
-- Suruchi Patki: [[GitHub](https://github.com/Supatki)] / [[LinkedIn](https://www.linkedin.com/in/suruchi-patki-b0710b195/)]
+- Suruchi Patki: [GitHub](https://github.com/Supatki) / [LinkedIn](https://www.linkedin.com/in/suruchi-patki-b0710b195/)
 - Julie Cheng: [GitHub](https://github.com/jucheng925) / [LinkedIn](https://www.linkedin.com/in/juliecheng925/)
 - Cody Miller: [GitHub](https://github.com/CJMiller17) / [LinkedIn](https://www.linkedin.com/in/cjmiller17/)
 - Tuyet Nguyen: [GitHub](https://github.com/hongtuyet91) / [LinkedIn](https://www.linkedin.com/in/nguyen-tuyet/)
 - Rika Miyata: [GitHub](https://github.com/Tayrika) / [LinkedIn](https://www.linkedin.com/in/rika-miyata-4bab99243/)
 - Mahyar Erfanian: [GitHub](https://github.com/Mahyar-98) / [LinkedIn](https://www.linkedin.com/in/mahyar-erfanian-67968279/)
 - Sapna Bolikal: [GitHub](https://github.com/sapnab821)
+- Greimil Nunez: [GitHub](https://github.com/Greimil) / [LinkedIn](https://www.linkedin.com/in/greimil-nu%C3%B1ez/)

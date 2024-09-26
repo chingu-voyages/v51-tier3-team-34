@@ -1,0 +1,133 @@
+header {
+  color: var(--header-font-color);
+  background-color: var(--header-bg-color);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  padding: 0.6em 0;
+  margin-bottom: 2em;
+}
+
+header > div {
+  margin: 0 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2rem;
+}
+
+.logo img {
+  width: 150px;
+}
+
+header #nav-toggle {
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+}
+#nav-toggle:hover {
+  background-color: var(--hover-color);
+}
+
+header #nav-toggle .hamburger-line {
+  display: block;
+  background-color: var(--header-font-color);
+  width: 1.3rem;
+  height: 0.15rem;
+  margin: 0.2rem 0;
+}
+
+header nav,
+header button.auth-btn {
+  display: none;
+}
+
+header nav a,
+.side-nav nav a {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+button.auth-btn {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 250px;
+  height: 100%;
+  padding: 0 1em;
+  background-color: var(--bg-color);
+  transition: left 0.3s ease;
+  z-index: 999;
+}
+
+.side-nav.show {
+  left: 0;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 997;
+}
+
+.side-nav nav {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  color: var(--header-font-color);
+}
+
+.side-nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.side-nav ul li {
+  margin-bottom: 1rem;
+}
+
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 0.5em 0 0.5em 1em;
+  border-radius: 0.6em;
+}
+.side-nav a:hover {
+  background-color: var(--hover-color);
+}
+
+.side-nav button.auth-btn {
+  margin-left: 1.8em;
+}
+
+@media (min-width: 850px) {
+  header > div {
+    margin: 0 2em;
+  }
+
+  header #nav-toggle {
+    display: none;
+  }
+
+  header nav,
+  header button.auth-btn {
+    display: flex;
+  }
+
+  header nav ul {
+    display: flex;
+    list-style-type: none;
+    gap: 3.5em;
+    padding-left: 0;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
