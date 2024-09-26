@@ -10,7 +10,7 @@ const NavBar = () => {
       <header>
         <div>
           <div className="logo">
-            <img src={logo} alt="" />
+            <img src={logo} alt="GeoDash World Logo" />
           </div>
           <button
             id="nav-toggle"
@@ -33,14 +33,14 @@ const NavBar = () => {
                 <Link to="/scavenger-hunt">Scavenger Hunt</Link>
               </li>
               <li>
-                <Link to="/badges">Badges</Link>
+                <Link to="/achievements">Achievements</Link>
               </li>
               <li>
                 <Link to="/leaderboard">Leaderboard</Link>
               </li>
             </ul>
           </nav>
-          <button className="auth-btn">Sign In/Sign Up</button>
+          <button className="auth-btn">Login</button>
         </div>
       </header>
       <div className={`side-nav ${navOpen ? "show" : ""}`}>
@@ -59,14 +59,14 @@ const NavBar = () => {
               <Link to="/scavenger-hunt">Scavenger Hunt</Link>
             </li>
             <li>
-              <Link to="/badges">Badges</Link>
+              <Link to="/achievements">Achievements</Link>
             </li>
             <li>
               <Link to="/leaderboard">Leaderboard</Link>
             </li>
           </ul>
         </nav>
-        <button className="auth-btn">Sign In/Sign Up</button>
+        <button className="auth-btn">Login</button>
       </div>
       {navOpen && (
         <div className="overlay" onClick={() => setNavOpen(false)}></div>
