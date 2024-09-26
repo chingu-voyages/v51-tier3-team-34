@@ -16,12 +16,28 @@ in your `readme` feel free to replace the text we've provided here.
 ## How to Start
 IN DEVELOPMENT
 
-Client (front-end)
+**Client (front-end)**
 Go into client folder, run `npm install`. Make sure there is an .env file in client folder with your google maps api key. To run `npm run dev`
 
-Server (back-end)
+**Server (back-end)**
 Go into server folder, run `npm install`. Make sure there is an .env file in server folder with you mongodb username/password. To run server: 1. `npm run dev` using nodemon - changes to server file will restart server each time 2. `npm run start` using node - will need to restart server each time for change to be reflect
 
+## What to put on ENV.files
+**Client (using vite)**
+
+VITE_GOOGLE_MAPS_API_KEY: googlemaps api key
+
+VITE_BACKEND_URL: backend-render-url //This will only be for deployment, not necessary during development
+
+**Server**
+
+NODE_ENV: development or production  //Select one. Production should only be use in deployment
+
+MONGO_URI: mongodb+srv://<db_username>:<db_password>@geoworlddash.zosfj.mongodb.net/geoworlddash?retryWrites=true&w=majority&appName=geoworlddash       __replace db_username and db_password with what was sent to you__
+
+VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not necessary during development
+
+..
 
 ## Team Documents
 
