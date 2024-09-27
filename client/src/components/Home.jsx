@@ -28,7 +28,7 @@ const Home = () => {
 
   // console.log("API URL:", apiUrl);
 
-  console.log(position);
+  console.log(window.innerWidth, window.innerHeight);
 
   useEffect(() => {
     fetch(`${apiUrl}/api/landmarks`)
@@ -51,47 +51,49 @@ const Home = () => {
         // This is the map component that can be customized
         style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
         defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
-        center={position}
+        center={ window.innerWidth >= 992 ? position : "" }
         defaultZoom={10.4}
         mapId="90d6d90b957e9186" // This helps with styling default points of interest
         gestureHandling={"cooperative"}
         disableDefaultUI={true}
       >
-        <MapControl position={ControlPosition.TOP_RIGHT}>
-          <div className="Control-Circle">
-            <div className="horizontalArrows">
-              <Arrowleft
-                className="arrowHorizontal"
-                fn={() => {
-                  moveMap(position, setPosition, "left");
-                }}
-              />
-            </div>
+        {window.innerWidth >= 992 && (
+          <MapControl position={ControlPosition.TOP_RIGHT}>
+            <div className="Control-Circle">
+              <div className="horizontalArrows">
+                <Arrowleft
+                  className="arrowHorizontal"
+                  fn={() => {
+                    moveMap(position, setPosition, "left");
+                  }}
+                />
+              </div>
 
-            <div className="verticalArrows">
-              <ArrowUp
-                className="ArrowVertical"
-                fn={() => {
-                  moveMap(position, setPosition, "up");
-                }}
-              />
-              <ArrowDown
-                className="ArrowVertical bottomArrow"
-                fn={() => {
-                  moveMap(position, setPosition, "down");
-                }}
-              />
+              <div className="verticalArrows">
+                <ArrowUp
+                  className="ArrowVertical"
+                  fn={() => {
+                    moveMap(position, setPosition, "up");
+                  }}
+                />
+                <ArrowDown
+                  className="ArrowVertical bottomArrow"
+                  fn={() => {
+                    moveMap(position, setPosition, "down");
+                  }}
+                />
+              </div>
+              <div className="horizontalArrows">
+                <ArrowRight
+                  className="arrowHorizontal rightArrow"
+                  fn={() => {
+                    moveMap(position, setPosition, "right");
+                  }}
+                />
+              </div>
             </div>
-            <div className="horizontalArrows" >
-              <ArrowRight
-                className="arrowHorizontal rightArrow"
-                fn={() => {
-                  moveMap(position, setPosition, "right");
-                }}
-              />
-            </div>
-          </div>
-        </MapControl>
+          </MapControl>
+        )}
 
         <PoiMarkers
           pois={pointsOfInterest}
