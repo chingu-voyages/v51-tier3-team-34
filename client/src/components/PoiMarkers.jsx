@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Marker,
     InfoWindow,
@@ -6,8 +6,30 @@ import {
 import marker from "../assets/marker.png";
 
 
-const PoiMarkers = ({ pois }) => {
+const PoiMarkers = ({ setPointsOfInterest, pois }) => {
   const [selectedPoi, setSelectedPoi] = useState(null);
+
+  const apiUrl = 
+  import.meta.env.MODE === "development"
+    ? "http://localhost:8080"
+    : import.meta.env.VITE_BACKEND_URL
+
+  //fetching landmarks data from backend
+  useEffect(() => {
+    fetch(`${apiUrl}/api/landmarks`)
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error(`HTTP error! Status: ${resp.status}`);
+        }
+        return resp.json()
+      })
+      .then((data) => {
+        console.log(data);
+        setPointsOfInterest(data);
+      })
+      .catch((err) => console.error("Failed to fetch landmarks", err));
+  }, []);
+
     
   return (
     <>
