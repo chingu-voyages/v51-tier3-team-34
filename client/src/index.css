@@ -55,3 +55,46 @@ button {
 button:hover {
   border-color: #aaa;
 }
+
+.Control-Circle {
+  width: 80px;
+  height: 80px;
+  /* background-color: aqua; */
+  border-radius: 100%;
+  border-color: #000;
+  border-width: 1px;
+  border-style: dotted;
+  position: relative;
+  display: flex;
+}
+
+/* .horizontalArrows {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  position: absolute;
+  z-index: 100;
+  pointer-events: auto; 
+} */
+
+.horizontalArrows{
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 33.3333333%;
+  cursor: pointer;
+}
+
+.verticalArrows {
+  cursor: pointer;
+  display: flex;
+  width: 33.3333333%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  
+  pointer-events: auto; 
+}
+
