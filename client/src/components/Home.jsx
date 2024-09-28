@@ -161,6 +161,12 @@ const Home = () => {
     }
   }, [mapInstance]);
 
+  const clearSearch = () => {
+    setMarkerPosition(null)
+    mapInstance.panTo(center);
+    mapInstance.setZoom(13);
+  }
+
 
   return (
     <LoadScript 
@@ -170,7 +176,7 @@ const Home = () => {
       <div className="interaction-menu">
         {/*The route planner component will replace the null*/}
         {showRoute ? 
-          null : <SearchBar searchBoxRef={searchBoxRef}/>
+          null : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
         }
         <MapButtons 
           setShowRoute={setShowRoute} 
