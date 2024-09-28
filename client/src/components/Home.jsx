@@ -1,11 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
 
+
+const center = { lat: 38.0406, lng: -84.5037 }
+const libraries = ["places"];
+
 const Home = () => {
+  const mapRef = useRef(null)
   const [mapInstance, setMapInstance] = useState(null)
   const [polylines, setPolylines] = useState([])
   const [visibleTransit, setVisibleTransit] = useState(true)
@@ -15,12 +20,10 @@ const Home = () => {
   const [stops, setStops] = useState([]);
   // This is for creating the shapes, connecting the stops together into routes
   const [shapes, setShapes] = useState([])
+  // For the positioning of the map
+  const [position, setPosition] = useState(center)
   
-  // This will be triggered on Mapload
-  const onMapLoad = (map) => {
-    console.log("Map Loaded: ", map)
-    setMapInstance(map)
-  };
+
 
   const mapStyles = [
     // Turn off points of interest that is default in googlemaps.
@@ -52,7 +55,6 @@ const Home = () => {
     return () => clearTimeout(delayMapInstance)
 
   }, [mapInstance, shapes])
-
 
   function drawBusRoute(map, shapes) {
 
@@ -115,12 +117,39 @@ const Home = () => {
     });
   };
   
+  // Search location functionality
+  useEffect(() => {
+    if (mapInstance) {
+      // Initialize the SearchBox after the map is loaded
+      const input = document.getElementById("search-box");
+      const searchBox = new window.google.maps.places.SearchBox(input);
+
+      // Listen for the 'places_changed' event
+      searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+        if (places.length === 0) return;
+
+        const place = places[0];
+        if (!place.geometry || !place.geometry.location) return;
+
+        const location = place.geometry.location;
+
+        // Set the new position and update the map center
+        setPosition({
+          lat: location.lat(),
+          lng: location.lng(),
+        });
+
+        mapInstance.panTo(location);
+        mapInstance.setZoom(14);
+      });
+    }
+  }, [mapInstance]);
+
+
   return (
     <>
-      {/*The route planner component will replace the null*/}
-      {showRoute ? 
-        null : <SearchBar/>
-      }
+
      
       <MapButtons 
         setShowRoute={setShowRoute} 
@@ -129,7 +158,14 @@ const Home = () => {
         visibleTransit={visibleTransit}
       />
 
-      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+      <LoadScript 
+        googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+        libraries={libraries}
+      >
+        {/*The route planner component will replace the null*/}
+        {showRoute ? 
+          null : <SearchBar/>
+        }
 
         <GoogleMap
           // This is the map component that can be customized
@@ -138,12 +174,12 @@ const Home = () => {
             height: "70vh",
             marginLeft: "26rem",
           }}
-          center={{ lat: 38.0406, lng: -84.5037 }}
+          center={position}
           zoom={11.9}
           mapId="90d6d90b957e9186" // This helps with styling default points of interest
           gestureHandling={"cooperative"}
           disableDefaultUI={false}
-          onLoad={onMapLoad}
+          onLoad={(map) => setMapInstance(map)}
           options={{ styles: mapStyles }}
         >
           <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
