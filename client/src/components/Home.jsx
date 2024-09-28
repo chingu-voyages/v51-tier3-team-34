@@ -1,24 +1,30 @@
-import { useState, useEffect } from "react";
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { useState, useEffect, useRef } from "react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
+import MapButtons from "./MapButtons";
+import SearchBar from "./SearchBar";
+
+
+const center = { lat: 38.0406, lng: -84.5037 }
+const libraries = ["places"];
+const cityLocation = { lat: 38.0406, lng: -84.5037 };
+const searchRadius = 15000 // Radius in meters (15 km)
 
 const Home = () => {
   const [mapInstance, setMapInstance] = useState(null)
   const [polylines, setPolylines] = useState([])
   const [visibleTransit, setVisibleTransit] = useState(true)
+  const [showRoute, setShowRoute] = useState(false)
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
-
   // This is for creating our stops because the transit layer doesn't display them
   const [stops, setStops] = useState([]);
   // This is for creating the shapes, connecting the stops together into routes
   const [shapes, setShapes] = useState([])
-  
-  // This will be triggered on Mapload
-  const onMapLoad = (map) => {
-    console.log("Map Loaded: ", map)
-    setMapInstance(map)
-  };
+  // For the positioning of the map
+  const [markerPosition, setMarkerPosition] = useState(null)
+  const searchBoxRef = useRef(null)
+
 
   const mapStyles = [
     // Turn off points of interest that is default in googlemaps.
@@ -50,7 +56,6 @@ const Home = () => {
     return () => clearTimeout(delayMapInstance)
 
   }, [mapInstance, shapes])
-
 
   function drawBusRoute(map, shapes) {
 
@@ -113,32 +118,95 @@ const Home = () => {
     });
   };
   
-  return (
-    <>
-      <button onClick={togglePolylines}>
-        {visibleTransit ? "Hide Transit Map" : "Show Transit Map"}
-      </button>
-      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+  // Search location functionality
+  useEffect(() => {
+    if (mapInstance && searchBoxRef.current) {
+      // Initialize the SearchBox after the map is loaded
+      const input = document.getElementById("search-box");
+      const searchBox = new window.google.maps.places.SearchBox(input);
 
-        <GoogleMap
-          // This is the map component that can be customized
-          mapContainerStyle={{
-            width: "70vh",
-            height: "70vh",
-            marginLeft: "26rem",
-          }}
-          center={{ lat: 38.0406, lng: -84.5037 }}
-          zoom={11.9}
-          mapId="90d6d90b957e9186" // This helps with styling default points of interest
-          gestureHandling={"cooperative"}
-          disableDefaultUI={false}
-          onLoad={onMapLoad}
-          options={{ styles: mapStyles }}
-        >
-          <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
-        </GoogleMap>
-      </LoadScript>
-    </>
+      // Listen for the 'places_changed' event
+      searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+        if (places.length === 0) return;
+
+        const validPlaces = places.filter(place => {
+          if (!place.geometry || !place.geometry.location) return false;
+
+          // Calculate the distance from the city center
+          const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+            new window.google.maps.LatLng(cityLocation.lat, cityLocation.lng),
+            place.geometry.location
+          );
+
+          // Return true if the place is within the defined radius
+          return distance <= searchRadius;
+        });
+
+        if (validPlaces.length === 0) {
+          alert("No places found within the specificied city limit.")
+        }
+        const place = validPlaces[0]; // Use the first valid place for the marker
+        const location = place.geometry.location;
+
+        // Set the new position and update the map center
+        setMarkerPosition({
+          lat: location.lat(),
+          lng: location.lng(),
+        });
+
+        mapInstance.panTo(location);
+        mapInstance.setZoom(14);
+      });
+    }
+  }, [mapInstance]);
+
+  const clearSearch = () => {
+    setMarkerPosition(null)
+    mapInstance.panTo(center);
+    mapInstance.setZoom(13);
+  }
+
+
+  return (
+    <LoadScript 
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={libraries}
+    >
+      <div className="interaction-menu">
+        {/*The route planner component will replace the null*/}
+        {showRoute ? 
+          null : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
+        }
+        <MapButtons 
+          setShowRoute={setShowRoute} 
+          showRoute={showRoute}
+          togglePolyLines={togglePolylines} 
+          visibleTransit={visibleTransit}
+        />
+      </div>
+
+      <GoogleMap
+        // This is the map component that can be customized
+        mapContainerStyle={{
+          width: "70vh",
+          height: "70vh",
+          marginLeft: "26rem",
+        }}
+        center={center}
+        zoom={13}
+        mapId="90d6d90b957e9186" // This helps with styling default points of interest
+        gestureHandling={"cooperative"}
+        disableDefaultUI={false}
+        onLoad={(map) => setMapInstance(map)}
+        options={{ styles: mapStyles }}
+      >
+        {/* Add a marker if a place is selected */}
+        {markerPosition && <Marker position={markerPosition} />}
+        <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
+        
+      </GoogleMap>
+    </LoadScript>
   );
 };
 
