@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SearchBar = () => {
+const SearchBar = ({searchBoxRef}) => {
   return (
     <input
     id="search-box"
@@ -20,6 +20,7 @@ const SearchBar = () => {
       // marginLeft: "-120px",
       // top: "10px",
     }}
+    ref={searchBoxRef}
   />
   )
 }

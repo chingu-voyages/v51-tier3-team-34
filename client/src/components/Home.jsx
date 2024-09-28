@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
 import MapButtons from "./MapButtons";
@@ -8,9 +8,10 @@ import SearchBar from "./SearchBar";
 
 const center = { lat: 38.0406, lng: -84.5037 }
 const libraries = ["places"];
+const cityLocation = { lat: 38.0406, lng: -84.5037 };
+const searchRadius = 15000 // Radius in meters (15 km)
 
 const Home = () => {
-  const mapRef = useRef(null)
   const [mapInstance, setMapInstance] = useState(null)
   const [polylines, setPolylines] = useState([])
   const [visibleTransit, setVisibleTransit] = useState(true)
@@ -21,8 +22,8 @@ const Home = () => {
   // This is for creating the shapes, connecting the stops together into routes
   const [shapes, setShapes] = useState([])
   // For the positioning of the map
-  const [position, setPosition] = useState(center)
-  
+  const [markerPosition, setMarkerPosition] = useState(null)
+  const searchBoxRef = useRef(null)
 
 
   const mapStyles = [
@@ -119,7 +120,7 @@ const Home = () => {
   
   // Search location functionality
   useEffect(() => {
-    if (mapInstance) {
+    if (mapInstance && searchBoxRef.current) {
       // Initialize the SearchBox after the map is loaded
       const input = document.getElementById("search-box");
       const searchBox = new window.google.maps.places.SearchBox(input);
@@ -129,13 +130,27 @@ const Home = () => {
         const places = searchBox.getPlaces();
         if (places.length === 0) return;
 
-        const place = places[0];
-        if (!place.geometry || !place.geometry.location) return;
+        const validPlaces = places.filter(place => {
+          if (!place.geometry || !place.geometry.location) return false;
 
+          // Calculate the distance from the city center
+          const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+            new window.google.maps.LatLng(cityLocation.lat, cityLocation.lng),
+            place.geometry.location
+          );
+
+          // Return true if the place is within the defined radius
+          return distance <= searchRadius;
+        });
+
+        if (validPlaces.length === 0) {
+          alert("No places found within the specificied city limit.")
+        }
+        const place = validPlaces[0]; // Use the first valid place for the marker
         const location = place.geometry.location;
 
         // Set the new position and update the map center
-        setPosition({
+        setMarkerPosition({
           lat: location.lat(),
           lng: location.lng(),
         });
@@ -148,44 +163,44 @@ const Home = () => {
 
 
   return (
-    <>
-
-     
-      <MapButtons 
-        setShowRoute={setShowRoute} 
-        showRoute={showRoute}
-        togglePolyLines={togglePolylines} 
-        visibleTransit={visibleTransit}
-      />
-
-      <LoadScript 
-        googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-        libraries={libraries}
-      >
+    <LoadScript 
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={libraries}
+    >
+      <div className="interaction-menu">
         {/*The route planner component will replace the null*/}
         {showRoute ? 
-          null : <SearchBar/>
+          null : <SearchBar searchBoxRef={searchBoxRef}/>
         }
+        <MapButtons 
+          setShowRoute={setShowRoute} 
+          showRoute={showRoute}
+          togglePolyLines={togglePolylines} 
+          visibleTransit={visibleTransit}
+        />
+      </div>
 
-        <GoogleMap
-          // This is the map component that can be customized
-          mapContainerStyle={{
-            width: "70vh",
-            height: "70vh",
-            marginLeft: "26rem",
-          }}
-          center={position}
-          zoom={11.9}
-          mapId="90d6d90b957e9186" // This helps with styling default points of interest
-          gestureHandling={"cooperative"}
-          disableDefaultUI={false}
-          onLoad={(map) => setMapInstance(map)}
-          options={{ styles: mapStyles }}
-        >
-          <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
-        </GoogleMap>
-      </LoadScript>
-    </>
+      <GoogleMap
+        // This is the map component that can be customized
+        mapContainerStyle={{
+          width: "70vh",
+          height: "70vh",
+          marginLeft: "26rem",
+        }}
+        center={center}
+        zoom={13}
+        mapId="90d6d90b957e9186" // This helps with styling default points of interest
+        gestureHandling={"cooperative"}
+        disableDefaultUI={false}
+        onLoad={(map) => setMapInstance(map)}
+        options={{ styles: mapStyles }}
+      >
+        {/* Add a marker if a place is selected */}
+        {markerPosition && <Marker position={markerPosition} />}
+        <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
+        
+      </GoogleMap>
+    </LoadScript>
   );
 };
 
