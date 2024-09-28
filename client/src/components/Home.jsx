@@ -3,13 +3,14 @@ import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
 import MapButtons from "./MapButtons";
+import SearchBar from "./SearchBar";
 
 const Home = () => {
   const [mapInstance, setMapInstance] = useState(null)
   const [polylines, setPolylines] = useState([])
   const [visibleTransit, setVisibleTransit] = useState(true)
+  const [showRoute, setShowRoute] = useState(false)
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
-
   // This is for creating our stops because the transit layer doesn't display them
   const [stops, setStops] = useState([]);
   // This is for creating the shapes, connecting the stops together into routes
@@ -116,7 +117,18 @@ const Home = () => {
   
   return (
     <>
-      <MapButtons togglePolyLines={togglePolylines} visibleTransit={visibleTransit}/>
+      {/*The route planner component will replace the null*/}
+      {showRoute ? 
+        null : <SearchBar/>
+      }
+     
+      <MapButtons 
+        setShowRoute={setShowRoute} 
+        showRoute={showRoute}
+        togglePolyLines={togglePolylines} 
+        visibleTransit={visibleTransit}
+      />
+
       <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
 
         <GoogleMap
