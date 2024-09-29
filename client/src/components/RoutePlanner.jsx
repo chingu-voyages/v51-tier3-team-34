@@ -4,8 +4,14 @@ import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
+  const [travelMode, setTravelMode] = useState("DRIVING");
   const originRef = useRef(null);
   const destinationRef = useRef(null);
+
+  // Handle travel mode change
+  const handleTravelModeChange = (event) => { 
+    setTravelMode(event.target.value);
+  };
 
   // Calculate the route
   const calculateRoute = async () => {
@@ -18,7 +24,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
     const results = await directionsService.route({
       origin: originRef.current.value,
       destination: destinationRef.current.value,
-      travelMode: window.google.maps.TravelMode.DRIVING, // Set toggle mode later
+      travelMode: travelMode,
     });
 
     console.log("Directions response:", results);
@@ -93,6 +99,41 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
           </Autocomplete>
         </div>
+
+        {/* Travel mode radio buttons */}
+        <div>
+          <label>
+            <input
+              type="radio"
+              name="travelMode"
+              value="DRIVING"
+              checked={travelMode === "DRIVING"}
+              onChange={handleTravelModeChange}
+            />
+            Drive
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="travelMode"
+              value="WALKING"
+              checked={travelMode === "WALKING"}
+              onChange={handleTravelModeChange}
+            />
+            Walk
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="travelMode"
+              value="TRANSIT"
+              checked={travelMode === "TRANSIT"}
+              onChange={handleTravelModeChange}
+            />
+            Train
+          </label>
+        </div>
+        
         <div>
           <button onClick={calculateRoute}>Calculate Route</button>
           <button onClick={clearRoute}>X</button>
