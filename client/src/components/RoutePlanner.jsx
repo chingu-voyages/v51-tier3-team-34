@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
 import { FaLocationArrow } from "react-icons/fa";
 
 const center = { lat: 38.0406, lng: -84.5037 }
