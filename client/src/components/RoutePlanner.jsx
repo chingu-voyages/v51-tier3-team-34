@@ -1,10 +1,14 @@
 import React, { useState, useRef } from "react";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import { FaLocationArrow } from "react-icons/fa";
+
+const center = { lat: 38.0406, lng: -84.5037 }
 
 const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [travelMode, setTravelMode] = useState("DRIVING");
+  const [gpsEnabled, setGpsEnabled] = useState(false);
   const originRef = useRef(null);
   const destinationRef = useRef(null);
 
@@ -43,6 +47,42 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
     destinationRef.current.value = "";
   };
 
+  // Get current location
+  const handleCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const currentLocation = new window.google.maps.LatLng(lat, lng);
+
+         // Pan to current location
+         mapInstance.panTo(currentLocation);
+         mapInstance.setZoom(15);
+
+        originRef.current.value = `${lat}, ${lng}`;
+      }, (error) => {
+        console.error("Error retrieving location", error);
+        alert("Unable to retrieve your location.");
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
+
+  // Toggle GPS
+  const toggleGps = () => {
+    setGpsEnabled((prevState) => {
+      if (prevState) {
+        mapInstance.panTo(center);
+        mapInstance.setZoom(13);
+        originRef.current.value = "";
+    } else {
+      handleCurrentLocation();
+    }
+      return !prevState;
+    })
+  };
+
   return (
     <div style={{ 
       padding: "1rem", 
@@ -50,10 +90,11 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
       borderRadius: "4px", 
       boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
       flex: "1",
-      maxWidth: "1200px",
+      maxWidth: "1500px",
       display: "flex", 
       flexDirection: "column", 
-      gap: "1rem"
+      gap: "1rem",
+      margin: "0 auto"
     }}>
       <div style={{ 
         display: "flex", 
@@ -61,7 +102,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
         gap: "0.5rem", 
         alignItems: "center" 
     }}>
-        <div style={{ width: "80%" }}>
+        <div style={{ width: "85%" }}>
           <Autocomplete>
             <input
               id="origin"
@@ -80,7 +121,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
           </Autocomplete>
         </div>
-        <div style={{ width: "80%" }}>
+        <div style={{ width: "85%" }}>
           <Autocomplete>
             <input
               id="destination"
@@ -134,9 +175,18 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
           </label>
         </div>
         
-        <div>
+        <div style={{ display: "flex", gap: "0.1rem", alignItems: "center" }}>
           <button onClick={calculateRoute}>Calculate Route</button>
           <button onClick={clearRoute}>X</button>
+          <button 
+            className="icon-button" 
+            onClick={toggleGps}
+            style={{
+              color: gpsEnabled ? "green" : "gray" 
+            }}
+          >
+            <FaLocationArrow />
+          </button>
         </div>
       </div>
 
