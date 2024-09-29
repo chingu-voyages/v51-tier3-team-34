@@ -25,6 +25,7 @@ const Home = () => {
   // For the positioning of the map
   const [markerPosition, setMarkerPosition] = useState(null)
   const searchBoxRef = useRef(null)
+  const [directionsResponse, setDirectionsResponse] = useState(null);
 
 
   const mapStyles = [
@@ -175,10 +176,9 @@ const Home = () => {
       libraries={libraries}
     >
       <div className="interaction-menu">
-        {/*The route planner component will replace the null*/}
         {/* Toggle between route planner and search bar */}
         {showRoute ? 
-          <RoutePlanner mapInstance={mapInstance} />
+          <RoutePlanner mapInstance={mapInstance} setDirectionsResponse={setDirectionsResponse} />
           : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
         }
         <MapButtons 
@@ -207,7 +207,9 @@ const Home = () => {
         {/* Add a marker if a place is selected */}
         {markerPosition && <Marker position={markerPosition} />}
         <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
-        
+
+        {/* Render Directions on the map */}
+        {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
       </GoogleMap>
     </LoadScript>
   );

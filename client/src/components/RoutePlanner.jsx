@@ -1,8 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 
-const RoutePlanner = ({ mapInstance }) => {
-  const [directionsResponse, setDirectionsResponse] = useState(null);
+const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const originRef = useRef(null);
@@ -21,6 +20,8 @@ const RoutePlanner = ({ mapInstance }) => {
       destination: destinationRef.current.value,
       travelMode: window.google.maps.TravelMode.DRIVING, // Set toggle mode later
     });
+
+    console.log("Directions response:", results);
 
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);
