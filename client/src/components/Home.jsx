@@ -162,7 +162,7 @@ const Home = () => {
           <Map
               // This is the map component that can be customized
             style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
-            center={center}
+            // center={position}
             defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
             defaultZoom={11.9}
             mapId="90d6d90b957e9186" // This helps with styling default points of interest
