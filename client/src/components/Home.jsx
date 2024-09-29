@@ -1,233 +1,216 @@
-import { useState, useEffect, useMemo, useRef } from "react";
-import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  Pin,
-  InfoWindow,
-} from "@vis.gl/react-google-maps";
-import {
-  useJsApiLoader,
-  Autocomplete,
-  DirectionsRenderer,
-} from "@react-google-maps/api";
+import { useState, useEffect, useRef } from "react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import PoiMarkers from "./PoiMarkers";
+import { fetchGTFSData } from "./transitfunction";
+import MapButtons from "./MapButtons";
+import SearchBar from "./SearchBar";
 
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  HStack,
-  IconButton,
-  Input,
-  Text,
-} from "@chakra-ui/react";
-import { FaLocationArrow, FaTimes } from "react-icons/fa";
-import marker from "../assets/marker.png";
 
+const center = { lat: 38.0406, lng: -84.5037 }
 const libraries = ["places"];
+const cityLocation = { lat: 38.0406, lng: -84.5037 };
+const searchRadius = 15000 // Radius in meters (15 km)
+
 const Home = () => {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries,
-  });
-
+  const [mapInstance, setMapInstance] = useState(null)
+  const [polylines, setPolylines] = useState([])
+  const [visibleTransit, setVisibleTransit] = useState(true)
+  const [showRoute, setShowRoute] = useState(false)
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
-  const [selectedPoi, setSelectedPoi] = useState(null);
-  const [map, setMap] = useState(null);
-  const [directionsResponse, setDirectionsResponse] = useState(null);
-  const [distance, setDistance] = useState("");
-  const [duration, setDuration] = useState("");
-  const [currentLocation, setCurrentLocation] = useState(null);
+  // This is for creating our stops because the transit layer doesn't display them
+  const [stops, setStops] = useState([]);
+  // This is for creating the shapes, connecting the stops together into routes
+  const [shapes, setShapes] = useState([])
+  // For the positioning of the map
+  const [markerPosition, setMarkerPosition] = useState(null)
+  const searchBoxRef = useRef(null)
 
-  const originRef = useRef();
-  const destinationRef = useRef();
 
-  const apiUrl = 
-  import.meta.env.MODE === "development"
-    ? "http://localhost:8080"
-    : import.meta.env.VITE_BACKEND_URL
+  const mapStyles = [
+    // Turn off points of interest that is default in googlemaps.
+    {
+      featureType: "poi",
+      elementType: "all",
+      stylers: [{ visibility: "off" }],
+    },
+  ];
 
-  console.log("API URL:", apiUrl);
-
-  // Center of the map based on current location or default location
-  const center = useMemo(() => (
-    currentLocation
-      ? { lat: currentLocation.lat, lng: currentLocation.lng }
-      : { lat: 38.0406, lng: -84.5037 }
-  ), [currentLocation]);
-  
+  //Fetch transit system data
   useEffect(() => {
-    fetch(`${apiUrl}/api/landmarks`)
-      .then((resp) => {
-        if (!resp.ok) {
-          throw new Error(`HTTP error! Status: ${resp.status}`);
-        }
-        return resp.json()
-      })
-      .then((data) => {
-        console.log(data);
-        setPointsOfInterest(data);
-      })
-      .catch((err) => console.error("Failed to fetch landmarks", err));
-  }, [apiUrl]);
+    fetchGTFSData({setStops, setShapes});
+  }, []);
 
-  if (!isLoaded) {
-    return <div>Loading...</div>;
+  useEffect(() => {
+    if (!mapInstance) {
+      console.log("Map instance is NOT ready yet...")
+      return
+    }
+
+    const delayMapInstance = setTimeout(() => {
+      if (shapes.length > 0) {
+        console.log("drawing bus route with map instance: ")
+        drawBusRoute(mapInstance, shapes)
+      }
+    }, 1000)
+
+    return () => clearTimeout(delayMapInstance)
+
+  }, [mapInstance, shapes])
+
+  function drawBusRoute(map, shapes) {
+
+    if (!map) {
+      console.log("Map instance is null or undefined.")
+      return
+    }
+    
+    // Grouping the shapes by their ID's in order to draw the correct route
+    const shapesByRoute = shapes.reduce((acc, shape) => {
+      if (!acc[shape.shape_id]) {
+        acc[shape.shape_id] = []
+      }
+      
+      acc[shape.shape_id].push({ lat: shape.lat, lng: shape.lng })
+      return acc
+    }, {})
+  
+    const polylinesArray = [];
+
+    // Draws each route
+    Object.keys(shapesByRoute).forEach((routeId) => {
+      const routePath = shapesByRoute[routeId];
+  
+      const routePolyLine = new google.maps.Polyline({
+        path: routePath,
+        geodesic: true,
+        strokeColor: "red",
+        strokeOpacity: .1,
+        strokeWeight: 2,
+      });
+  
+      // Adds the polylines to the map
+      routePolyLine.setMap(map);
+      polylinesArray.push(routePolyLine)
+    
+      // Adds an info window to the displayed route when clicked
+      const infoWindow = new google.maps.InfoWindow({
+        content: `<strong>${routeId}</strong>`
+      })
+  
+      routePolyLine.addListener("click", function () {
+        infoWindow.setPosition(routePath[0]) // Opens the window at the start of the route
+        infoWindow.open(map)
+      })
+    })
+    setPolylines(polylinesArray)
   }
 
-    // Route Calculation
-  const calculateRoute = async () => {
-    if (!originRef.current.value || !destinationRef.current.value) return;
-
-    const directionsService = new google.maps.DirectionsService();
-    try {
-      const results = await directionsService.route({
-        origin: originRef.current.value,
-        destination: destinationRef.current.value,
-        travelMode: google.maps.TravelMode.DRIVING, // or WALKING, TRANSIT
-      });
-      setDirectionsResponse(results);
-      setDistance(results.routes[0].legs[0].distance.text);
-      setDuration(results.routes[0].legs[0].duration.text);
-    } catch (error) {
-      console.error("Error calculating route", error);
-    }
-  };
-
-  const clearRoute = () => {
-    setDirectionsResponse(null);
-    setDistance("");
-    setDuration("");
-    originRef.current.value = "";
-    destinationRef.current.value = "";
-  };
-
-
-  return (
-    <Flex position="relative" flexDirection="column" alignItems="center" h="100vh" w="100vw">
-      <Box 
-        p={4}
-        borderRadius="lg" 
-        m={4} 
-        bgColor="white" 
-        shadow="base" 
-        minW="container.md" 
-        zIndex="1"
-      >
-        <HStack spacing={2} justifyContent="space-between">
-          <Box flexGrow={1}>
-            <Autocomplete>
-              <Input type="text" placeholder="Origin" ref={originRef} />
-            </Autocomplete>
-          </Box>
-          <Box flexGrow={1}>
-            <Autocomplete>
-              <Input type="text" placeholder="Destination" ref={destinationRef} />
-            </Autocomplete>
-          </Box>
-          <ButtonGroup>
-            <Button colorScheme="orange" onClick={calculateRoute}>
-              Plan Route
-            </Button>
-            <IconButton aria-label="clear route" icon={<FaTimes />} onClick={clearRoute} />
-          </ButtonGroup>
-        </HStack>
-        <HStack spacing={4} mt={4} justifyContent="space-between">
-          <Text>Distance: {distance}</Text>
-          <Text>Duration: {duration}</Text>
-          <IconButton
-            aria-label="center back"
-            icon={<FaLocationArrow />}
-            isRound
-            onClick={() => {
-              map.panTo(center);
-              map.setZoom(15);
-            }}
-          />
-        </HStack>
-      </Box>
-
-      <Box 
-        position="relative" 
-        borderRadius="lg"
-        shadow="base"
-        mt={6}
-        left={0}
-        top={0}
-        h="100%" 
-        w="100%"
-      >
-        <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-          <Map
-              // This is the map component that can be customized
-            style={{ width: "70vh", height: "70vh", marginLeft: "26rem" }}
-            // center={position}
-            defaultCenter={{ lat: 38.0406, lng: -84.5037 }}
-            defaultZoom={11.9}
-            mapId="90d6d90b957e9186" // This helps with styling default points of interest
-            gestureHandling={"cooperative"}
-            disableDefaultUI={true}
-            mapTypeControl={true}
-            fullscreenControl={true}
-            onLoad={(map) => setMap(map)}
-          >
-            <AdvancedMarker position={center} />
-            {directionsResponse && <DirectionsRenderer map={map} directions={directionsResponse} />}
-            <PoiMarkers
-              pois={pointsOfInterest}
-              selectedPoi={selectedPoi}
-              setSelectedPoi={setSelectedPoi}
-            />
-          </Map>
-        </APIProvider>
-      </Box>
-    </Flex>
-  );
-};
-
-
-const PoiMarkers = ({ pois, selectedPoi, setSelectedPoi }) => {
-
-  const customIcon = (poi) => {
-    if (poi.icontype !== "default"){
-      return <img src={marker} width={50} height={50}/> 
-    } else {
-      return (
-      <Pin
-        background={"gold"}
-        glyphColor={"black"}
-        borderColor={"black"}
-      />)
-    };
+  // Toggle the visibility of all polylines
+  const togglePolylines = () => {
+    polylines.forEach((polyline) => {
+      if (polyline.getMap()) {
+        polyline.setMap(null); // Hide the polyline
+        setVisibleTransit(false)
+      } else {
+        polyline.setMap(mapInstance); // Show the polyline
+        setVisibleTransit(true)
+      }
+    });
   };
   
-  return (
-    <>
-      {pois.map((poi) => (
-        <AdvancedMarker
-          key={poi._id}
-          position={poi.location}
-          onClick={() => setSelectedPoi(poi)} // Set the selected marker on click
-        > 
-            {customIcon(poi)}
-          </AdvancedMarker>
-      ))}
+  // Search location functionality
+  useEffect(() => {
+    if (mapInstance && searchBoxRef.current) {
+      // Initialize the SearchBox after the map is loaded
+      const input = document.getElementById("search-box");
+      const searchBox = new window.google.maps.places.SearchBox(input);
 
-      {selectedPoi && (
-        <InfoWindow
-          position={selectedPoi.location}
-          onCloseClick={() => setSelectedPoi(null)} // Close InfoWindow on Click
-        >
-          <div>
-            {/* Display the actual names and descriptions of the landmarks */}
-            <h3>{selectedPoi.name || "Landmark Name"}</h3>
-            <p>{selectedPoi.description || "Landmark Description"}</p>
-          </div>
-        </InfoWindow>
-      )}
-    </>
+      // Listen for the 'places_changed' event
+      searchBox.addListener("places_changed", () => {
+        const places = searchBox.getPlaces();
+        if (places.length === 0) return;
+
+        const validPlaces = places.filter(place => {
+          if (!place.geometry || !place.geometry.location) return false;
+
+          // Calculate the distance from the city center
+          const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+            new window.google.maps.LatLng(cityLocation.lat, cityLocation.lng),
+            place.geometry.location
+          );
+
+          // Return true if the place is within the defined radius
+          return distance <= searchRadius;
+        });
+
+        if (validPlaces.length === 0) {
+          alert("No places found within the specificied city limit.")
+        }
+        const place = validPlaces[0]; // Use the first valid place for the marker
+        const location = place.geometry.location;
+
+        // Set the new position and update the map center
+        setMarkerPosition({
+          lat: location.lat(),
+          lng: location.lng(),
+        });
+
+        mapInstance.panTo(location);
+        mapInstance.setZoom(14);
+      });
+    }
+  }, [mapInstance]);
+
+  const clearSearch = () => {
+    setMarkerPosition(null)
+    mapInstance.panTo(center);
+    mapInstance.setZoom(13);
+  }
+
+
+  return (
+    <LoadScript 
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={libraries}
+    >
+      <div className="interaction-menu">
+        {/*The route planner component will replace the null*/}
+        {showRoute ? 
+          null : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
+        }
+        <MapButtons 
+          setShowRoute={setShowRoute} 
+          showRoute={showRoute}
+          togglePolyLines={togglePolylines} 
+          visibleTransit={visibleTransit}
+        />
+      </div>
+
+      <GoogleMap
+        // This is the map component that can be customized
+        mapContainerStyle={{
+          width: "70vh",
+          height: "70vh",
+          marginLeft: "26rem",
+        }}
+        center={center}
+        zoom={13}
+        mapId="90d6d90b957e9186" // This helps with styling default points of interest
+        gestureHandling={"cooperative"}
+        disableDefaultUI={false}
+        onLoad={(map) => setMapInstance(map)}
+        options={{ styles: mapStyles }}
+      >
+        {/* Add a marker if a place is selected */}
+        {markerPosition && <Marker position={markerPosition} />}
+        <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
+        
+      </GoogleMap>
+    </LoadScript>
   );
 };
+
+
+
 
 export default Home;
