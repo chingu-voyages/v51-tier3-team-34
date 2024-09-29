@@ -9,8 +9,7 @@ import RoutePlanner from "./RoutePlanner";
 
 const center = { lat: 38.0406, lng: -84.5037 }
 const libraries = ["places"];
-const cityLocation = { lat: 38.0406, lng: -84.5037 };
-const searchRadius = 15000 // Radius in meters (15 km)
+
 
 const Home = () => {
   const [mapInstance, setMapInstance] = useState(null)
@@ -26,7 +25,6 @@ const Home = () => {
   const [markerPosition, setMarkerPosition] = useState(null)
   const searchBoxRef = useRef(null)
   const [directionsResponse, setDirectionsResponse] = useState(null);
-
 
   const mapStyles = [
     // Turn off points of interest that is default in googlemaps.
@@ -120,49 +118,6 @@ const Home = () => {
     });
   };
   
-  // Search location functionality
-  useEffect(() => {
-    if (mapInstance && searchBoxRef.current) {
-      // Initialize the SearchBox after the map is loaded
-      const input = document.getElementById("search-box");
-      const searchBox = new window.google.maps.places.SearchBox(input);
-
-      // Listen for the 'places_changed' event
-      searchBox.addListener("places_changed", () => {
-        const places = searchBox.getPlaces();
-        if (places.length === 0) return;
-
-        const validPlaces = places.filter(place => {
-          if (!place.geometry || !place.geometry.location) return false;
-
-          // Calculate the distance from the city center
-          const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-            new window.google.maps.LatLng(cityLocation.lat, cityLocation.lng),
-            place.geometry.location
-          );
-
-          // Return true if the place is within the defined radius
-          return distance <= searchRadius;
-        });
-
-        if (validPlaces.length === 0) {
-          alert("No places found within the specificied city limit.")
-        }
-        const place = validPlaces[0]; // Use the first valid place for the marker
-        const location = place.geometry.location;
-
-        // Set the new position and update the map center
-        setMarkerPosition({
-          lat: location.lat(),
-          lng: location.lng(),
-        });
-
-        mapInstance.panTo(location);
-        mapInstance.setZoom(14);
-      });
-    }
-  }, [mapInstance]);
-
   const clearSearch = () => {
     setMarkerPosition(null)
     mapInstance.panTo(center);
@@ -179,9 +134,15 @@ const Home = () => {
         {/* Toggle between route planner and search bar */}
         {showRoute ? 
           <RoutePlanner mapInstance={mapInstance} setDirectionsResponse={setDirectionsResponse} />
-          : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
+          : 
+          <SearchBar
+            mapInstance={mapInstance} 
+            setMarkerPosition={setMarkerPosition} 
+            clearSearch={clearSearch}
+          />
         }
-        <MapButtons 
+        <MapButtons
+          clearSearch={clearSearch} 
           setShowRoute={setShowRoute} 
           showRoute={showRoute}
           togglePolyLines={togglePolylines} 
