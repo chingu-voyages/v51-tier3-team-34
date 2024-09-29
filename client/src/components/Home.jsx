@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
+import RoutePlanner from "./RoutePlanner";
 
 
 const center = { lat: 38.0406, lng: -84.5037 }
@@ -22,8 +23,8 @@ const Home = () => {
   const [shapes, setShapes] = useState([])
   // For the positioning of the map
   const [markerPosition, setMarkerPosition] = useState(null)
-
-
+  const searchBoxRef = useRef(null)
+  const [directionsResponse, setDirectionsResponse] = useState(null);
 
   const mapStyles = [
     // Turn off points of interest that is default in googlemaps.
@@ -130,9 +131,10 @@ const Home = () => {
       libraries={libraries}
     >
       <div className="interaction-menu">
-        {/*The route planner component will replace the null*/}
+        {/* Toggle between route planner and search bar */}
         {showRoute ? 
-          null : 
+          <RoutePlanner mapInstance={mapInstance} setDirectionsResponse={setDirectionsResponse} />
+          : 
           <SearchBar
             mapInstance={mapInstance} 
             setMarkerPosition={setMarkerPosition} 
@@ -166,7 +168,9 @@ const Home = () => {
         {/* Add a marker if a place is selected */}
         {markerPosition && <Marker position={markerPosition} />}
         <PoiMarkers setPointsOfInterest={setPointsOfInterest} pois={pointsOfInterest}/>
-        
+
+        {/* Render Directions on the map */}
+        {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
       </GoogleMap>
     </LoadScript>
   );
