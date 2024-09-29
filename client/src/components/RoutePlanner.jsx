@@ -106,9 +106,6 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
           <p>Duration: {duration}</p>
         </div>
       )}
-
-      {/* Render Directions */}
-      {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
     </div>
   );
 };
