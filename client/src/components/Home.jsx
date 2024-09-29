@@ -4,6 +4,7 @@ import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
+import RoutePlanner from "./RoutePlanner";
 
 
 const center = { lat: 38.0406, lng: -84.5037 }
@@ -175,8 +176,10 @@ const Home = () => {
     >
       <div className="interaction-menu">
         {/*The route planner component will replace the null*/}
+        {/* Toggle between route planner and search bar */}
         {showRoute ? 
-          null : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
+          <RoutePlanner mapInstance={mapInstance} />
+          : <SearchBar searchBoxRef={searchBoxRef} clearSearch={clearSearch}/>
         }
         <MapButtons 
           setShowRoute={setShowRoute} 
