@@ -1,26 +1,31 @@
-const { MongoClient } = require('mongodb');
-require('dotenv').config()
+const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-let dbConnection
-const uri = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@geoworlddash.zosfj.mongodb.net/geoworlddash?retryWrites=true&w=majority&appName=geoworlddash`
+let dbConnection;
+const uri = process.env.MONGO_URI;
 
 module.exports = {
   connectToDb: (cb) => {
     MongoClient.connect(uri)
-			.then((client)=> {
-				dbConnection = client.db()
-				return cb()
-			})
-			.catch(err => {
-				console.log(err)
-				return cb(err)
-			})
+      .then((client) => {
+        dbConnection = client.db("geoworlddash");
+        return cb();
+      })
+      .catch((err) => {
+        console.error("Failed to connect to MongoDB", err);
+        dbConnection = null;
+        return cb(err);
+      });
   },
-  getDb: () => dbConnection
-}
+  getDb: () => {
+    if (!dbConnection) {
+      throw new Error("Database connection is not established");
+    }
+    return dbConnection;
+  },
+};
 
 // What these functions does
 // connectToDb - establish connection to database
 // getDb - return database connection after already connected
 // cb - callback function
-
