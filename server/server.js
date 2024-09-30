@@ -7,14 +7,7 @@ const { ObjectId } = require("mongodb");
 const { connectToDb, getDb } = require("./db");
 
 const app = express();
-
-app.use(express.json())
-
-const cors = require("cors");
-const corsOptions = {
-  origin: "https://geodash-world-client.onrender.com/"
-}; 
-
+app.use(express.json());
 
 const corsOption = {
   origin:
