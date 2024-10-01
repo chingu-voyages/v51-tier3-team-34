@@ -1,12 +1,12 @@
-import JSZip from 'jszip'
-import Papa from 'papaparse'
+import JSZip from "jszip";
+import Papa from "papaparse";
 import axios from "axios";
 
-export const fetchGTFSData = async ({setStops, setShapes}) => {
+export const fetchGTFSData = async ({ setStops, setShapes }) => {
   const response = await axios.get("/google_transit.zip", {
     responseType: "arraybuffer",
   });
-    
+
   const zip = new JSZip();
   const content = await zip.loadAsync(response.data);
 
@@ -20,10 +20,10 @@ export const fetchGTFSData = async ({setStops, setShapes}) => {
     skipEmptyLines: true, // This is important because there is an empty line in the data that throws an error
     complete: (results) => {
       const stopsData = results.data.map((stop) => ({
-          id: stop.stop_id,
-          name: stop.stop_name,
-          lat: parseFloat(stop.stop_lat),
-          lon: parseFloat(stop.stop_lon),
+        id: stop.stop_id,
+        name: stop.stop_name,
+        lat: parseFloat(stop.stop_lat),
+        lon: parseFloat(stop.stop_lon),
       }));
       setStops(stopsData);
     },
@@ -44,9 +44,7 @@ export const fetchGTFSData = async ({setStops, setShapes}) => {
         lng: parseFloat(shape.shape_pt_lon),
         sequence: parseInt(shape.shape_pt_sequence, 10),
       }));
-    	setShapes(shapesData);
+      setShapes(shapesData);
     },
   });
 };
-
-

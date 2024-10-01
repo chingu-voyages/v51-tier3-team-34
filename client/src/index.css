@@ -9,12 +9,15 @@
   --header-font-color: #933a05;
   --header-bg-color: #ebdebe;
 
+  --quiz-bg-color: #f9f9f9;
+
   --shadow-color: rgba(0, 0, 0, 0.1);
 
   --btn-font-color: #933a05;
   --btn-bg-color: #f5f5f5;
 
   --link-hover-color: #f47c48;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
