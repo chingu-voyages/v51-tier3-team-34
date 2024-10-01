@@ -75,7 +75,7 @@ const displayErrors =(error) => {
   return (
 		<div className='formbody'>
     <form onSubmit={formik.handleSubmit}>
-    	<h2>SignUp</h2>
+    	<h2>Signup</h2>
 
       <div className='container'>
 				<label htmlFor="email"><strong>Email </strong></label>
