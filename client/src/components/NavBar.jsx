@@ -40,7 +40,7 @@ const NavBar = () => {
               </li>
             </ul>
           </nav>
-          <button className="auth-btn">Login</button>
+          <button className="auth-btn"><Link to="/login">LogIn</Link></button>
         </div>
       </header>
       <div className={`side-nav ${navOpen ? "show" : ""}`}>
