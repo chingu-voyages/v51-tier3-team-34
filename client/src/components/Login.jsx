@@ -59,7 +59,6 @@ const Login = () => {
         	</div>
 
 					<button type="submit">Log In</button>
-        	{/* <ColorButton sx={{width: '100%'}} type="submit">Log In</ColorButton> */}
         	{/* {displayErrors(error)} */}
   
 					<p>Not a current user? <Link to="/signup">Sign Up</Link></p>
