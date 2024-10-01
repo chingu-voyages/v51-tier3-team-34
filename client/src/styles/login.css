@@ -7,7 +7,7 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 50%;
+    width: 100%;
 }
 
 form h2 {
@@ -24,7 +24,7 @@ form h2 {
     flex-direction: column;
     border-top: 5px double;
     padding-top: 10px;
-    width: 50%
+    width: 70%
 }
 
 input {
@@ -42,4 +42,14 @@ label {
 
 form button {
     margin-top: 5px;
+}
+
+@media (min-width: 850px) {
+    form {
+        width: 50%
+    }
+
+    .container  {
+        width: 60%
+    };
 }

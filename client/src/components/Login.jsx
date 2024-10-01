@@ -7,8 +7,29 @@ import "../styles/login.css"
 const Login = () => {
 	const formSchema = yup.object().shape({
 		email: yup.string().email().required("Email is required"),
-		password: yup.string().required("Password is required").min(8).max(12),
-	});
+		password: yup.string()
+			.min(8, 'Password must be at least 8 characters long')
+			.max(12, 'Password cannot be more than 12 characters long')
+			.matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+			.matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+			.matches(/\d/, 'Password must contain at least one number')
+			.matches(/[\W_]/, 'Password must contain at least one special character')
+			.test('no-repeating', 'Password cannot contain repeating characters', (value) => {
+				return !(/(.)\1\1/.test(value)); // checks for repeating characters
+			})
+			.test('no-sequential', 'Password cannot contain sequential characters', (value) => {
+				const hasSequential = (str) => {
+					for (let i = 0; i < str.length - 2; i++) {
+						if (str.charCodeAt(i) + 1 === str.charCodeAt(i + 1) && str.charCodeAt(i + 1) + 1 === str.charCodeAt(i + 2)) {
+							return true;
+						}
+					}
+					return false;
+				};
+				return !hasSequential(value);
+			})
+			.required('Password is required'),
+		});
 
 	const formik = useFormik({
 		initialValues: {
