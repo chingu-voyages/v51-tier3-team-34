@@ -10,15 +10,17 @@ import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
 import RoutePlanner from "./RoutePlanner";
 
-const center = { lat: 38.0406, lng: -84.5037 };
+
+const center = { lat: 38.0406, lng: -84.5037 }
 
 
-const Home = () => {
-  const [mapInstance, setMapInstance] = useState(null);
-  const [polylines, setPolylines] = useState([]);
-  const [visibleTransit, setVisibleTransit] = useState(true);
-  const [showRoute, setShowRoute] = useState(false);
-  const [pointsOfInterest, setPointsOfInterest] = useState([]);
+
+const MapContainer = ({children}) => {
+  const [mapInstance, setMapInstance] = useState(null)
+  const [polylines, setPolylines] = useState([])
+  const [visibleTransit, setVisibleTransit] = useState(true)
+  const [showRoute, setShowRoute] = useState(false)
+
   // This is for creating our stops because the transit layer doesn't display them
   const [stops, setStops] = useState([]);
   // This is for creating the shapes, connecting the stops together into routes
@@ -180,4 +182,5 @@ const Home = () => {
   );
 };
 
-export default Home;
+
+export default MapContainer;
