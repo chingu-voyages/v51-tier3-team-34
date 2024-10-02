@@ -1,9 +1,16 @@
-import React from 'react'
+import React, {useState} from 'react'
 import * as yup from 'yup'
 import {useFormik} from 'formik'
 
+const apiUrl = 
+import.meta.env.MODE === "development"
+	? "http://localhost:8080"
+	: import.meta.env.VITE_BACKEND_URL
+
 
 const Signup = () => {
+	const [ errorMessage, setErrorMessage ] = useState("")
+
 	const formSchema = yup.object().shape({
 		email: yup.string().required("Email is required").email("Please provide a valid email"),
 		password: yup.string()
@@ -41,32 +48,37 @@ const Signup = () => {
 		onSubmit: submitform
 })
 
-// const checkBackendErrors = (data) => {
-// 		if (data.error) {
-// 				setError(data.error)
-// 		} else {
-// 				login(data)
-// 				navigate("/")
-// 		}
-// }
 
-function submitform(values) {
-	console.log(values)
-// 		setError(null)
-		
-// 		fetch("/api/signup", {
-// 				method: "POST",
-// 				headers: {
-// 						"Content-Type" : "application/json",
-// 						"Accept" : "application/json"
-// 				},
-// 				body: JSON.stringify(values)
-// 		})
-// 		.then(resp => resp.json())
-// 		.then(data => {
-// 				checkBackendErrors(data)
-// 		})
+async function submitform(values) {
+  console.log(values);
 
+  try {
+    const response = await fetch(`${apiUrl}/api/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    // Check if the response was successful
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Signup failed");
+    }
+
+    // Parse the response data for successful signup
+    const data = await response.json();
+    setErrorMessage("");  // Clear any previous errors
+    console.log("Signup successful", data);
+    // Handle signup success, like redirecting or showing success message
+
+  } catch (err) {
+    // Handle errors, either from the response or network issues
+    setErrorMessage(err.message || "An unexpected error occurred");
+    console.error("Signup error:", err);
+  }
 }
 
 const displayErrors =(error) => {
@@ -82,6 +94,10 @@ const displayErrors =(error) => {
         <input type="email" id="email" value={formik.values.email} onChange={formik.handleChange} />
         {displayErrors(formik.errors.email)}
 
+				<p>Password need to be 8-12 characters. Must include a mix of uppercase letters (A-Z), 
+					lowercase letters (a-z), Numbers (0-9), special characters (!, @, #, $, %). No repeating (a,a,a)
+					or sequential characters (1,2,3) allowed. </p>
+
         <label htmlFor="password"><strong>Password </strong></label>
         <input type="password" id="password" value={formik.values.password} onChange={formik.handleChange} autoComplete='new-password'/>
         {displayErrors(formik.errors.password)}
@@ -90,8 +106,8 @@ const displayErrors =(error) => {
         <input type="password" id='confirmpassword' value={formik.values.confirmpassword} onChange={formik.handleChange} autoComplete='new-password'/>
         {displayErrors(formik.errors.confirmpassword)}
       </div>
-        
       <button type="submit">Sign Up</button>
+      {displayErrors(errorMessage)}  
     </form>
     </div>
   )
