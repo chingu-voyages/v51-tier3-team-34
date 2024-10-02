@@ -171,7 +171,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
               checked={travelMode === "TRANSIT"}
               onChange={handleTravelModeChange}
             />
-            Train
+            Bus
           </label>
         </div>
         
