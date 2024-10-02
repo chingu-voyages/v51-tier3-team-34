@@ -102,7 +102,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
         gap: "0.5rem", 
         alignItems: "center" 
     }}>
-        <div style={{ width: "85%" }}>
+        <div style={{ width: "100%" }}>
           <Autocomplete>
             <input
               id="origin"
@@ -121,7 +121,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
           </Autocomplete>
         </div>
-        <div style={{ width: "85%" }}>
+        <div style={{ width: "100%" }}>
           <Autocomplete>
             <input
               id="destination"
@@ -142,8 +142,8 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
         </div>
 
         {/* Travel mode radio buttons */}
-        <div>
-          <label>
+        <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <input
               type="radio"
               name="travelMode"
@@ -153,7 +153,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
             Drive
           </label>
-          <label>
+          <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <input
               type="radio"
               name="travelMode"
@@ -163,7 +163,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
             Walk
           </label>
-          <label>
+          <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <input
               type="radio"
               name="travelMode"
