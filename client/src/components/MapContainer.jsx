@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
   GoogleMap,
-  LoadScript,
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
@@ -12,7 +11,7 @@ import SearchBar from "./SearchBar";
 import RoutePlanner from "./RoutePlanner";
 
 const center = { lat: 38.0406, lng: -84.5037 };
-const libraries = ["places"];
+
 
 const Home = () => {
   const [mapInstance, setMapInstance] = useState(null);
@@ -126,10 +125,7 @@ const Home = () => {
   };
 
   return (
-    <LoadScript
-      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-      libraries={libraries}
-    >
+    <>
       <div className="interaction-menu">
         {/* Toggle between route planner and search bar */}
         {showRoute ? (
@@ -180,7 +176,7 @@ const Home = () => {
           <DirectionsRenderer directions={directionsResponse} />
         )}
       </GoogleMap>
-    </LoadScript>
+      </>
   );
 };
 
