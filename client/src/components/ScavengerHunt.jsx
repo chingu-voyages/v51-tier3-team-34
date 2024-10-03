@@ -12,7 +12,7 @@ const useGeolocation = (setUserLocation) => {
           });
         },
         (error) => console.error("Error fetching geolocation", error),
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true },
       );
     }
   }, [setUserLocation]);

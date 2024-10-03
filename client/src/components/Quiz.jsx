@@ -17,9 +17,9 @@ const Quiz = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       const baseURL =
-        process.env.NODE_ENV === "development"
+        import.meta.env.MODE === "development"
           ? "http://localhost:8080"
-          : process.env.VITE_BACKEND_URL;
+          : import.meta.env.VITE_BACKEND_URL;
 
       try {
         const response = await fetch(`${baseURL}/api/questions/`);
@@ -175,7 +175,7 @@ const Quiz = () => {
                 >
                   {option}
                 </button>
-              )
+              ),
             )}
           </div>
           {!showAnswer && selectedAnswer !== null && (
