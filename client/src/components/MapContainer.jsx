@@ -1,21 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  GoogleMap,
-  Marker,
-  DirectionsRenderer,
-} from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker, DirectionsRenderer } from "@react-google-maps/api";
 import PoiMarkers from "./PoiMarkers";
 import { fetchGTFSData } from "./transitfunction";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
 import RoutePlanner from "./RoutePlanner";
+import PoiMarkers from "./PoiMarkers";
 
 
 const center = { lat: 38.0406, lng: -84.5037 }
 
 
-
-const MapContainer = ({children}) => {
+const MapContainer = () => {
   const [mapInstance, setMapInstance] = useState(null)
   const [polylines, setPolylines] = useState([])
   const [visibleTransit, setVisibleTransit] = useState(true)
@@ -26,8 +22,8 @@ const MapContainer = ({children}) => {
   // This is for creating the shapes, connecting the stops together into routes
   const [shapes, setShapes] = useState([]);
   // For the positioning of the map
-  const [markerPosition, setMarkerPosition] = useState(null);
-  const searchBoxRef = useRef(null);
+  const [markerPosition, setMarkerPosition] = useState(null)
+  const searchBoxRef = useRef(null)
   const [directionsResponse, setDirectionsResponse] = useState(null);
 
   const mapStyles = [
@@ -166,17 +162,7 @@ const MapContainer = ({children}) => {
         onLoad={(map) => setMapInstance(map)}
         options={{ styles: mapStyles }}
       >
-        {/* Add a marker if a place is selected */}
-        {markerPosition && <Marker position={markerPosition} />}
-        <PoiMarkers
-          setPointsOfInterest={setPointsOfInterest}
-          pois={pointsOfInterest}
-        />
-
-        {/* Render Directions on the map */}
-        {directionsResponse && (
-          <DirectionsRenderer directions={directionsResponse} />
-        )}
+        {children}
       </GoogleMap>
       </>
   );
