@@ -87,29 +87,25 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   };
 
   return (
-    <div
-      style={{
-        padding: "1rem",
-        backgroundColor: "white",
-        borderRadius: "4px",
-        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
-        flex: "1",
-        maxWidth: "1500px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        margin: "0 auto",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.5rem",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ width: "85%" }}>
+    <div style={{ 
+      padding: "1rem", 
+      backgroundColor: "white", 
+      borderRadius: "4px", 
+      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+      flex: "1",
+      maxWidth: "1500px",
+      display: "flex", 
+      flexDirection: "column", 
+      gap: "1rem",
+      margin: "0 auto"
+    }}>
+      <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: "0.5rem", 
+        alignItems: "center" 
+    }}>
+        <div style={{ width: "100%" }}>
           <Autocomplete>
             <input
               id="origin"
@@ -128,7 +124,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
           </Autocomplete>
         </div>
-        <div style={{ width: "85%" }}>
+        <div style={{ width: "100%" }}>
           <Autocomplete>
             <input
               id="destination"
@@ -149,8 +145,8 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
         </div>
 
         {/* Travel mode radio buttons */}
-        <div>
-          <label>
+        <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <input
               type="radio"
               name="travelMode"
@@ -160,7 +156,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
             Drive
           </label>
-          <label>
+          <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <input
               type="radio"
               name="travelMode"
@@ -170,7 +166,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             />
             Walk
           </label>
-          <label>
+          <label style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             <input
               type="radio"
               name="travelMode"
@@ -178,7 +174,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
               checked={travelMode === "TRANSIT"}
               onChange={handleTravelModeChange}
             />
-            Train
+            Bus
           </label>
         </div>
 

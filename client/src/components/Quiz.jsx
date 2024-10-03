@@ -11,14 +11,15 @@ const Quiz = () => {
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0); // Track correct answers
   const [quizCompleted, setQuizCompleted] = useState(false); // Track if quiz is completed
+  const [score, setScore] = useState(0); // Track the score
 
   // Fetch questions from the backend
   useEffect(() => {
     const fetchQuestions = async () => {
       const baseURL =
-        import.meta.env.MODE === "development"
+        process.env.NODE_ENV === "development"
           ? "http://localhost:8080"
-          : import.meta.env.VITE_BACKEND_URL;
+          : process.env.VITE_BACKEND_URL;
 
       try {
         const response = await fetch(`${baseURL}/api/questions/`);
@@ -65,8 +66,24 @@ const Quiz = () => {
     setShowAnswer(true);
     setProgress(Math.round(((currentQuestion + 1) / quizData.length) * 100)); // Round progress to an integer
 
+    // Calculate bonus points based on the timer
+    let bonusPoints = 0;
+    const timeTaken = 60 - timer; // Calculate time taken in seconds
+
     if (selectedAnswer === quizData[currentQuestion].answer) {
       setCorrectAnswers((prev) => prev + 1); // Increment correct answers
+      setScore((prevScore) => prevScore + 20); // Add 20 points for correct answer
+
+      // Award bonus points based on time taken
+      if (timeTaken <= 2) {
+        bonusPoints = 5; // 5 extra points for answers given within 2 seconds
+      } else if (timeTaken <= 4) {
+        bonusPoints = 3; // 3 extra points for answers given between 3-4 seconds
+      } else if (timeTaken <= 5) {
+        bonusPoints = 1; // 1 extra point for answers given at 5 seconds
+      }
+
+      setScore((prevScore) => prevScore + bonusPoints); // Add bonus points to score
     }
   };
 
@@ -114,8 +131,7 @@ const Quiz = () => {
         <div className="results">
           <h2>Quiz Complete!</h2>
           <h3>
-            Your Score: {correctAnswers} out of {totalQuestions} (
-            {Math.round(scorePercentage)}%)
+            Your Score: {score} points ({Math.round(scorePercentage)}%)
           </h3>
           <h3>
             {scorePercentage >= 50 ? "Good job!" : "Better luck next time!"}
@@ -130,9 +146,13 @@ const Quiz = () => {
             ></div>
           </div>
           <div className="progress">Progress: {progress}%</div>
-          <div>
-            Time remaining: {timer}s {/* Display remaining time */}
-          </div>
+
+          {/* Score display */}
+          <div className="score">Score: {score} points</div>
+
+          {/* Timer display */}
+          <div>Time remaining: {timer}s</div>
+
           <h2>{quizData[currentQuestion].question}</h2>
           <div className="options">
             {Object.entries(quizData[currentQuestion].choices).map(
@@ -155,7 +175,7 @@ const Quiz = () => {
                 >
                   {option}
                 </button>
-              ),
+              )
             )}
           </div>
           {!showAnswer && selectedAnswer !== null && (
