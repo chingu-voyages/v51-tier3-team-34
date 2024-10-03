@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Autocomplete } from "@react-google-maps/api";
 import { FaLocationArrow } from "react-icons/fa";
 
-const center = { lat: 38.0406, lng: -84.5037 }
+const center = { lat: 38.0406, lng: -84.5037 };
 
 const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   const [distance, setDistance] = useState("");
@@ -13,7 +13,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   const destinationRef = useRef(null);
 
   // Handle travel mode change
-  const handleTravelModeChange = (event) => { 
+  const handleTravelModeChange = (event) => {
     setTravelMode(event.target.value);
   };
 
@@ -50,20 +50,23 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
   // Get current location
   const handleCurrentLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        const currentLocation = new window.google.maps.LatLng(lat, lng);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const currentLocation = new window.google.maps.LatLng(lat, lng);
 
-         // Pan to current location
-         mapInstance.panTo(currentLocation);
-         mapInstance.setZoom(15);
+          // Pan to current location
+          mapInstance.panTo(currentLocation);
+          mapInstance.setZoom(15);
 
-        originRef.current.value = `${lat}, ${lng}`;
-      }, (error) => {
-        console.error("Error retrieving location", error);
-        alert("Unable to retrieve your location.");
-      });
+          originRef.current.value = `${lat}, ${lng}`;
+        },
+        (error) => {
+          console.error("Error retrieving location", error);
+          alert("Unable to retrieve your location.");
+        },
+      );
     } else {
       alert("Geolocation is not supported by this browser.");
     }
@@ -76,11 +79,11 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
         mapInstance.panTo(center);
         mapInstance.setZoom(13);
         originRef.current.value = "";
-    } else {
-      handleCurrentLocation();
-    }
+      } else {
+        handleCurrentLocation();
+      }
       return !prevState;
-    })
+    });
   };
 
   return (
@@ -174,15 +177,15 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             Bus
           </label>
         </div>
-        
+
         <div style={{ display: "flex", gap: "0.1rem", alignItems: "center" }}>
           <button onClick={calculateRoute}>Calculate Route</button>
           <button onClick={clearRoute}>X</button>
-          <button 
-            className="icon-button" 
+          <button
+            className="icon-button"
             onClick={toggleGps}
             style={{
-              color: gpsEnabled ? "green" : "gray" 
+              color: gpsEnabled ? "green" : "gray",
             }}
           >
             <FaLocationArrow />
