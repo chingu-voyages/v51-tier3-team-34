@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import MapContainer from "./MapContainer";
-import ScavengerProcess from "./ScavengerProcess"
-import { Circle, Marker } from "@react-google-maps/api";
+import ScavengerProgress from "./ScavengerProgress"
 import CustomMarker from "./CustomMarker";
 import ScavengerMarkers from "./ScavengerMarkers";
-import { MapContext } from "../context/MapContext";
 
 const accuracyThreshold = 50; // Threshold for location accuracy in meters
 
@@ -31,8 +29,11 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
 };
 
 const ScavengerHunt = () => {
+  const [startHunt, setStartHunt] = useState(false)
   const [userLocation, setUserLocation] = useState(null);
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
+  const [userProgress, setUserProgress] = useState(0) // keeping track of which location user has went to
+
   const accuracyThreshold = 50; // Threshold for location accuracy in meters
 
   const apiUrl =
@@ -56,21 +57,28 @@ const ScavengerHunt = () => {
       .catch((err) => console.error("Failed to fetch hunt locations", err));
   }, []);
 
+  const handleClick = () =>{
+    setStartHunt(true)
+  }
+
   useGeolocation(setUserLocation);
 
   return (
     <>
-      <div className="information">
-        <h2>Scavenger Hunt</h2>
-        <p>Ready to test your knowledge of Lexington, KY? Earn points playing our scavenger hunt.</p>
-        <p>If you are ready, head to downtown Lexington to the marker on the map. Once you are there, click on the button to start.</p>
-      </div>
-      <button>I am here!</button> {/* Once clicked, can turn on GPS*/ }
-      <ScavengerProcess huntLocations={huntLocations}/>
+      {!startHunt ? 
+        <div className="information">
+          <h2>Scavenger Hunt</h2>
+          <p>Ready to test your knowledge of Lexington, KY? Earn points playing our scavenger hunt.</p>
+          <p>If you are ready, head to downtown Lexington to the marker on the map. Once you are there, click on the button to start. Note will turn on GPS monitoring.</p>
+          <button onClick={handleClick}>I am here!</button> {/* Once clicked, can turn on GPS*/ }
+        </div> 
+        :
+        <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
+      }
       {huntLocations &&
         <MapContainer center={{lat: 38.04963007625419, lng: -84.49553566106573}} zoom={16}> 
+          {!startHunt && <CustomMarker/>}
           <ScavengerMarkers huntLocations={huntLocations}/>
-          <CustomMarker/>
         </MapContainer>
       }
     </>

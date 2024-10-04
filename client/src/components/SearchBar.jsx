@@ -44,7 +44,7 @@ const SearchBar = ({ mapInstance, setMarkerPosition, clearSearch }) => {
           lat: location.lat(),
           lng: location.lng(),
         });
-        console.log(location.lat())
+      
         mapInstance.panTo(location);
         mapInstance.setZoom(14);
       });

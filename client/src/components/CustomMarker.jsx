@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Marker } from '@react-google-maps/api';
+import { Circle, Marker } from '@react-google-maps/api';
 import { MapContext } from "../context/MapContext"
 
 
@@ -14,15 +14,13 @@ const CustomMarker = () => {
   //   mapInstance.panTo(position)
   // }, [mapInstance])
 
-  
-  const position = { lat: 38.052327640, lng: -84.497 }; // Valid coordinates
-
-
-  console.log('Rendering CustomMarker:', position); // Check if position is logged
-  
+  const position = { lat: 38.05224348731636, lng: -84.49533042381834}; // Valid coordinates
 
   return (
+    <>
     <Marker position={position} />
+    <Circle center={position} radius={30}/>
+    </>
   );
 };
 
