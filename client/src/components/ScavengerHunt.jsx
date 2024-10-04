@@ -35,7 +35,7 @@ const ScavengerHunt = () => {
   const [startHunt, setStartHunt] = useState(false)
   const [userLocation, setUserLocation] = useState(null);
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
-  const [userProgress, setUserProgress] = useState(0) // keeping track of which location user has went to
+  const [userProgress, setUserProgress] = useState(7) // keeping track of which location user has went to
 
   const apiUrl =
   import.meta.env.MODE === "development"
@@ -76,10 +76,10 @@ const ScavengerHunt = () => {
         :
         <div className="hunt-interface">
           <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
-          {/* <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/> */}
         </div>
       }
       {huntLocations &&
+        <>
         <MapContainer center={center} zoom={16}> 
           {!startHunt && <CustomMarker/>}
           <Circle 
@@ -91,6 +91,8 @@ const ScavengerHunt = () => {
             }} />
           <ScavengerMarkers huntLocations={huntLocations}/>
         </MapContainer>
+        <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/>
+        </>
       }
     </>
   );

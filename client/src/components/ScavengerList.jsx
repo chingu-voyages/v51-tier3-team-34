@@ -1,21 +1,21 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
-const ScavengerList = ({huntsLocations, userProgress}) => {
-  // userProgress = #
-  // if routeIndex is less than or equal to userprogress, reveal location name
+const ScavengerList = ({huntLocations, userProgress}) => {
 
-
-  useEffect(()=> {
-
-  }, [huntsLocations, userProgress])
+  const sortedLocations = huntLocations.sort((a, b) => a.routeIndex - b.routeIndex)
 
   return (
+    <>
+    <h3>Scavenger Hunt Locations</h3>
     <ul>
-        {huntsLocations.map((location)=> {
-            <li>{location.name}</li>
-        })}
-      
+        {sortedLocations.map((location) => 
+          <li key={location._id}>
+            {location.routeIndex <= userProgress ? <strong>{location.name}</strong> : <strong>*******</strong>}
+            <p style={{fontStyle: 'italic'}}>{location.routeIndex <= userProgress ? location.hint : "********************"}</p>
+          </li>
+        )}
     </ul> 
+    </>
   )
 }
 
