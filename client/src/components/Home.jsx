@@ -96,11 +96,10 @@ const Home = () => {
         />
       </div>
 
-      <MapContainer>
+      <MapContainer center={center} zoom={13}>
         {/* Add a marker if a place is selected */}
         {markerPosition && <Marker position={markerPosition} />}
         <PoiMarkers/>
-        <CustomMarker/>
         {/* Render Directions on the map */}
         {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
       </MapContainer>

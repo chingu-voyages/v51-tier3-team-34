@@ -57,7 +57,7 @@ const ScavengerHunt = () => {
   }, []);
 
   useGeolocation(setUserLocation);
-  
+
   return (
     <>
       <div className="information">
@@ -68,7 +68,7 @@ const ScavengerHunt = () => {
       <button>I am here!</button> {/* Once clicked, can turn on GPS*/ }
       <ScavengerProcess huntLocations={huntLocations}/>
       {huntLocations &&
-        <MapContainer> 
+        <MapContainer center={{lat: 38.04963007625419, lng: -84.49553566106573}} zoom={16}> 
           <ScavengerMarkers huntLocations={huntLocations}/>
           <CustomMarker/>
         </MapContainer>
