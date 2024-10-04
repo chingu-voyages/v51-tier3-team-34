@@ -5,9 +5,13 @@ import { MapContext } from "../context/MapContext"
 
 import React from 'react'
 
-const ScavengerMarkers = ({huntLocations}) => {
-  // const { mapRef } = useContext(MapContext)
-  // const mapInstance = mapRef.current
+const ScavengerMarkers = ({huntLocations, userProgress}) => {
+  const { mapRef } = useContext(MapContext)
+  const mapInstance = mapRef.current
+  
+  const filterLocations = huntLocations.filter((location)=>location.routeIndex <= userProgress)
+  const sortedLocations = filterLocations.sort((a, b) => a.routeIndex - b.routeIndex)
+
   // useEffect(()=>{
   //   if (!mapInstance){
   //     return;
@@ -16,7 +20,7 @@ const ScavengerMarkers = ({huntLocations}) => {
 
   return (
     <>
-      {huntLocations.map((poi)=> (
+      {filterLocations.map((poi)=> (
         <Marker
         key={poi._id}
         position={poi.location}

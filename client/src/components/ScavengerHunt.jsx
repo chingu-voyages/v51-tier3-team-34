@@ -95,7 +95,7 @@ const ScavengerHunt = () => {
               strokeWeight: 0.5,
               fillOpacity: 0.08
             }} />
-          <ScavengerMarkers huntLocations={huntLocations}/>
+          <ScavengerMarkers huntLocations={huntLocations} userProgress={userProgress}/>
           </>
           }
         </MapContainer>
