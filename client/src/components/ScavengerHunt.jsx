@@ -23,6 +23,7 @@ const ScavengerHunt = () => {
   const [userLocation, setUserLocation] = useState(null);
 
   useGeolocation(setUserLocation);
+  
 
   return (
     <>

@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Marker, InfoWindow } from "@react-google-maps/api";
 import marker from "../assets/marker.png";
 
-const PoiMarkers = ({ setPointsOfInterest, pois }) => {
+const PoiMarkers = () => {
+  const [pointsOfInterest, setPointsOfInterest] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
 
   const apiUrl =
@@ -28,7 +29,7 @@ const PoiMarkers = ({ setPointsOfInterest, pois }) => {
 
   return (
     <>
-      {pois.map((poi) => (
+      {pointsOfInterest.map((poi) => (
         <Marker
           key={poi._id}
           position={poi.location}
