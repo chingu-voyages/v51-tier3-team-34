@@ -17,10 +17,7 @@ const CustomMarker = () => {
   const position = { lat: 38.05224348731636, lng: -84.49533042381834}; // Valid coordinates
 
   return (
-    <>
     <Marker position={position} />
-    <Circle center={position} radius={30}/>
-    </>
   );
 };
 

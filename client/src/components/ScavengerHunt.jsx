@@ -3,8 +3,11 @@ import MapContainer from "./MapContainer";
 import ScavengerProgress from "./ScavengerProgress"
 import CustomMarker from "./CustomMarker";
 import ScavengerMarkers from "./ScavengerMarkers";
+import { Circle } from "@react-google-maps/api";
+import ScavengerList from "./ScavengerList";
 
 const accuracyThreshold = 50; // Threshold for location accuracy in meters
+const center ={lat: 38.048172393597355, lng: -84.4964571176625}
 
 const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
   useEffect(() => {
@@ -73,11 +76,21 @@ const ScavengerHunt = () => {
           <button onClick={handleClick}>I am here!</button> {/* Once clicked, can turn on GPS*/ }
         </div> 
         :
-        <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
+        <div className="hunt-interface">
+          <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
+          <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/>
+        </div>
       }
       {huntLocations &&
-        <MapContainer center={{lat: 38.04963007625419, lng: -84.49553566106573}} zoom={16}> 
+        <MapContainer center={center} zoom={16}> 
           {!startHunt && <CustomMarker/>}
+          <Circle 
+            center ={center} 
+            radius={650}
+            options={{
+              strokeWeight: 0.5,
+              fillOpacity: 0.08
+            }} />
           <ScavengerMarkers huntLocations={huntLocations}/>
         </MapContainer>
       }
