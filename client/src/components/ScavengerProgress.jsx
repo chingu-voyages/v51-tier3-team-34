@@ -1,11 +1,24 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 
 const ScavengerProgress = ({huntLocations, userProgress}) => {
-  const progress = userProgress * 10
+  const [endGame, setEndGame ] = useState(false)
+  const [selectLocation, setSelectLocation] = useState(null);
   
-  const selectLocation = huntLocations.find(location=>
-    location.routeIndex === (userProgress + 1)
-  )
+  useEffect(() => {
+    // Check for end game condition
+    if (userProgress < 10) {
+      setEndGame(false);
+      const location = huntLocations.find(location => 
+        location.routeIndex === (userProgress + 1)
+      );
+      setSelectLocation(location);
+    } else {
+      setEndGame(true);
+    }
+  }, [userProgress, huntLocations]); // Dependency array
+
+  const progress = userProgress * 10;
+
 
   return (
     <>
@@ -17,12 +30,16 @@ const ScavengerProgress = ({huntLocations, userProgress}) => {
       </div>
       <div className="progress">Progress: {progress}%</div>
 
+      {!endGame ? 
       <div className='hints'>
         <h2>Find this location!</h2>
         <p><strong>Here is your hint</strong></p>
-        <p>{selectLocation.hint}</p>
-        
+        <p>{selectLocation ? selectLocation.hint : 'No hint available'}</p>
+      </div> :
+      <div>
+        <p>You completed our scavenger hunt! Thanks for playing.</p>
       </div>
+    }
     </>
   )
 }
