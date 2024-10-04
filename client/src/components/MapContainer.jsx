@@ -4,7 +4,7 @@ import { MapContext } from "../context/MapContext"
 
 
 const MapContainer = ({children}) => {
-  const { onLoad, onUnmount } = useContext(MapContext)
+  const { onLoad, onUnmount, mapRef } = useContext(MapContext)
 
   const mapStyles = [
     // Turn off points of interest that is default in googlemaps.
@@ -31,9 +31,9 @@ const MapContainer = ({children}) => {
       disableDefaultUI={false}
       options={{ styles: mapStyles }}
       onLoad={onLoad}
-      // onUnmount={onUnmount}
+      onUnmount={onUnmount}
     >
-      {children}
+      {mapRef.current && children}
     </GoogleMap>
 
   );
