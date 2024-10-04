@@ -31,7 +31,7 @@ const MapContainer = ({children}) => {
       disableDefaultUI={false}
       options={{ styles: mapStyles }}
       onLoad={onLoad}
-      onUnmount={onUnmount}
+      // onUnmount={onUnmount}
     >
       {children}
     </GoogleMap>

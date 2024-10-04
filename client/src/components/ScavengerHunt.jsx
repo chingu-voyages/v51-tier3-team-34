@@ -42,8 +42,8 @@ const ScavengerHunt = () => {
       <button>I am here!</button> {/* Once clicked, can turn on GPS*/ }
       <ScavengerProcess/>
       <MapContainer> 
-        <CustomMarker/>
-        <PoiMarkers/>
+        {/* <CustomMarker/>
+        <PoiMarkers/> */}
       </MapContainer>
     </>
   );

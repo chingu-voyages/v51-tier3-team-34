@@ -7,6 +7,7 @@ import PoiMarkers from "./PoiMarkers";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
 import RoutePlanner from "./RoutePlanner";
+import CustomMarker from "./CustomMarker";
 
 const center = { lat: 38.0406, lng: -84.5037 }
 
@@ -99,7 +100,7 @@ const Home = () => {
         {/* Add a marker if a place is selected */}
         {markerPosition && <Marker position={markerPosition} />}
         <PoiMarkers/>
-
+        <CustomMarker/>
         {/* Render Directions on the map */}
         {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
       </MapContainer>
