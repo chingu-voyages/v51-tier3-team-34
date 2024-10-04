@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import "../styles/quiz.css";
+import "../styles/quiz.css";
 
 const Quiz = () => {
   const [quizData, setQuizData] = useState([]);
@@ -20,7 +20,7 @@ const Quiz = () => {
       const baseURL =
         import.meta.env.MODE === "development"
           ? "http://localhost:8080"
-          : import.meta.env.vite_backend_url;
+          : import.meta.env.VITE_BACKEND_URL;          ;
 
       try {
         const response = await fetch(`${baseURL}/api/questions/`);

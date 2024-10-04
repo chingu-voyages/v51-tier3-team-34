@@ -10,7 +10,6 @@ const accuracyThreshold = 50; // Threshold for location accuracy in meters
 const center ={lat: 38.048172393597355, lng: -84.4964571176625}
 
 const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
-const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.watchPosition(
@@ -27,10 +26,8 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
         },
         (error) => console.error("Error fetching geolocation", error),
         { enableHighAccuracy: true }
-        { enableHighAccuracy: true }
       );
     }
-  }, [setUserLocation, accuracyThreshold]);
   }, [setUserLocation, accuracyThreshold]);
 };
 
@@ -39,8 +36,6 @@ const ScavengerHunt = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
   const [userProgress, setUserProgress] = useState(0) // keeping track of which location user has went to
-
-  const accuracyThreshold = 50; // Threshold for location accuracy in meters
 
   const apiUrl =
   import.meta.env.MODE === "development"
@@ -81,7 +76,7 @@ const ScavengerHunt = () => {
         :
         <div className="hunt-interface">
           <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
-          <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/>
+          {/* <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/> */}
         </div>
       }
       {huntLocations &&
