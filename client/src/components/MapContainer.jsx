@@ -33,7 +33,7 @@ const MapContainer = ({children}) => {
       onLoad={onLoad}
       onUnmount={onUnmount}
     >
-      {mapRef.current && children}
+      {children}
     </GoogleMap>
 
   );

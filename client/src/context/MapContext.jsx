@@ -1,7 +1,7 @@
 import React, { createContext, useRef, useCallback } from 'react';
 
 // Create a Context for the map instance
-export const MapContext = createContext(null);
+export const MapContext = createContext({});
 
 export const MapProvider = ({ children }) => {
   const mapRef = useRef(null);
