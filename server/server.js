@@ -65,6 +65,34 @@ app.post("/api/landmarks", (req, res) => {
     });
 });
 
+// Get all scavenger hunt locations
+app.get("/api/hunt-locations", (req, res) => {
+  let huntLocations = [];
+  db.collection("huntLocations")
+    .find()
+    .forEach((location) => huntLocations.push(location))
+    .then(() => {
+      res.status(200).json(huntLocations);
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Could not fetch" });
+    });
+});
+
+// Add a scavenger hunt location
+app.post("/api/hunt-locations", (req, res) => {
+  const huntLocation = req.body;
+
+  db.collection("huntLocations")
+    .insertOne(huntLocation)
+    .then((result) => {
+      res.status(201).json(result);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: "Could not create a new hunt location document" });
+    });
+});
+
 // Get all the questions
 app.get("/api/questions", (req, res) => {
   let questions = [];
