@@ -20,7 +20,7 @@ const Router = () => {
           element: <Home />,
         },
         {
-          path: "quiz",
+          path: "/quiz",
           element: <Quiz />,
         },
         {

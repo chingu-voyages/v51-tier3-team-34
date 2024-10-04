@@ -10,6 +10,7 @@ const accuracyThreshold = 50; // Threshold for location accuracy in meters
 const center ={lat: 38.048172393597355, lng: -84.4964571176625}
 
 const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
+const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.watchPosition(
@@ -26,8 +27,10 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
         },
         (error) => console.error("Error fetching geolocation", error),
         { enableHighAccuracy: true }
+        { enableHighAccuracy: true }
       );
     }
+  }, [setUserLocation, accuracyThreshold]);
   }, [setUserLocation, accuracyThreshold]);
 };
 
