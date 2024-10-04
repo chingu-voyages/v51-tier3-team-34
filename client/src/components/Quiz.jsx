@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/quiz.css";
+// import "../styles/quiz.css";
 
 const Quiz = () => {
   const [quizData, setQuizData] = useState([]);
@@ -11,7 +11,8 @@ const Quiz = () => {
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0); // Track correct answers
   const [quizCompleted, setQuizCompleted] = useState(false); // Track if quiz is completed
-  const [score, setScore] = useState(0); // Track the score
+  const [regularPoints, setRegularPoints] = useState(0); // Track regular points
+  const [bonusPoints, setBonusPoints] = useState(0); // Track bonus points
 
   // Fetch questions from the backend
   useEffect(() => {
@@ -19,7 +20,7 @@ const Quiz = () => {
       const baseURL =
         import.meta.env.MODE === "development"
           ? "http://localhost:8080"
-          : import.meta.env.VITE_BACKEND_URL;
+          : import.meta.env.vite_backend_url;
 
       try {
         const response = await fetch(`${baseURL}/api/questions/`);
@@ -67,23 +68,23 @@ const Quiz = () => {
     setProgress(Math.round(((currentQuestion + 1) / quizData.length) * 100)); // Round progress to an integer
 
     // Calculate bonus points based on the timer
-    let bonusPoints = 0;
+    let bonusPointsAwarded = 0;
     const timeTaken = 60 - timer; // Calculate time taken in seconds
 
     if (selectedAnswer === quizData[currentQuestion].answer) {
       setCorrectAnswers((prev) => prev + 1); // Increment correct answers
-      setScore((prevScore) => prevScore + 20); // Add 20 points for correct answer
+      setRegularPoints((prevPoints) => prevPoints + 20); // Add 20 points for correct answer
 
       // Award bonus points based on time taken
       if (timeTaken <= 2) {
-        bonusPoints = 5; // 5 extra points for answers given within 2 seconds
+        bonusPointsAwarded = 5; // 5 extra points for answers given within 2 seconds
       } else if (timeTaken <= 4) {
-        bonusPoints = 3; // 3 extra points for answers given between 3-4 seconds
+        bonusPointsAwarded = 3; // 3 extra points for answers given between 3-4 seconds
       } else if (timeTaken <= 5) {
-        bonusPoints = 1; // 1 extra point for answers given at 5 seconds
+        bonusPointsAwarded = 1; // 1 extra point for answers given at 5 seconds
       }
 
-      setScore((prevScore) => prevScore + bonusPoints); // Add bonus points to score
+      setBonusPoints((prevBonus) => prevBonus + bonusPointsAwarded); // Add bonus points to bonusPoints state
     }
   };
 
@@ -108,7 +109,7 @@ const Quiz = () => {
   }
 
   const totalQuestions = quizData.length;
-  const scorePercentage = (correctAnswers / totalQuestions) * 100;
+  const totalPoints = regularPoints + bonusPoints; // Calculate total points
 
   return (
     <div className="quiz-container">
@@ -130,11 +131,14 @@ const Quiz = () => {
       ) : quizCompleted ? (
         <div className="results">
           <h2>Quiz Complete!</h2>
+          <h3>Results:</h3>
+          <p>Score: {regularPoints} points</p>
+          <p>Bonus Points: {bonusPoints} points</p>
+          <p>Total Score: {totalPoints} points</p>
           <h3>
-            Your Score: {score} points ({Math.round(scorePercentage)}%)
-          </h3>
-          <h3>
-            {scorePercentage >= 50 ? "Good job!" : "Better luck next time!"}
+            {totalPoints >= totalQuestions * 10
+              ? "Good job!"
+              : "Better luck next time!"}
           </h3>
         </div>
       ) : (
@@ -148,7 +152,9 @@ const Quiz = () => {
           <div className="progress">Progress: {progress}%</div>
 
           {/* Score display */}
-          <div className="score">Score: {score} points</div>
+          <div className="score">
+            Score: {regularPoints + bonusPoints} points
+          </div>
 
           {/* Timer display */}
           <div>Time remaining: {timer}s</div>
@@ -175,7 +181,7 @@ const Quiz = () => {
                 >
                   {option}
                 </button>
-              ),
+              )
             )}
           </div>
           {!showAnswer && selectedAnswer !== null && (
