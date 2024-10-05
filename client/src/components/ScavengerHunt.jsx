@@ -123,9 +123,6 @@ const ScavengerHunt = () => {
     };
   }
 
-  // Handle Route showing up after each location visited
-
-
   return (
     <>
       {!startHunt ? 
