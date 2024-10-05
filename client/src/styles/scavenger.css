@@ -28,4 +28,57 @@
       margin: 2em auto;
     }
   }
+
+/* Pulsing Circle */
+.pulse-circle {
+  width: 25px;
+  height: 25px;
+  background-color: rgba(0, 122, 255, 0.4);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 1.9s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* Directional Cone */
+.directional-cone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  transform: translate(-50%, -100%) rotate(0deg);
+  width: 60px;
+  height: 60px;
+}
+
+.directional-cone::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom, 
+    rgba(0, 122, 255, 0.5) 0%, 
+    rgba(0, 122, 255, 0) 100%
+  );
+  transform: translateX(-50%);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+
   
