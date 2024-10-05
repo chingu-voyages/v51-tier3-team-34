@@ -10,17 +10,24 @@ import ScavengerList from "./ScavengerList";
 const center = {lat: 38.048172393597355, lng: -84.4964571176625};
 const center2 = { lat: 38.05224348731636, lng: -84.49533042381834};
 
-const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt) => {
+const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt, mapRef) => {
   useEffect(() => {
     if (startHunt && "geolocation" in navigator) {
       const watchId = navigator.geolocation.watchPosition(
         (position) => {
           if (position.coords.accuracy <= accuracyThreshold) {
-            setUserLocation({
+            const newLocation = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
-              accuracy: position.coords.accuracy, 
-            });
+              accuracy: position.coords.accuracy,
+            };
+
+            setUserLocation(newLocation);
+
+            // Auto-pan to new location
+            if (mapRef.current) {
+              mapRef.current.panTo(newLocation);
+            }
           } else {
             console.warn("Location accuracy too low:", position.coords.accuracy);
           }
@@ -31,7 +38,7 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt) => {
 
       return () => navigator.geolocation.clearWatch(watchId); // Cleanup on component unmount
     }
-  }, [setUserLocation, accuracyThreshold , startHunt]);
+  }, [setUserLocation, accuracyThreshold , startHunt, mapRef]);
 };
 
 const ScavengerHunt = () => {
