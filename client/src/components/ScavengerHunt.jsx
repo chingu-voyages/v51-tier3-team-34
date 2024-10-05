@@ -48,8 +48,8 @@ const ScavengerHunt = () => {
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
   const [userProgress, setUserProgress] = useState(0) 
       // keeping track of how many location user has visited, will increase by 1 after a location is found (max: 10 - completed hunt)
+  
   const [userPoints, setUserPoints] = useState(0); // keeping track of user points
-
   const [directionsResponse, setDirectionsResponse] = useState(null)
   const [routeSegments, setRouteSegments] = useState([])
 
@@ -78,7 +78,7 @@ const ScavengerHunt = () => {
   // Use geolocation when the hunt starts
   useGeolocation(setUserLocation, 50, startHunt);
 
-  const handleClick = () =>{
+  const handleClickHere = () =>{
     setStartHunt(true)
     mapRef.current.panTo(center)
     mapRef.current.setZoom(16.3)
@@ -112,7 +112,6 @@ const ScavengerHunt = () => {
       });
       setDirectionsResponse(results);
       splitRouteIntoSegments(results);
-
     } catch (error) {
       console.error(error);
     }
@@ -129,10 +128,10 @@ const ScavengerHunt = () => {
           steps: legs[i].steps
         });
       }
-
       setRouteSegments(segments);
     };
   }
+
   const checkLocation = () => {
     if (!userLocation || !huntLocations || userProgress >= huntLocations.length) return;
     
@@ -165,7 +164,7 @@ const ScavengerHunt = () => {
           <h2>Scavenger Hunt</h2>
           <p>Ready to test your knowledge of Lexington, KY? Earn points playing our scavenger hunt.</p>
           <p>If you are ready, head to downtown Lexington to the marker on the map. Once you are there, click on the button to start. Note will turn on GPS monitoring.</p>
-          <button onClick={handleClick}>I am here!</button> {/* Once clicked, can turn on GPS*/ }
+          <button onClick={handleClickHere}>I am here!</button> {/* Once clicked, can turn on GPS*/ }
         </div> 
         :
         <div className="hunt-interface">
@@ -175,7 +174,8 @@ const ScavengerHunt = () => {
           {/*BUTTON can be deleted or use if gps is not working well?*/}
           <button onClick={()=>{
             if (userProgress < 10){
-              setUserProgress((prev)=>prev +1)
+              setUserProgress((prev)=>prev +1);
+              setUserPoints((prev)=>prev+ 20)
             } 
           }}>
             TEST button for user progression
