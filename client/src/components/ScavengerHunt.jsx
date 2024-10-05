@@ -4,23 +4,30 @@ import MapContainer from "./MapContainer";
 import ScavengerProgress from "./ScavengerProgress"
 import CustomMarker from "./CustomMarker";
 import ScavengerMarkers from "./ScavengerMarkers";
-import { Circle } from "@react-google-maps/api";
+import { Circle, Marker } from "@react-google-maps/api";
 import ScavengerList from "./ScavengerList";
 
-const center ={lat: 38.048172393597355, lng: -84.4964571176625}
-const center2 = { lat: 38.05224348731636, lng: -84.49533042381834}
+const center = {lat: 38.048172393597355, lng: -84.4964571176625};
+const center2 = { lat: 38.05224348731636, lng: -84.49533042381834};
 
-const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
+const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt, mapRef) => {
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.watchPosition(
+    if (startHunt && "geolocation" in navigator) {
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
           if (position.coords.accuracy <= accuracyThreshold) {
-            setUserLocation({
+            const newLocation = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
-              accuracy: position.coords.accuracy, 
-            });
+              accuracy: position.coords.accuracy,
+            };
+
+            setUserLocation(newLocation);
+
+            // Auto-pan to new location
+            if (mapRef.current) {
+              mapRef.current.panTo(newLocation);
+            }
           } else {
             console.warn("Location accuracy too low:", position.coords.accuracy);
           }
@@ -28,16 +35,18 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
         (error) => console.error("Error fetching geolocation", error),
         { enableHighAccuracy: true }
       );
+
+      return () => navigator.geolocation.clearWatch(watchId); // Cleanup on component unmount
     }
-  }, [setUserLocation, accuracyThreshold]);
+  }, [setUserLocation, accuracyThreshold , startHunt, mapRef]);
 };
 
 const ScavengerHunt = () => {
-  const { mapRef } = useContext(MapContext)
+  const { mapRef } = useContext(MapContext);
   const [startHunt, setStartHunt] = useState(false)
-  const [userLocation, setUserLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null); // Current user location
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
-  const [userProgress, setUserProgress] = useState(7) // keeping track of which location user has went to
+  const [userProgress, setUserProgress] = useState(7); // keeping track of which location user has went to
 
   const apiUrl =
   import.meta.env.MODE === "development"
@@ -60,13 +69,15 @@ const ScavengerHunt = () => {
       .catch((err) => console.error("Failed to fetch hunt locations", err));
   }, []);
 
+  // Use geolocation when the hunt starts
+  useGeolocation(setUserLocation, 50, startHunt);
+
   const handleClick = () =>{
     setStartHunt(true)
     mapRef.current.panTo(center)
     mapRef.current.setZoom(16.3)
-  }
+  };
 
-  useGeolocation(setUserLocation);
 
   return (
     <>
@@ -84,7 +95,7 @@ const ScavengerHunt = () => {
       }
       {huntLocations &&
         <>
-        <MapContainer center={center2} zoom={15}> 
+        <MapContainer center={userLocation ? userLocation : center2} zoom={15}> 
           {!startHunt ? 
           <CustomMarker/> :
           <>
@@ -94,7 +105,18 @@ const ScavengerHunt = () => {
             options={{
               strokeWeight: 0.5,
               fillOpacity: 0.08
-            }} />
+            }} 
+          />
+          {userLocation && (
+            // Display user's location with a blue dot
+            <Marker
+              position={userLocation}
+              icon={{
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                scaledSize: new window.google.maps.Size(40, 40), 
+              }}
+            />
+          )}
           <ScavengerMarkers huntLocations={huntLocations} userProgress={userProgress}/>
           </>
           }
