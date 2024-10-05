@@ -1,0 +1,95 @@
+{
+    "scavenger" : [
+    {
+        "name": "The Hunt-Morgan House",
+        "location": {
+            "lat": 38.05194737126736,
+            "lng": -84.49711145756426
+        },
+        "hint": "Explore a historic gem in Gratz Park district, which showcases 19th-century architecture and stories of prominent local families",
+        "routeIndex": 1
+    },
+    {
+        "name": "Lexington's Children Museum",
+        "location": {
+            "lat": 38.05116089484693, 
+            "lng": -84.49994788086302
+        },
+        "hint": "This interactive space sparks curiosity with exhibits about science, art, and nature, all designed just for little explorers",
+        "routeIndex": 2
+    },
+    {
+        "name": "Triangle Park",
+        "location": {
+            "lat": 38.04899089356689, 
+            "lng": -84.5004849923121
+        },
+        "hint": "Relax in the heart of downtown Lexington, where fountains, greenery, and outdoor fun meet at this popular park!",
+        "routeIndex": 3
+    },
+    {
+        "name": "Dudley’s on Short (restaurant)",
+        "location": {
+            "lat": 38.04936222081672, 
+            "lng": -84.49801954222538
+        },
+        "hint": "Upscale dining meets Southern charm at this Lexington staple, offering classic dishes with a modern twist on Short Street",
+        "routeIndex": 4
+    },
+    {
+        "name": "Lexington Farmers Market",
+        "location": {
+            "lat": 38.0475328424761, 
+            "lng": -84.49809746161269
+        },
+        "hint": "Find fresh, local produce and artisan goods at the heart of downtown Lexington",
+        "routeIndex": 5
+    },
+    {
+        "name": "21c Museum Hotel",
+        "location": {
+            "lat": 38.047226655260346, 
+            "lng": -84.4975574460646
+        },
+        "hint": " This hotel is where contemporary art meets boutique luxury",
+        "routeIndex": 6
+    },
+    {
+        "name": "Bourbon on Rye (pub)",
+        "location": {
+            "lat": 38.046805858966025, 
+            "lng": -84.49710744791093
+        },
+        "hint": "Craft cocktails and Southern bites in a vintage Lexington setting",
+        "routeIndex": 7
+    },
+    {
+        "name": "Ethereal Brewing Public House(fun brewery spot)",
+        "location": {
+            "lat": 38.04573804986419, 
+            "lng": -84.49828792958711
+        },
+        "hint": "Enjoy craft brews in a laid-back atmosphere at this Lexington favorite, known for its creative beer selections and cool vibes",
+        "routeIndex": 8
+    },
+    {
+        "name": "Lexington Public Library",
+        "location": {
+            "lat": 38.04554472680396,
+            "lng": -84.49659348154478
+        },
+        "hint": "Explore a treasure trove of books, programs, and community events at this library",
+        "routeIndex": 9
+    },
+    {
+        "name": "The Kentucky Theatre",
+        "location": {
+            "lat": 38.0446045713216, 
+            "lng": -84.49513205242751
+        },
+        "hint": "Catch a classic film or a live performance at this historic venue, known for its charming ambiance and iconic marquee",
+        "routeIndex": 10
+    }
+    ]
+
+}
