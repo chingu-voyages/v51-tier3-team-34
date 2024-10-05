@@ -4,7 +4,7 @@ import MapContainer from "./MapContainer";
 import ScavengerProgress from "./ScavengerProgress"
 import CustomMarker from "./CustomMarker";
 import ScavengerMarkers from "./ScavengerMarkers";
-import { Circle, Marker } from "@react-google-maps/api";
+import { Circle, Marker, useLoadScript } from "@react-google-maps/api";
 import ScavengerList from "./ScavengerList";
 
 const center = {lat: 38.048172393597355, lng: -84.4964571176625};
@@ -46,7 +46,8 @@ const ScavengerHunt = () => {
   const [startHunt, setStartHunt] = useState(false)
   const [userLocation, setUserLocation] = useState(null); // Current user location
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
-  const [userProgress, setUserProgress] = useState(7); // keeping track of which location user has went to
+  const [userProgress, setUserProgress] = useState(0); // keeping track of which location user has went to
+  const [userPoints, setUserPoints] = useState(0); // keeping track of user points
 
   const apiUrl =
   import.meta.env.MODE === "development"
@@ -78,6 +79,30 @@ const ScavengerHunt = () => {
     mapRef.current.setZoom(16.3)
   };
 
+  const checkLocation = () => {
+    if (!userLocation || !huntLocations || userProgress >= huntLocations.length) return;
+    
+    const nextLocation = huntLocations[userProgress];
+    const userLatLng = new window.google.maps.LatLng(userLocation.lat, userLocation.lng);
+    const huntLatLng = new window.google.maps.LatLng(nextLocation.lat, nextLocation.lng);
+
+    const distance = window.google.maps.geometry.spherical.computeDistanceBetween(userLatLng, huntLatLng);
+
+    // If the user is within 50 meters of the next location, award points and update progress
+    if (distance <= 50) {
+      setUserProgress(userProgress + 1);
+      setUserPoints(userPoints + 20);
+      console.log(`Location verified: ${nextLocation.name}. Points: ${userPoints + 20}`);
+    }
+  };
+
+  // Check location on every geolocation update
+  useEffect(() => {
+    if (startHunt && userLocation) {
+      checkLocation();  
+    }
+  }, [userLocation]);
+
 
   return (
     <>
@@ -91,6 +116,7 @@ const ScavengerHunt = () => {
         :
         <div className="hunt-interface">
           <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
+          <p>Points: {userPoints}</p>
         </div>
       }
       {huntLocations &&
