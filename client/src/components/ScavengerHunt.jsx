@@ -5,6 +5,7 @@ import ScavengerProgress from "./ScavengerProgress"
 import ScavengerMarkers from "./ScavengerMarkers";
 import { Circle, DirectionsRenderer, Marker } from "@react-google-maps/api";
 import ScavengerList from "./ScavengerList";
+import "../styles/scavenger.css"
 
 const center = {lat: 38.048172393597355, lng: -84.4964571176625}; // center of the entire scavenger area
 const center2 = { lat: 38.05224348731636, lng: -84.49533042381834}; // position of starting point
@@ -143,11 +144,20 @@ const ScavengerHunt = () => {
         :
         <div className="hunt-interface">
           <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
-          <button onClick={()=>setUserProgress((prev)=>prev +1)}>TEST button for user progression</button>
+
+          {/*BUTTON can be deleted or use if gps is not working well?*/}
+          <button onClick={()=>{
+            if (userProgress < 10){
+              setUserProgress((prev)=>prev +1)
+            } 
+          }}>
+            TEST button for user progression
+          </button>
         </div>
       }
       {huntLocations &&
-        <>
+        <div className="display-section">
+        <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/>
         <MapContainer center={userLocation ? userLocation : center2} zoom={15}> 
           {!startHunt ? 
           <Marker position={center2} /> :
@@ -193,9 +203,7 @@ const ScavengerHunt = () => {
           </>
           }
         </MapContainer>
-        <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/>
-
-        </>
+        </div>
       }
     </>
   );
