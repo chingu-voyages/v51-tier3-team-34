@@ -12,8 +12,8 @@
     {
         "name": "Lexington's Children Museum",
         "location": {
-            "lat": 38.05116089484693, 
-            "lng": -84.49994788086302
+            "lat": 38.05013515899646, 
+            "lng": -84.49999469308241
         },
         "hint": "This interactive space sparks curiosity with exhibits about science, art, and nature, all designed just for little explorers",
         "routeIndex": 2
@@ -30,8 +30,8 @@
     {
         "name": "Dudley’s on Short (restaurant)",
         "location": {
-            "lat": 38.04936222081672, 
-            "lng": -84.49801954222538
+            "lat": 38.048445044089846, 
+            "lng": -84.4978035618233
         },
         "hint": "Upscale dining meets Southern charm at this Lexington staple, offering classic dishes with a modern twist on Short Street",
         "routeIndex": 4

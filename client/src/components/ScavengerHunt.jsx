@@ -2,13 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { MapContext } from "../context/MapContext"
 import MapContainer from "./MapContainer";
 import ScavengerProgress from "./ScavengerProgress"
-import CustomMarker from "./CustomMarker";
 import ScavengerMarkers from "./ScavengerMarkers";
-import { Circle } from "@react-google-maps/api";
+import { Circle, DirectionsRenderer, Marker } from "@react-google-maps/api";
 import ScavengerList from "./ScavengerList";
 
-const center ={lat: 38.048172393597355, lng: -84.4964571176625}
-const center2 = { lat: 38.05224348731636, lng: -84.49533042381834}
+const center ={lat: 38.048172393597355, lng: -84.4964571176625} // center of the entire scavenger area
+const center2 = { lat: 38.05224348731636, lng: -84.49533042381834} // position of starting point
 
 const useGeolocation = (setUserLocation, accuracyThreshold = 50) => {
   useEffect(() => {
@@ -37,7 +36,11 @@ const ScavengerHunt = () => {
   const [startHunt, setStartHunt] = useState(false)
   const [userLocation, setUserLocation] = useState(null);
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
-  const [userProgress, setUserProgress] = useState(7) // keeping track of which location user has went to
+  const [userProgress, setUserProgress] = useState(0) 
+      // keeping track of how many location user has visited, will increase by 1 after a location is found (max: 10 - completed hunt)
+  const [directionsResponse, setDirectionsResponse] = useState(null)
+  const [routeSegments, setRouteSegments] = useState([])
+
 
   const apiUrl =
   import.meta.env.MODE === "development"
@@ -54,12 +57,13 @@ const ScavengerHunt = () => {
         return resp.json();
       })
       .then((data) => {
-        console.log(data);
         setHuntLocations(data);
+        calculateRoute(data)
       })
       .catch((err) => console.error("Failed to fetch hunt locations", err));
   }, []);
 
+  // Click of the "I'm here" button, will need to turn on GPS here and track user
   const handleClick = () =>{
     setStartHunt(true)
     mapRef.current.panTo(center)
@@ -67,6 +71,60 @@ const ScavengerHunt = () => {
   }
 
   useGeolocation(setUserLocation);
+
+
+  //route calculatons
+  const calculateRoute = async (locations) => {
+    const sortedCoordinates = locations
+      .sort((a, b) => a.routeIndex - b.routeIndex)  // Sort by routeIndex
+      .map(location => location.location);          // Extract location after sorting
+
+    const wayPointsObj = sortedCoordinates.slice(1,-1).map((coord) => ({location: coord}));
+
+    const directionsServiceOptions = {
+      origin: sortedCoordinates[0],
+      destination: sortedCoordinates[sortedCoordinates.length -1],
+      travelMode: "WALKING",
+      waypoints: wayPointsObj
+    };
+
+    try {
+      const directionsService = new google.maps.DirectionsService();
+      const results = await new Promise((resolve, reject) => {
+        directionsService.route(directionsServiceOptions, (response, status) => {
+          if (status === "OK"){
+            resolve(response);
+          } else {
+            reject(`Directions request failed due to ${status}`);
+          }
+        });
+      });
+      setDirectionsResponse(results);
+      splitRouteIntoSegments(results);
+
+    } catch (error) {
+      console.error(error);
+    }
+
+    function splitRouteIntoSegments(directionsResult) {
+      const legs = directionsResult.routes[0].legs;
+      const segments = [];
+
+      // Each leg represents a portion of the journey (origin -> waypoint, waypoint -> destination)
+      for (let i = 0; i < legs.length; i++) {
+        segments.push({
+          origin: legs[i].start_location,
+          destination: legs[i].end_location,
+          steps: legs[i].steps
+        });
+      }
+
+      setRouteSegments(segments);
+    };
+  }
+
+  // Handle Route showing up after each location visited
+
 
   return (
     <>
@@ -80,13 +138,14 @@ const ScavengerHunt = () => {
         :
         <div className="hunt-interface">
           <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
+          <button onClick={()=>setUserProgress((prev)=>prev +1)}>TEST button for user progression</button>
         </div>
       }
       {huntLocations &&
         <>
         <MapContainer center={center2} zoom={15}> 
           {!startHunt ? 
-          <CustomMarker/> :
+          <Marker position={center2} /> :
           <>
           <Circle 
             center ={center} 
@@ -96,10 +155,30 @@ const ScavengerHunt = () => {
               fillOpacity: 0.08
             }} />
           <ScavengerMarkers huntLocations={huntLocations} userProgress={userProgress}/>
+          {routeSegments.length > 0 && userProgress > 1 && (
+          <DirectionsRenderer
+            directions={{ 
+              ...directionsResponse,
+              routes: [{
+                legs: routeSegments.slice(0, userProgress - 1)  // Render up to current progress
+              }]
+            }}
+            options={{
+              suppressMarkers: true,
+              polylineOptions: {
+                strokeColor: "#69c261",          // Customize the route color (red)
+                strokeOpacity: 0.7,              // Customize the opacity of the route
+                strokeWeight: 5,                 // Customize the width of the route
+              },
+              suppressInfoWindows: true          // Disable default info windows
+            }}
+            />
+          )}
           </>
           }
         </MapContainer>
         <ScavengerList huntLocations={huntLocations} userProgress={userProgress}/>
+
         </>
       }
     </>

@@ -7,7 +7,6 @@ import PoiMarkers from "./PoiMarkers";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
 import RoutePlanner from "./RoutePlanner";
-import CustomMarker from "./CustomMarker";
 
 const center = { lat: 38.0406, lng: -84.5037 }
 
