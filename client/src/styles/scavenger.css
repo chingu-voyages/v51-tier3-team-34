@@ -4,15 +4,22 @@
 
 
 .display-section {
-   position: relative
+   display: flex;
+   position: relative;
+   height: calc(100vh - 100px);
 }
 
 .hunt-locations {
-    position: absolute
+    position: absolute;
+    overflow-y: auto;
+    height: 80vh;
+    padding: 10px;
+    width: 300px;
+    left: 10px;
 }
 
 .hunt-locations + div {
-    width: 70vw
+    width: 70vw;
 }
 
 @media (min-width: 800px) {
