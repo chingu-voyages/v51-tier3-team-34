@@ -3,7 +3,7 @@ import { MapContext } from "../context/MapContext"
 import MapContainer from "./MapContainer";
 import ScavengerProgress from "./ScavengerProgress"
 import ScavengerMarkers from "./ScavengerMarkers";
-import { Circle, DirectionsRenderer, Marker } from "@react-google-maps/api";
+import { Circle, DirectionsRenderer, Marker, useLoadScript } from "@react-google-maps/api";
 import ScavengerList from "./ScavengerList";
 import "../styles/scavenger.css"
 
@@ -48,6 +48,8 @@ const ScavengerHunt = () => {
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
   const [userProgress, setUserProgress] = useState(0) 
       // keeping track of how many location user has visited, will increase by 1 after a location is found (max: 10 - completed hunt)
+  const [userPoints, setUserPoints] = useState(0); // keeping track of user points
+
   const [directionsResponse, setDirectionsResponse] = useState(null)
   const [routeSegments, setRouteSegments] = useState([])
 
@@ -131,6 +133,30 @@ const ScavengerHunt = () => {
       setRouteSegments(segments);
     };
   }
+  const checkLocation = () => {
+    if (!userLocation || !huntLocations || userProgress >= huntLocations.length) return;
+    
+    const nextLocation = huntLocations[userProgress];
+    const userLatLng = new window.google.maps.LatLng(userLocation.lat, userLocation.lng);
+    const huntLatLng = new window.google.maps.LatLng(nextLocation.lat, nextLocation.lng);
+
+    const distance = window.google.maps.geometry.spherical.computeDistanceBetween(userLatLng, huntLatLng);
+
+    // If the user is within 50 meters of the next location, award points and update progress
+    if (distance <= 50) {
+      setUserProgress(userProgress + 1);
+      setUserPoints(userPoints + 20);
+      console.log(`Location verified: ${nextLocation.name}. Points: ${userPoints + 20}`);
+    }
+  };
+
+  // Check location on every geolocation update
+  useEffect(() => {
+    if (startHunt && userLocation) {
+      checkLocation();  
+    }
+  }, [userLocation]);
+
 
   return (
     <>
@@ -144,6 +170,7 @@ const ScavengerHunt = () => {
         :
         <div className="hunt-interface">
           <ScavengerProgress huntLocations={huntLocations} userProgress={userProgress}/>
+          <p>Points: {userPoints}</p>
 
           {/*BUTTON can be deleted or use if gps is not working well?*/}
           <button onClick={()=>{
