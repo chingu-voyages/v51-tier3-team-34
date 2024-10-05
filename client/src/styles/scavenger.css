@@ -14,10 +14,11 @@
     overflow-y: auto;
     height: 80vh;
     padding: 10px;
+    width: 300px;
 }
 
 .hunt-locations + div {
-    width: 70vw
+    width: 70vw;
 }
 
 @media (min-width: 800px) {
