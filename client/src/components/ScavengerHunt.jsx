@@ -189,7 +189,7 @@ const ScavengerHunt = () => {
             map. Once you are there, click on the button to start. Note will
             turn on GPS monitoring.
           </p>
-          <button onClick={handleClick}>I am here!</button>{" "}
+          <button onClick={handleClickHere}>I am here!</button>
           {/* Once clicked, can turn on GPS*/}
         </div>
       ) : (
@@ -215,10 +215,6 @@ const ScavengerHunt = () => {
       )}
       {huntLocations && (
         <div className="display-section">
-          <ScavengerList
-            huntLocations={huntLocations}
-            userProgress={userProgress}
-          />
           <MapContainer
             center={userLocation ? userLocation : center2}
             zoom={15}
@@ -297,6 +293,10 @@ const ScavengerHunt = () => {
               </>
             )}
           </MapContainer>
+          <ScavengerList
+            huntLocations={huntLocations}
+            userProgress={userProgress}
+          />
         </div>
       )}
     </>
