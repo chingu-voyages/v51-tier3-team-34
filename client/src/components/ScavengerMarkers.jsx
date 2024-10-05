@@ -24,7 +24,11 @@ const ScavengerMarkers = ({huntLocations, userProgress}) => {
         <Marker
         key={poi._id}
         position={poi.location}
-        icon={{ url: marker2, scaledSize: { width: 30, height: 30 } }}
+        icon={{ 
+          url: marker2, 
+          scaledSize: { width: 30, height: 30 }, 
+          anchor: new window.google.maps.Point(15, 30)
+        }}
         />
       ))}
     </>

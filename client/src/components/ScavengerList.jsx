@@ -5,8 +5,8 @@ const ScavengerList = ({huntLocations, userProgress}) => {
   const sortedLocations = huntLocations.sort((a, b) => a.routeIndex - b.routeIndex)
 
   return (
-    <>
-    <h3>Scavenger Hunt Locations</h3>
+    <div className='hunt-locations'>
+    <h2>Scavenger Hunt Locations</h2>
     <ul>
         {sortedLocations.map((location) => 
           <li key={location._id}>
@@ -15,7 +15,7 @@ const ScavengerList = ({huntLocations, userProgress}) => {
           </li>
         )}
     </ul> 
-    </>
+    </div>
   )
 }
 
