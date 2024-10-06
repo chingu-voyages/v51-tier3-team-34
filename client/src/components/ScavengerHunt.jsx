@@ -96,7 +96,7 @@ const ScavengerHunt = () => {
   // Use geolocation when the hunt starts
   useGeolocation(setUserLocation, 50, startHunt, mapRef, setHeading);
 
-  const handleClick = () =>{
+  const handleClickHere = () =>{
     setStartHunt(true)
     mapRef.current.panTo(center)
     mapRef.current.setZoom(16.3)
@@ -130,7 +130,6 @@ const ScavengerHunt = () => {
       });
       setDirectionsResponse(results);
       splitRouteIntoSegments(results);
-
     } catch (error) {
       console.error(error);
     }
@@ -147,7 +146,6 @@ const ScavengerHunt = () => {
           steps: legs[i].steps
         });
       }
-
       setRouteSegments(segments);
     };
   }
@@ -191,7 +189,7 @@ const ScavengerHunt = () => {
             map. Once you are there, click on the button to start. Note will
             turn on GPS monitoring.
           </p>
-          <button onClick={handleClick}>I am here!</button>{" "}
+          <button onClick={handleClickHere}>I am here!</button>
           {/* Once clicked, can turn on GPS*/}
         </div>
       ) : (
@@ -207,6 +205,7 @@ const ScavengerHunt = () => {
             onClick={() => {
               if (userProgress < 10) {
                 setUserProgress((prev) => prev + 1);
+                setUserPoints((prev) => prev + 20);
               }
             }}
           >
@@ -216,10 +215,6 @@ const ScavengerHunt = () => {
       )}
       {huntLocations && (
         <div className="display-section">
-          <ScavengerList
-            huntLocations={huntLocations}
-            userProgress={userProgress}
-          />
           <MapContainer
             center={userLocation ? userLocation : center2}
             zoom={15}
@@ -298,6 +293,10 @@ const ScavengerHunt = () => {
               </>
             )}
           </MapContainer>
+          <ScavengerList
+            huntLocations={huntLocations}
+            userProgress={userProgress}
+          />
         </div>
       )}
     </>

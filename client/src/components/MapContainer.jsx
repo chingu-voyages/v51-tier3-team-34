@@ -14,28 +14,32 @@ const MapContainer = ({children, center, zoom}) => {
       stylers: [{ visibility: "off" }],
     },
   ];
+
+  const containerStyle = {
+    width: '100%',
+    height: '100%',
+  };
  
   return (
-
-    <GoogleMap
-        // This is the map component that can be customized
-      mapContainerStyle={{
-        width: "70vh",
-        height: "70vh",
-        marginLeft: "26rem",
-      }}
-      center={center}
-      zoom={zoom}
-      mapId="90d6d90b957e9186" // This helps with styling default points of interest
-      gestureHandling={"cooperative"}
-      disableDefaultUI={false}
-      options={{ styles: mapStyles }}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-    >
-      {children}
-    </GoogleMap>
-
+    <div className="map-container">
+      <GoogleMap
+          // This is the map component that can be customized
+        mapContainerStyle={containerStyle}
+          // width: "70vh",
+          // height: "70vh",
+          // marginLeft: "26rem",
+        center={center}
+        zoom={zoom}
+        mapId="90d6d90b957e9186" // This helps with styling default points of interest
+        gestureHandling={"cooperative"}
+        disableDefaultUI={false}
+        options={{ styles: mapStyles }}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+      >
+        {children}
+      </GoogleMap>
+    </div>
   );
 };
 
