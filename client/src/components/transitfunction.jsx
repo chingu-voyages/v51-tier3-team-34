@@ -1,12 +1,12 @@
-import JSZip from 'jszip'
-import Papa from 'papaparse'
+import JSZip from "jszip";
+import Papa from "papaparse";
 import axios from "axios";
 
-export const fetchGTFSData = async ({setStops, setShapes}) => {
+export const fetchGTFSData = async ({ setStops, setShapes }) => {
   const response = await axios.get("/google_transit.zip", {
     responseType: "arraybuffer",
   });
-    
+
   const zip = new JSZip();
   const content = await zip.loadAsync(response.data);
 
@@ -20,10 +20,10 @@ export const fetchGTFSData = async ({setStops, setShapes}) => {
     skipEmptyLines: true, // This is important because there is an empty line in the data that throws an error
     complete: (results) => {
       const stopsData = results.data.map((stop) => ({
-          id: stop.stop_id,
-          name: stop.stop_name,
-          lat: parseFloat(stop.stop_lat),
-          lon: parseFloat(stop.stop_lon),
+        id: stop.stop_id,
+        name: stop.stop_name,
+        lat: parseFloat(stop.stop_lat),
+        lon: parseFloat(stop.stop_lon),
       }));
       setStops(stopsData);
     },
@@ -44,9 +44,55 @@ export const fetchGTFSData = async ({setStops, setShapes}) => {
         lng: parseFloat(shape.shape_pt_lon),
         sequence: parseInt(shape.shape_pt_sequence, 10),
       }));
-    	setShapes(shapesData);
+      setShapes(shapesData);
     },
   });
 };
 
 
+export function drawBusRoute(map, shapes, setPolylines) {
+  if (!map) {
+    console.log("Map instance is null or undefined.");
+    return;
+  }
+
+  // Grouping the shapes by their ID's in order to draw the correct route
+  const shapesByRoute = shapes.reduce((acc, shape) => {
+    if (!acc[shape.shape_id]) {
+      acc[shape.shape_id] = [];
+    }
+
+    acc[shape.shape_id].push({ lat: shape.lat, lng: shape.lng });
+    return acc;
+  }, {});
+
+  const polylinesArray = [];
+
+  // Draws each route
+  Object.keys(shapesByRoute).forEach((routeId) => {
+    const routePath = shapesByRoute[routeId];
+
+    const routePolyLine = new google.maps.Polyline({
+      path: routePath,
+      geodesic: true,
+      strokeColor: "red",
+      strokeOpacity: 0.1,
+      strokeWeight: 2,
+    });
+
+    // Adds the polylines to the map
+    routePolyLine.setMap(map);
+    polylinesArray.push(routePolyLine);
+
+    // Adds an info window to the displayed route when clicked
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<strong>${routeId}</strong>`,
+    });
+
+    routePolyLine.addListener("click", function () {
+      infoWindow.setPosition(routePath[0]); // Opens the window at the start of the route
+      infoWindow.open(map);
+    });
+  });
+  setPolylines(polylinesArray);
+}

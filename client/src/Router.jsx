@@ -6,6 +6,8 @@ import Quiz from "./components/Quiz";
 import ScavengerHunt from "./components/ScavengerHunt";
 import Achievements from "./components/Achievements";
 import Leaderboard from "./components/Leaderboard";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
 const Router = () => {
   const router = createBrowserRouter([
@@ -18,7 +20,7 @@ const Router = () => {
           element: <Home />,
         },
         {
-          path: "quiz",
+          path: "/quiz",
           element: <Quiz />,
         },
         {
@@ -32,6 +34,14 @@ const Router = () => {
         {
           path: "/leaderboard",
           element: <Leaderboard />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/signup",
+          element: <Signup />,
         },
       ],
     },

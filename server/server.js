@@ -3,7 +3,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
 const { ObjectId } = require("mongodb");
-
+const bcrypt = require('bcrypt')
 const { connectToDb, getDb } = require("./db");
 
 const app = express();
@@ -32,7 +32,7 @@ connectToDb((err) => {
       console.log(`Server started on port ${port}`);
     });
   } else {
-    console.error("Failed to connect to the databse.");
+    console.error("Failed to connect to the database.");
   }
 });
 
@@ -61,7 +61,35 @@ app.post("/api/landmarks", (req, res) => {
       res.status(201).json(result);
     })
     .catch((err) => {
-      res.status(500).json({ err: "Could not create a new landmark document" });
+      res.status(500).json({ error: "Could not create a new landmark document" });
+    });
+});
+
+// Get all scavenger hunt locations
+app.get("/api/hunt-locations", (req, res) => {
+  let huntLocations = [];
+  db.collection("huntLocations")
+    .find()
+    .forEach((location) => huntLocations.push(location))
+    .then(() => {
+      res.status(200).json(huntLocations);
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Could not fetch" });
+    });
+});
+
+// Add a scavenger hunt location
+app.post("/api/hunt-locations", (req, res) => {
+  const huntLocation = req.body;
+
+  db.collection("huntLocations")
+    .insertOne(huntLocation)
+    .then((result) => {
+      res.status(201).json(result);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: "Could not create a new hunt location document" });
     });
 });
 
@@ -89,7 +117,7 @@ app.post("/api/questions", (req, res) => {
       res.status(201).json(result);
     })
     .catch((err) => {
-      res.status(500).json({ err: "Could not create a new question document" });
+      res.status(500).json({ error: "Could not create a new question document" });
     });
 });
 
@@ -113,3 +141,62 @@ app.put("/api/questions/:id", (req, res) => {
       res.status(500).json({ error: "Could not update the question" });
     });
 });
+
+
+// Add an user
+app.post("/api/signup", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Check if the email or password is missing
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    // Check if user already exists
+    const userExists = await db.collection("users").findOne({ email });
+    if (userExists) {
+      return res.status(409).json({ error: "User with this email already exists" });
+    }
+
+    // Hash password
+    const hash = await bcrypt.hash(password, 10);
+    const newUser = { email, password: hash, profileImg: "", point: 0}
+    
+    // Insert the new user into the database
+    const result = await db.collection("users").insertOne(newUser);
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(500).json({ err: "Could not create a new user" });
+  }
+});
+
+// Login an user
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Check if the email or password is missing
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+  
+    const user = await db.collection("users").findOne({email})
+    console.log(user)
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Compare the provided password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+     return res.status(401).json({ error: "Invalid credentials" });
+    }
+  
+    // If successful, you can create a session, JWT, or simply return a success message
+    res.status(200).json({ message: "Login successful", user });
+
+  } catch (err) {
+    res.status(500).json({ error: "An error occurred during login" });
+  }
+})
