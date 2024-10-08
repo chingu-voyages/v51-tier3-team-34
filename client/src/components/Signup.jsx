@@ -62,6 +62,8 @@ const Signup = () => {
     },
     validationSchema: formSchema,
     onSubmit: submitform,
+    validateOnChange: false,
+    validateOnBlur: false
   });
 
   async function submitform(values) {
@@ -98,6 +100,7 @@ const Signup = () => {
   const displayErrors = (error) => {
     return error ? <p style={{ color: "red" }}>{error}</p> : null;
   };
+  
   return (
     <div className="formbody">
       <form onSubmit={formik.handleSubmit}>

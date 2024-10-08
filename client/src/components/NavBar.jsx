@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import "../styles/nav-bar.css";
 
 const NavBar = () => {
+  const { currentUser } = useContext(UserContext)
   const [navOpen, setNavOpen] = useState(false);
+
   return (
     <>
       <header>
@@ -41,7 +44,7 @@ const NavBar = () => {
             </ul>
           </nav>
           <button className="auth-btn">
-            <Link to="/login">Login</Link>
+            {currentUser ? "Logout" : <Link to="/login">Login</Link>}
           </button>
         </div>
       </header>
@@ -68,7 +71,7 @@ const NavBar = () => {
             </li>
           </ul>
         </nav>
-        <button className="auth-btn">Login</button>
+        {currentUser ? "Logout" : <Link to="/login">Login</Link>}
       </div>
       {navOpen && (
         <div className="overlay" onClick={() => setNavOpen(false)}></div>

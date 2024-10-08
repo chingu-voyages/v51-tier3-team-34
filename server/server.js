@@ -3,7 +3,8 @@ const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
 const { ObjectId } = require("mongodb");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 const { connectToDb, getDb } = require("./db");
 
 const app = express();
@@ -80,8 +81,10 @@ app.get("/api/hunt-locations", (req, res) => {
 });
 
 // Add a scavenger hunt location
-app.post("/api/hunt-locations", (req, res) => {
+app.post("/api/hunt-locations", authToken, (req, res) => {
   const huntLocation = req.body;
+  const user = req.user
+  console.log("scavenger hunt user", user)
 
   db.collection("huntLocations")
     .insertOne(huntLocation)
@@ -182,7 +185,7 @@ app.post("/api/login", async (req, res) => {
     }
   
     const user = await db.collection("users").findOne({email})
-    console.log(user)
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -194,9 +197,24 @@ app.post("/api/login", async (req, res) => {
     }
   
     // If successful, you can create a session, JWT, or simply return a success message
-    res.status(200).json({ message: "Login successful", user });
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    res.status(200).json({ accessToken: accessToken, user: user });
 
   } catch (err) {
     res.status(500).json({ error: "An error occurred during login" });
   }
 })
+
+// MiddleWare
+function authToken(req, res, next) {
+  const authHeader = req.headers['Authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null ) return res.sendStatus(401).json({message: "No auth token, access denied"})
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403).json({message: " Token verification failed"})
+    res.user = user
+    next()  
+  })  
+}
+

@@ -4,6 +4,7 @@ import Router from "./Router.jsx";
 import { MapProvider } from "./context/MapContext.jsx"
 import { LoadScriptNext } from "@react-google-maps/api";
 import "./index.css";
+import { UserProvider } from "./context/UserContext.jsx";
 
 const libraries = ["places"]
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       loadingElement={<div>Loading...</div>} // Provide loading element for better UX
     >
       <MapProvider>
-        <Router />
+        <UserProvider>
+          <Router />
+        </UserProvider>
       </MapProvider>
     </LoadScriptNext>
   </React.StrictMode>,
