@@ -36,13 +36,13 @@ const Home = () => {
 
   useEffect(() => {
     if (!mapInstance) {
-      console.log("Map instance is NOT ready yet...");
+      // console.log("Map instance is NOT ready yet...");
       return;
     }
 
     const delayMapInstance = setTimeout(() => {
       if (shapes.length > 0) {
-        console.log("drawing bus route with map instance: ");
+        // console.log("drawing bus route with map instance: ");
         drawBusRoute(mapInstance, shapes, setPolylines);
       }
     }, 1000);
