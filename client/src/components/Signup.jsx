@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { UserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const apiUrl =
   import.meta.env.MODE === "development"
@@ -9,6 +11,8 @@ const apiUrl =
 
 const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
+  const { currentUser, login } = useContext(UserContext)
+  const navigate = useNavigate()
 
   const formSchema = yup.object().shape({
     email: yup
@@ -67,8 +71,6 @@ const Signup = () => {
   });
 
   async function submitform(values) {
-    console.log(values);
-
     try {
       const response = await fetch(`${apiUrl}/api/signup`, {
         method: "POST",
@@ -88,8 +90,11 @@ const Signup = () => {
       // Parse the response data for successful signup
       const data = await response.json();
       setErrorMessage(""); // Clear any previous errors
-      console.log("Signup successful", data);
-      // Handle signup success, like redirecting or showing success message
+      login(data);
+      navigate('/')
+      alert('Thanks for signing up!')
+
+
     } catch (err) {
       // Handle errors, either from the response or network issues
       setErrorMessage(err.message || "An unexpected error occurred");

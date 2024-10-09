@@ -164,11 +164,20 @@ app.post("/api/signup", async (req, res) => {
 
     // Hash password
     const hash = await bcrypt.hash(password, 10);
-    const newUser = { email, password: hash, profileImg: "", point: 0}
     
     // Insert the new user into the database
-    const result = await db.collection("users").insertOne(newUser);
-    res.status(201).json(result);
+    const result = await db.collection("users").insertOne({
+      email,
+      password: hash,
+      profileImg: "",
+      points: 0
+    });
+
+    if (result.acknowledged) {
+      const newUser = await db.collection("users").findOne({_id: result.insertedId });
+      const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
+      res.status(201).json({ accessToken: accessToken, user: newUser });
+    }
   } catch (err) {
     res.status(500).json({ err: "Could not create a new user" });
   }

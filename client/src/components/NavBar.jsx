@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
+import ProtectedLink from "./ProtectedLink";
 import logo from "../assets/logo.png";
 import "../styles/nav-bar.css";
 
@@ -33,19 +34,19 @@ const NavBar = () => {
           <nav>
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <ProtectedLink to={"/"} children={"Home"}/>
               </li>
               <li>
-                <Link to="/quiz">Quiz Challenge</Link>
+                <ProtectedLink to={"/quiz"} children={"Quiz Challenge"}/>
               </li>
               <li>
-                <Link to="/scavenger-hunt">Scavenger Hunt</Link>
+                <ProtectedLink to={"/scavenger-hunt"} children={"Scavenger Hunt"}/>
               </li>
               <li>
-                <Link to="/achievements">Achievements</Link>
+                <ProtectedLink to={"/achievements"} children={"Achievements"}/>
               </li>
               <li>
-                <Link to="/leaderboard">Leaderboard</Link>
+                <ProtectedLink to={"/leaderboard"} children={"Leaderboard"}/>
               </li>
               {currentUser &&
                 <li>
@@ -66,19 +67,19 @@ const NavBar = () => {
           </div>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <ProtectedLink to={"/"} children={"Home"}/>
             </li>
             <li>
-              <Link to="/quiz">Quiz Challenge</Link>
+              <ProtectedLink to={"/quiz"} children={"Quiz Challenge"}/>
             </li>
             <li>
-              <Link to="/scavenger-hunt">Scavenger Hunt</Link>
+              <ProtectedLink to={"/scavenger-hunt"} children={"Scavenger Hunt"}/>
             </li>
             <li>
-              <Link to="/achievements">Achievements</Link>
+              <ProtectedLink to={"/achievements"} children={"Achievements"}/>
             </li>
             <li>
-              <Link to="/leaderboard">Leaderboard</Link>
+              <ProtectedLink to={"/leaderboard"} children={"Leaderboard"}/>
             </li>
             {currentUser &&
               <li>
