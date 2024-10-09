@@ -47,10 +47,15 @@ const NavBar = () => {
               <li>
                 <Link to="/leaderboard">Leaderboard</Link>
               </li>
+              {currentUser &&
+                <li>
+                  <Link to="/profile">Profile Settings</Link>
+                </li>
+              }
             </ul>
           </nav>
           <button className="auth-btn">
-            {currentUser ? <button onClick={handleLogout}>Logout</button> : <Link to="/login">Login</Link>}
+            {currentUser ? <div onClick={handleLogout}>Logout</div> : <Link to="/login">Login</Link>}
           </button>
         </div>
       </header>
@@ -75,9 +80,14 @@ const NavBar = () => {
             <li>
               <Link to="/leaderboard">Leaderboard</Link>
             </li>
+            {currentUser &&
+              <li>
+                <Link to="/profile">Profile Settings</Link>
+              </li>
+            }
           </ul>
         </nav>
-        {currentUser ? <button onClick={handleLogout}>Logout</button> : <Link to="/login">Login</Link>}
+        {currentUser ? <div onClick={handleLogout}>Logout</div> : <Link to="/login">Login</Link>}
       </div>
       {navOpen && (
         <div className="overlay" onClick={() => setNavOpen(false)}></div>
