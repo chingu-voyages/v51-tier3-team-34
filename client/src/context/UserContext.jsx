@@ -36,10 +36,18 @@ const UserProvider = ({ children }) => {
     });
   };
 
+  const logout = () => {
+    setAuth({
+      currentUser: null,
+      token: null,
+    });
+    sessionStorage.removeItem("currentUser");
+    sessionStorage.removeItem("token");
+  };
 
   // spreading "..auth" - allow the properties of auth to be added directly to value
   return (
-    <UserContext.Provider value={{ ...auth, login }}>  
+    <UserContext.Provider value={{ ...auth, login, logout }}>  
       {children}
     </UserContext.Provider>
   );
@@ -47,38 +55,9 @@ const UserProvider = ({ children }) => {
 
 export { UserContext, UserProvider };
 
-
-// const UserProvider = ({children}) => {
-//     const [currentUser, setCurrentUser] = useState(getInitialUser);
-//     const [token, setToken ] = useState(getInitialToken)
-
-//     useEffect(() => {
-//       sessionStorage.setItem("currentUser", JSON.stringify(currentUser))
-//     }, [currentUser])
-
-//     useEffect(() => {
-//       sessionStorage.setItem("token", JSON.stringify(token))
-//     }, [token])
-  
-//     const login = (data) => {
-//       console.log("login from usecontext", data.accessToken)
-//       setToken(data.accessToken)
-//       setCurrentUser(data.user)
-//     }
-  
-//     const logout = () => {
-//       fetch("/api/logout", {
-//         method: "DELETE",
-//         })
-//         .then(() => setCurrentUser(null))
-//     }
-
-//     return (
-//         <UserContext.Provider 
-//           value={{currentUser, login, logout}}>
-//             { children }
-//         </UserContext.Provider>
-//       )
-//   }
-  
-// export { UserContext, UserProvider }
+// We do not have time for this, but nice to have for security.
+//3. Optional Backend Logout (Token Invalidation)
+// Token invalidation: You typically don't need to handle anything on the backend for JWT-based logout because JWT is stateless. 
+// However, if you want to explicitly "invalidate" a token (e.g., by blacklisting it or tracking it in a database), you'd need to 
+// implement a token blacklist mechanism on the backend. This is optional but can add another layer of security, 
+// especially for sensitive applications.
