@@ -53,7 +53,7 @@ app.get("/api/landmarks", (req, res) => {
 });
 
 // Add a landmark
-app.post("/api/landmarks", authToken, (req, res) => {
+app.post("/api/landmarks", (req, res) => {
   const landmark = req.body;
 
   db.collection("landmarks")
@@ -67,7 +67,7 @@ app.post("/api/landmarks", authToken, (req, res) => {
 });
 
 // Get all scavenger hunt locations
-app.get("/api/hunt-locations", authToken, (req, res) => {
+app.get("/api/hunt-locations", (req, res) => {
   let huntLocations = [];
   db.collection("huntLocations")
     .find()
@@ -81,10 +81,8 @@ app.get("/api/hunt-locations", authToken, (req, res) => {
 });
 
 // Add a scavenger hunt location
-app.post("/api/hunt-locations", authToken, (req, res) => {
+app.post("/api/hunt-locations", (req, res) => {
   const huntLocation = req.body;
-  const user = req.user
-  console.log("scavenger hunt user", user)
 
   db.collection("huntLocations")
     .insertOne(huntLocation)
@@ -97,7 +95,7 @@ app.post("/api/hunt-locations", authToken, (req, res) => {
 });
 
 // Get all the questions
-app.get("/api/questions", authToken, (req, res) => {
+app.get("/api/questions", (req, res) => {
   let questions = [];
   db.collection("questions")
     .find()
@@ -111,7 +109,7 @@ app.get("/api/questions", authToken, (req, res) => {
 });
 
 // Add a question
-app.post("/api/questions", authToken, (req, res) => {
+app.post("/api/questions", (req, res) => {
   const question = req.body;
 
   db.collection("questions")
@@ -125,7 +123,7 @@ app.post("/api/questions", authToken, (req, res) => {
 });
 
 // Update a question by ID
-app.put("/api/questions/:id", authToken, (req, res) => {
+app.put("/api/questions/:id", (req, res) => {
   const questionId = req.params.id;
   const updatedQuestion = req.body;
 
@@ -215,7 +213,9 @@ app.post("/api/login", async (req, res) => {
 })
 
 // MiddleWare to pass to the routes that needs to be protected
+// not added, if do want backend routes to be protected, will need to add headers and token info in frontend during fetch
 function authToken(req, res, next) {
+  console.log("from authToken", req.headers)
   const authHeader = req.headers['Authorization']
   const token = authHeader && authHeader.split(' ')[1]
   if (token == null ) return res.status(401).json({message: "No auth token, access denied"})
