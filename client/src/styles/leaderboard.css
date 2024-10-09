@@ -1,0 +1,74 @@
+/* Leaderboard.css */
+.leaderboard {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.full-leaderboard-btn {
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.leaderboard-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.rank {
+  width: 5%;
+  font-weight: bold;
+}
+
+.profile-pic {
+  margin-left: 10px;
+}
+
+.profile-pic img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.user-name {
+  width: 30%;
+  margin-left: 20px;
+  flex-grow: 1;
+}
+
+.score {
+  width: 30%;
+  text-align: right;
+}
+
+.points {
+  font-weight: normal;
+  font-size: 12px;
+}
+
+tbody {
+  max-height: 300px;
+  overflow-y: auto;
+}
