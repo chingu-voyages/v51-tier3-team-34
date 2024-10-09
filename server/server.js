@@ -53,7 +53,7 @@ app.get("/api/landmarks", (req, res) => {
 });
 
 // Add a landmark
-app.post("/api/landmarks", (req, res) => {
+app.post("/api/landmarks", authToken, (req, res) => {
   const landmark = req.body;
 
   db.collection("landmarks")
@@ -67,7 +67,7 @@ app.post("/api/landmarks", (req, res) => {
 });
 
 // Get all scavenger hunt locations
-app.get("/api/hunt-locations", (req, res) => {
+app.get("/api/hunt-locations", authToken, (req, res) => {
   let huntLocations = [];
   db.collection("huntLocations")
     .find()
@@ -97,7 +97,7 @@ app.post("/api/hunt-locations", authToken, (req, res) => {
 });
 
 // Get all the questions
-app.get("/api/questions", (req, res) => {
+app.get("/api/questions", authToken, (req, res) => {
   let questions = [];
   db.collection("questions")
     .find()
@@ -111,7 +111,7 @@ app.get("/api/questions", (req, res) => {
 });
 
 // Add a question
-app.post("/api/questions", (req, res) => {
+app.post("/api/questions", authToken, (req, res) => {
   const question = req.body;
 
   db.collection("questions")
@@ -125,7 +125,7 @@ app.post("/api/questions", (req, res) => {
 });
 
 // Update a question by ID
-app.put("/api/questions/:id", (req, res) => {
+app.put("/api/questions/:id", authToken, (req, res) => {
   const questionId = req.params.id;
   const updatedQuestion = req.body;
 
@@ -214,14 +214,14 @@ app.post("/api/login", async (req, res) => {
   }
 })
 
-// MiddleWare
+// MiddleWare to pass to the routes that needs to be protected
 function authToken(req, res, next) {
   const authHeader = req.headers['Authorization']
   const token = authHeader && authHeader.split(' ')[1]
-  if (token == null ) return res.sendStatus(401).json({message: "No auth token, access denied"})
+  if (token == null ) return res.status(401).json({message: "No auth token, access denied"})
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403).json({message: " Token verification failed"})
+    if (err) return res.status(403).json({message: " Token verification failed"})
     res.user = user
     next()  
   })  
