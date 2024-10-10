@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from "react";
+import { UserContext } from "../context/UserContext";
 
 const MapButtons = ({
   togglePolyLines,
@@ -7,13 +8,16 @@ const MapButtons = ({
   showRoute,
   setShowRoute,
 }) => {
+  const { currentUser } = useContext(UserContext)
+
   return (
     <div>
-      <button onClick={togglePolyLines}>
+      <button disabled={!currentUser} onClick={togglePolyLines}>
         {visibleTransit ? "Hide Transit Map" : "Show Transit Map"}
       </button>
 
       <button
+        disabled={!currentUser}
         onClick={() => {
           setShowRoute(!showRoute);
           clearSearch();

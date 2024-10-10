@@ -31,7 +31,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
       travelMode: travelMode,
     });
 
-    console.log("Directions response:", results);
+    // console.log("Directions response:", results);
 
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);

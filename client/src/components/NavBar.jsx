@@ -1,10 +1,20 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import { Link, useNavigate } from "react-router-dom";
+import ProtectedLink from "./ProtectedLink";
 import logo from "../assets/logo.png";
 import "../styles/nav-bar.css";
 
 const NavBar = () => {
+  const { currentUser, logout } = useContext(UserContext)
+  const navigate = useNavigate()
   const [navOpen, setNavOpen] = useState(false);
+
+  const handleLogout = () =>{
+    logout();
+    navigate("/")
+  }
+
   return (
     <>
       <header>
@@ -24,24 +34,29 @@ const NavBar = () => {
           <nav>
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <ProtectedLink to={"/"} children={"Home"}/>
               </li>
               <li>
-                <Link to="/quiz">Quiz Challenge</Link>
+                <ProtectedLink to={"/quiz"} children={"Quiz Challenge"}/>
               </li>
               <li>
-                <Link to="/scavenger-hunt">Scavenger Hunt</Link>
+                <ProtectedLink to={"/scavenger-hunt"} children={"Scavenger Hunt"}/>
               </li>
               <li>
-                <Link to="/achievements">Achievements</Link>
+                <ProtectedLink to={"/achievements"} children={"Achievements"}/>
               </li>
               <li>
-                <Link to="/leaderboard">Leaderboard</Link>
+                <ProtectedLink to={"/leaderboard"} children={"Leaderboard"}/>
               </li>
+              {currentUser &&
+                <li>
+                  <Link to="/profile">Profile Settings</Link>
+                </li>
+              }
             </ul>
           </nav>
           <button className="auth-btn">
-            <Link to="/login">Login</Link>
+            {currentUser ? <div onClick={handleLogout}>Logout</div> : <Link to="/login">Login</Link>}
           </button>
         </div>
       </header>
@@ -52,23 +67,28 @@ const NavBar = () => {
           </div>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <ProtectedLink to={"/"} children={"Home"}/>
             </li>
             <li>
-              <Link to="/quiz">Quiz Challenge</Link>
+              <ProtectedLink to={"/quiz"} children={"Quiz Challenge"}/>
             </li>
             <li>
-              <Link to="/scavenger-hunt">Scavenger Hunt</Link>
+              <ProtectedLink to={"/scavenger-hunt"} children={"Scavenger Hunt"}/>
             </li>
             <li>
-              <Link to="/achievements">Achievements</Link>
+              <ProtectedLink to={"/achievements"} children={"Achievements"}/>
             </li>
             <li>
-              <Link to="/leaderboard">Leaderboard</Link>
+              <ProtectedLink to={"/leaderboard"} children={"Leaderboard"}/>
             </li>
+            {currentUser &&
+              <li>
+                <Link to="/profile">Profile Settings</Link>
+              </li>
+            }
           </ul>
         </nav>
-        <button className="auth-btn">Login</button>
+        {currentUser ? <div onClick={handleLogout}>Logout</div> : <Link to="/login">Login</Link>}
       </div>
       {navOpen && (
         <div className="overlay" onClick={() => setNavOpen(false)}></div>

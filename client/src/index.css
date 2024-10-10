@@ -61,3 +61,8 @@ button {
 button:hover {
   border-color: #aaa;
 }
+
+button:disabled, input:disabled {
+  color: grey;
+  cursor: not-allowed
+}
