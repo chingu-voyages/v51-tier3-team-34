@@ -53,7 +53,7 @@ const ForgotPassword = () => {
   return (
 		<div className="formbody">
 		<form onSubmit={formik.handleSubmit}>
-			<h2>Reset Your Password</h2>
+			<h2>Forgot Your Password</h2>
 			<div className="container">
 				<label htmlFor="email">
 					<p>Please enter the email address you would like password reset information be sent to.</p>
@@ -66,8 +66,8 @@ const ForgotPassword = () => {
 					onChange={formik.handleChange}
 				/>
 				{displayErrors(formik.errors.email)}
-				{resMessage && displayErrors(resMessage)}
 			</div>
+			{resMessage && displayErrors(resMessage)}
 			<button type="submit">Request Reset Link</button>
 			<p>Return to <span><Link to="/login">Login</Link></span></p>
 		</form>

@@ -59,7 +59,8 @@ const Signup = () => {
       .required("Password is required"),
     confirmpassword: yup
       .string()
-      .oneOf([yup.ref("password")], "Passwords must match"),
+      .oneOf([yup.ref("password")], "Passwords must match")
+      .required(),
   });
 
   const formik = useFormik({

@@ -327,5 +327,34 @@ app.post("/api/reset", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+})
 
+app.post("/api/reset/:token", async (req, res) => {
+  try {
+    const { password } = req.body
+    const token = req.params.token
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // If the token is invalid, return an error
+    if (!decodedToken) {
+      return res.status(401).json({message: "Invalid token"})
+    }
+
+    // Hash password
+    const hash = await bcrypt.hash(password, 10);
+    const result = await db.collection("users").updateOne(
+      { _id: new ObjectId(decodedToken.userId) },
+      { $set: { password: hash }}
+    );
+
+    // const user = await db.collection("users").findOne({_id: new ObjectId(decodedToken.userId)})
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ message: "Password changed "})
+    } else {
+      return res.status(401).json({ message: "User not found or password not changed"})
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 })
