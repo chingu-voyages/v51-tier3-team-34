@@ -152,11 +152,11 @@ app.put("/api/questions/:id", (req, res) => {
 // Add an user
 app.post("/api/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
     // Check if the email or password is missing
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: "Email, username and password are required" });
     }
 
     // Check if user already exists
@@ -167,6 +167,13 @@ app.post("/api/signup", async (req, res) => {
         .json({ error: "User with this email already exists" });
     }
 
+    const nameExists = await db.collection("users").findOne({ name });
+    if (nameExists) {
+      return res
+        .status(409)
+        .json({ error: "User with this username already exists" });
+    }
+
     // Hash password
     const hash = await bcrypt.hash(password, 10);
     
@@ -174,7 +181,9 @@ app.post("/api/signup", async (req, res) => {
     const result = await db.collection("users").insertOne({
       email,
       password: hash,
-      profileImg: "",
+      name,
+      img: "",
+      badges: [],
       points: 0
     });
 
