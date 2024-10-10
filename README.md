@@ -39,6 +39,8 @@ VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not n
 
 ACCESS_TOKEN_SECRET: ####
 
+SENDGRID_API_KEY: ####
+
 ..
 
 ## Team Documents
