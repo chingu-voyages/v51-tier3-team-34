@@ -122,6 +122,10 @@ const Login = () => {
         <p>
           Not a current user? <Link to="/signup">Sign Up</Link>
         </p>
+        
+        <p>
+          Forgot password? <Link to="/reset">Reset Password</Link>
+        </p>
       </form>
     </div>
   );
