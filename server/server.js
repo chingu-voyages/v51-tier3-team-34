@@ -237,7 +237,7 @@ app.get("/api/users/ranking", async (req, res) => {
     const users = await db
       .collection("users")
       .find()
-      .sort({ points: -1 }) // Sort them by points in descending order (-1)
+      .sort({ points: -1, name: 1 }) // Sort them by points in descending order (-1) and by name alphabetically (1)
       .toArray(); // Convert the cursor to an array
 
     res.status(200).json(users);
