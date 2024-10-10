@@ -12,11 +12,6 @@
   margin-bottom: 20px;
 }
 
-h2 {
-  font-size: 24px;
-  font-weight: bold;
-}
-
 .full-leaderboard-btn {
   padding: 8px 12px;
   border-radius: 4px;
@@ -44,6 +39,11 @@ h2 {
 .rank {
   width: 5%;
   font-weight: bold;
+}
+
+.ranking-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .profile-pic {

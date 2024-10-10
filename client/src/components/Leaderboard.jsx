@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import images from "../assets/avatar/images";
 import "../styles/leaderboard.css";
+import ranking1 from "../assets/ranking/ranking1.png";
+import ranking2 from "../assets/ranking/ranking2.png";
+import ranking3 from "../assets/ranking/ranking3.png";
 
 const Leaderboard = () => {
   const [users, setUsers] = useState([]);
@@ -52,6 +55,13 @@ const Leaderboard = () => {
 
   const displayedUsers = showFullList ? users : users.slice(0, 5);
 
+  const getRankingIcon = (index) => {
+    if (index === 0) return <img src={ranking1} alt="Top 1" className="ranking-icon" />;
+    if (index === 1) return <img src={ranking2} alt="Top 2" className="ranking-icon" />;
+    if (index === 2) return <img src={ranking3} alt="Top 3" className="ranking-icon" />;
+    return index + 1; 
+  };
+
   return (
     <div className="leaderboard">
       <div className="leaderboard-header">
@@ -64,7 +74,7 @@ const Leaderboard = () => {
         <tbody>
           {displayedUsers.map((user, index) => (
             <tr key={user._id} className={`leaderboard-row ${index < 5 ? "top-5" : ""}`}>
-              <td className="rank">{index + 1}</td>
+              <td className="rank">{getRankingIcon(index)}</td>
               <td className="profile-pic">
                 <img src={images[user.img]} alt="Profile Picture" />
               </td>
