@@ -12,11 +12,6 @@
   margin-bottom: 20px;
 }
 
-h2 {
-  font-size: 24px;
-  font-weight: bold;
-}
-
 .full-leaderboard-btn {
   padding: 8px 12px;
   border-radius: 4px;
@@ -37,9 +32,18 @@ h2 {
   border-bottom: 1px solid #ddd;
 }
 
+.leaderboard-row.top-5 {
+  background-color: #d4edda; /* Highlight top 5 with green */
+}
+
 .rank {
   width: 5%;
   font-weight: bold;
+}
+
+.ranking-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .profile-pic {
@@ -71,4 +75,10 @@ h2 {
 tbody {
   max-height: 300px;
   overflow-y: auto;
+}
+
+@media (min-width: 800px) {
+  .leaderboard {
+    max-width: 700px;
+  }
 }

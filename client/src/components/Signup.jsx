@@ -19,6 +19,10 @@ const Signup = () => {
       .string()
       .required("Email is required")
       .email("Please provide a valid email"),
+    name: yup
+      .string()
+      .min(3)
+      .required(),
     password: yup
       .string()
       .min(8, "Password must be at least 8 characters long")
@@ -61,6 +65,7 @@ const Signup = () => {
   const formik = useFormik({
     initialValues: {
       email: "",
+      name: "",
       password: "",
       confirmpassword: "",
     },
@@ -122,6 +127,17 @@ const Signup = () => {
             onChange={formik.handleChange}
           />
           {displayErrors(formik.errors.email)}
+
+          <label htmlFor="name">
+            <strong>Username (case-sensitive) </strong>
+          </label>
+          <input
+            type="text"
+            id="name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+          />
+          {displayErrors(formik.errors.name)}
 
           <p>
             Password need to be 8-12 characters. Must include a mix of uppercase
