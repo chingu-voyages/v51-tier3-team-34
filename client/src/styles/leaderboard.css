@@ -1,4 +1,3 @@
-/* Leaderboard.css */
 .leaderboard {
   width: 100%;
   max-width: 700px;
@@ -32,18 +31,21 @@
   border-bottom: 1px solid #ddd;
 }
 
-.leaderboard-row.top-5 {
-  background-color: #d4edda; /* Highlight top 5 with green */
+.highlight-green {
+  background-color: #d4edda;
+  color: #155724;
 }
 
 .rank {
   width: 5%;
   font-weight: bold;
+  text-align: center;
 }
 
 .ranking-icon {
   width: 24px;
   height: 24px;
+  margin-left: -8px;
 }
 
 .profile-pic {
