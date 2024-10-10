@@ -20,7 +20,7 @@ const Footer = () => {
           </div>
           <div>
             <b>Email: </b>
-            <p>support@geodashworld.com</p>
+            <p>geodashworld@outlook.com</p>
           </div>
         </div>
       </div>

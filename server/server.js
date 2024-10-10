@@ -6,6 +6,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { connectToDb, getDb } = require("./db");
+const { sendThankYouEmail } = require("./mail")
 
 const app = express();
 app.use(express.json());
@@ -190,6 +191,8 @@ app.post("/api/signup", async (req, res) => {
     if (result.acknowledged) {
       const newUser = await db.collection("users").findOne({_id: result.insertedId });
       const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
+      console.log(newUser)
+      sendThankYouEmail(newUser)
       res.status(201).json({ accessToken: accessToken, user: newUser });
     }
   } catch (err) {

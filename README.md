@@ -39,6 +39,8 @@ VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not n
 
 ACCESS_TOKEN_SECRET: ####
 
+SENDGRID_API_KEY: ####
+
 ..
 ## TEST USERS
 Here are some test emails/password you can use to login without needing to signup:
