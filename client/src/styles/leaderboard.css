@@ -39,11 +39,13 @@
 .rank {
   width: 5%;
   font-weight: bold;
+  text-align: center;
 }
 
 .ranking-icon {
   width: 24px;
   height: 24px;
+  margin-left: -8px;
 }
 
 .profile-pic {
