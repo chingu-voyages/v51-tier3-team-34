@@ -28,8 +28,8 @@ const Leaderboard = () => {
 
     fetchUsers();
 
-    // Set up polling for real-time updates (every 1 seconds)
-    const intervalId = setInterval(fetchUsers, 1000);
+    // Set up polling for real-time updates (every 5 seconds)
+    const intervalId = setInterval(fetchUsers, 5000);
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId);
