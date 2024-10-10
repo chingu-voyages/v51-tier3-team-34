@@ -1,31 +1,25 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail')
 
 
-module_exports = {
-    sendThankYouEmail: async (user) => {
-        const transporter = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525,
-            auth: {
-                user: "33f78c878d2848",
-                pass: "********03ba",
-            },
-        });
-        
-        console.log(user)
-        console.log(user.email)
-        const mailOptions = {
-          from: 'support@geodashworld.com', // Sender address (doesn't have to be real)
-          to: user.email, // Recipient email
-          subject: 'Thank You for Signing Up!',
-          text: `Hi ${user.email},\n\nThank you for signing up to our service! We're excited to have you onboard.\n\nBest regards,\nThe Team`,
-        };
-      
-        try {
-          await transporter.sendMail(mailOptions);
-          console.log('Thank you email sent');
-        } catch (error) {
-          console.error('Error sending email:', error);
-        }
+module.exports = {
+  sendThankYouEmail: async (user) => {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+    const mailOptions = {
+      from: 'geodashworld@outlook.com', // Sender address (doesn't have to be real)
+      to: user.email, // Recipient email
+      subject: 'Thank You for Signing Up!',
+      text: `Hi ${user.email},\n\nThank you for joining GeoDash World! We're excited to have you onboard and hope you enjoy discovering your city in a fun and creative way. We can’t wait to see what you achieve. Your support means a lot to us!
+        \n
+        \nBest regards,
+        \nThe GeoDash World Team`,
+      };
+
+      try {
+        await sgMail.send(mailOptions)
+        console.log('Thank you email sent');
+      } catch (error) {
+        console.error('Error sending email:', error);
       }
+    }
 }

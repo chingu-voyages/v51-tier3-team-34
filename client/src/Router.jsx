@@ -8,6 +8,7 @@ import Achievements from "./components/Achievements";
 import Leaderboard from "./components/Leaderboard";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import Profile from "./components/Profile"
 
 const Router = () => {
   const router = createBrowserRouter([
@@ -34,6 +35,10 @@ const Router = () => {
         {
           path: "/leaderboard",
           element: <Leaderboard />,
+        },
+        {
+          path: "/profile",
+          element: <Profile />,
         },
         {
           path: "/login",

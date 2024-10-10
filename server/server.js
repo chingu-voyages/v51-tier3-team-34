@@ -183,7 +183,7 @@ app.post("/api/signup", async (req, res) => {
       const newUser = await db.collection("users").findOne({_id: result.insertedId });
       const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
       console.log(newUser)
-      // sendThankYouEmail(newUser)
+      sendThankYouEmail(newUser)
       res.status(201).json({ accessToken: accessToken, user: newUser });
     }
   } catch (err) {
