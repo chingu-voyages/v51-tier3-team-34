@@ -8,7 +8,7 @@ import Achievements from "./components/Achievements";
 import Leaderboard from "./components/Leaderboard";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Profile from "./components/Profile"
+import Profile from "./components/Profile";
 
 const Router = () => {
   const router = createBrowserRouter([
