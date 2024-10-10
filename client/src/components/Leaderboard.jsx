@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import images from "../assets/avatar/images";
 import "../styles/leaderboard.css";
 
 const Leaderboard = () => {
@@ -45,7 +46,6 @@ const Leaderboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-
   const toggleLeaderboard = () => {
     setShowFullList(!showFullList);
   }; 
@@ -66,7 +66,7 @@ const Leaderboard = () => {
             <tr key={user._id} className={`leaderboard-row ${index < 5 ? "top-5" : ""}`}>
               <td className="rank">{index + 1}</td>
               <td className="profile-pic">
-                <img src={user.profileImg} alt="Profile Picture" />
+                <img src={images[user.img]} alt="Profile Picture" />
               </td>
               <td className="user-name">{user.name}</td>
               <td className="score">

@@ -40,6 +40,12 @@ VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not n
 ACCESS_TOKEN_SECRET: ####
 
 ..
+## TEST USERS
+Here are some test emails/password you can use to login without needing to signup:
+1. hello@gmail.com
+2. royal23@outlook.com
+3. kytb@aol.com
+All have the same password of "testTest1!"
 
 ## Team Documents
 

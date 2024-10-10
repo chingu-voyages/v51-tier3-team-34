@@ -182,7 +182,8 @@ app.post("/api/signup", async (req, res) => {
       email,
       password: hash,
       name,
-      profileImg: "",
+      img: null,
+      badges: [],
       points: 0
     });
 
