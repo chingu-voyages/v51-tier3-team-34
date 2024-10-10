@@ -122,7 +122,7 @@ const Login = () => {
         <p>
           Not a current user? <Link to="/signup">Sign Up</Link>
         </p>
-        
+        <hr style={{border: "1px dashed #933a05", width: "50%"}}/>
         <p>
           Forgot password? <Link to="/reset">Reset Password</Link>
         </p>

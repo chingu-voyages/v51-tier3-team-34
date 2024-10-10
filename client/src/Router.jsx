@@ -9,6 +9,8 @@ import Leaderboard from "./components/Leaderboard";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Profile from "./components/Profile"
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword";
 
 const Router = () => {
   const router = createBrowserRouter([
@@ -43,6 +45,14 @@ const Router = () => {
         {
           path: "/login",
           element: <Login />,
+        },
+        {
+          path: "/reset",
+          element: <ForgotPassword/>
+        },
+        {
+          path: '/reset/:token',
+          element: <ResetPassword/>
         },
         {
           path: "/signup",
