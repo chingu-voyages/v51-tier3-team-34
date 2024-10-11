@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/UserContext";
 import images from "../assets/avatar/images";
 import "../styles/leaderboard.css";
 import ranking1 from "../assets/ranking/ranking1.png";
@@ -8,6 +9,8 @@ import ranking3 from "../assets/ranking/ranking3.png";
 const Leaderboard = () => {
   const [users, setUsers] = useState([]);
   const [showFullList, setShowFullList] = useState(false);
+
+  const { currentUser } = useContext(UserContext);
 
   // Fetch users from backend
   useEffect(() => {
@@ -59,7 +62,12 @@ const Leaderboard = () => {
       <table className="leaderboard-table">
         <tbody>
           {displayedUsers.map((user, index) => (
-            <tr key={user._id} className={`leaderboard-row ${index < 5 ? "top-5" : ""}`}>
+            <tr 
+              key={user._id} 
+              className={`leaderboard-row ${index < 5 ? "top-5" : ""} ${
+              currentUser && user._id === currentUser._id && index < 5 ? "highlight-green" : ""
+            }`}
+            >
               <td className="rank">{getRankingIcon(index)}</td>
               <td className="profile-pic">
                 <img src={images[user.img]} alt="Profile Picture" />
