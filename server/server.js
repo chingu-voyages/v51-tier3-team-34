@@ -358,3 +358,24 @@ app.post("/api/reset/:token", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 })
+
+app.patch("/api/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const updates = req.body;
+
+  try {
+    const result = await db.collection("users").updateOne(
+      {_id: new ObjectId(id)},
+      { $set: updates }
+    )
+    console.log(result)
+    if (result.modifiedCount === 0 ){
+      return res.status(404).json({ message: "User not found or no changes made"})
+    }
+
+    res.status(200).json({message: "Usesr updated successfully"}); 
+  } catch (error) {
+    console.error(error)
+    res.status(500).send({message: "Internal server error"})
+  }
+})

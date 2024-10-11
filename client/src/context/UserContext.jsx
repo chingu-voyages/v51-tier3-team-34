@@ -45,6 +45,12 @@ const UserProvider = ({ children }) => {
     sessionStorage.removeItem("token");
   };
 
+  const handleUpdate = ()=> {
+    setAuth({
+      ...token, ...currentUser,
+    })
+  }
+
   // spreading "..auth" - allow the properties of auth to be added directly to value
   return (
     <UserContext.Provider value={{ ...auth, login, logout }}>  

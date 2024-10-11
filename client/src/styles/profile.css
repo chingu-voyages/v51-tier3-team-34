@@ -1,0 +1,11 @@
+.images img {
+    height: 30vh;
+}
+
+.all-images {
+    width: 60vw;
+}
+
+.all-images img:hover {
+    border: 5px solid red;
+}

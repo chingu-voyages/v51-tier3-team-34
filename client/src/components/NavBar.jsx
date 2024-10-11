@@ -50,7 +50,7 @@ const NavBar = () => {
               </li>
               {currentUser &&
                 <li>
-                  <Link to="/profile">Profile Settings</Link>
+                  <Link to="/profile">Profile</Link>
                 </li>
               }
             </ul>
@@ -83,7 +83,7 @@ const NavBar = () => {
             </li>
             {currentUser &&
               <li>
-                <Link to="/profile">Profile Settings</Link>
+                <Link to="/profile">Profile</Link>
               </li>
             }
           </ul>
