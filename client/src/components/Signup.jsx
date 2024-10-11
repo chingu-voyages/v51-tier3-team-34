@@ -97,7 +97,7 @@ const Signup = () => {
       const data = await response.json();
       setErrorMessage(""); // Clear any previous errors
       login(data);
-      navigate('/')
+      navigate('/profile')
       alert('Thanks for signing up!')
 
 
