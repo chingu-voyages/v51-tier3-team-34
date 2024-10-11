@@ -6,7 +6,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { connectToDb, getDb } = require("./db");
-const { sendThankYouEmail } = require("./mail")
+const { sendThankYouEmail, sendResetEmail } = require("./mail")
 
 const app = express();
 app.use(express.json());
@@ -191,12 +191,11 @@ app.post("/api/signup", async (req, res) => {
     if (result.acknowledged) {
       const newUser = await db.collection("users").findOne({_id: result.insertedId });
       const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
-      console.log(newUser)
       sendThankYouEmail(newUser)
       res.status(201).json({ accessToken: accessToken, user: newUser });
     }
-  } catch (err) {
-    res.status(500).json({ err: "Could not create a new user" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -306,3 +305,56 @@ function authToken(req, res, next) {
   })  
 }
 
+
+app.post("/api/reset", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if the email is missing
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+  
+    const user = await db.collection("users").findOne({ email })
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "30m"})
+    sendResetEmail(user.email, token)
+    res.status(201).json({ message: "Email sent. Please check your inbox."});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+})
+
+app.post("/api/reset/:token", async (req, res) => {
+  try {
+    const { password } = req.body
+    const token = req.params.token
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // If the token is invalid, return an error
+    if (!decodedToken) {
+      return res.status(401).json({message: "Invalid token"})
+    }
+
+    // Hash password
+    const hash = await bcrypt.hash(password, 10);
+    const result = await db.collection("users").updateOne(
+      { _id: new ObjectId(decodedToken.userId) },
+      { $set: { password: hash }}
+    );
+
+    // const user = await db.collection("users").findOne({_id: new ObjectId(decodedToken.userId)})
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ message: "Password changed "})
+    } else {
+      return res.status(401).json({ message: "User not found or password not changed"})
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+})

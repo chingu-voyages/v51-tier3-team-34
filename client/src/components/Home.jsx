@@ -7,10 +7,12 @@ import PoiMarkers from "./PoiMarkers";
 import MapButtons from "./MapButtons";
 import SearchBar from "./SearchBar";
 import RoutePlanner from "./RoutePlanner";
+import { UserContext } from "../context/UserContext";
 
 const center = { lat: 38.0406, lng: -84.5037 }
 
 const Home = () => {
+  const { currentUser } = useContext(UserContext)
   const { mapRef } = useContext(MapContext)
   const mapInstance = mapRef.current
 
@@ -72,6 +74,7 @@ const Home = () => {
 
   return (
     <>
+      {currentUser && <h3 style={{textAlign:'center'}}>Welcome {currentUser.name}</h3>}
       <div className="interaction-menu">
         {/* Toggle between route planner and search bar */}
         {showRoute ? (

@@ -120,7 +120,11 @@ const Login = () => {
         {displayErrors(errorMessage)}
 
         <p>
-          Not a current user? <Link to="/signup">Sign Up</Link>
+          Not a current user? <span><Link to="/signup">Sign Up</Link></span>
+        </p>
+        <hr style={{border: "1px dashed #933a05", width: "50%"}}/>
+        <p>
+          Forgot password? <span><Link to="/reset">Reset Password</Link></span>
         </p>
       </form>
     </div>

@@ -1,28 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from 'react'
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { UserContext } from "../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const apiUrl =
   import.meta.env.MODE === "development"
     ? "http://localhost:8080"
     : import.meta.env.VITE_BACKEND_URL;
 
-const Signup = () => {
-  const [errorMessage, setErrorMessage] = useState("");
-  const { currentUser, login } = useContext(UserContext)
-  const navigate = useNavigate()
+const ResetPassword = () => {
+  const [resMessage, setResMessage] = useState("")
 
   const formSchema = yup.object().shape({
-    email: yup
-      .string()
-      .required("Email is required")
-      .email("Please provide a valid email"),
-    name: yup
-      .string()
-      .min(3)
-      .required(),
     password: yup
       .string()
       .min(8, "Password must be at least 8 characters long")
@@ -65,8 +54,6 @@ const Signup = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
-      name: "",
       password: "",
       confirmpassword: "",
     },
@@ -77,8 +64,9 @@ const Signup = () => {
   });
 
   async function submitform(values) {
-    try {
-      const response = await fetch(`${apiUrl}/api/signup`, {
+    const token = window.location.pathname.split("/").pop();
+		try {
+      const response = await fetch(`${apiUrl}/api/reset/${token}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,59 +75,26 @@ const Signup = () => {
         body: JSON.stringify(values),
       });
 
-      // Check if the response was successful
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Signup failed");
-      }
-
-      // Parse the response data for successful signup
       const data = await response.json();
-      setErrorMessage(""); // Clear any previous errors
-      login(data);
-      navigate('/profile')
-      alert('Thanks for signing up!')
-
+      setResMessage(data.message); 
 
     } catch (err) {
-      // Handle errors, either from the response or network issues
-      setErrorMessage(err.message || "An unexpected error occurred");
-      console.error("Signup error:", err);
+      // Handle network or unexpected errors
+      setResMessage("An unexpected error occurred. Please try again later.");
+      console.error("Login error:", err);
     }
   }
 
   const displayErrors = (error) => {
     return error ? <p style={{ color: "red" }}>{error}</p> : null;
   };
-  
+
   return (
     <div className="formbody">
       <form onSubmit={formik.handleSubmit}>
-        <h2>Signup</h2>
+        <h2>Reset Password</h2>
 
         <div className="container">
-          <label htmlFor="email">
-            <strong>Email </strong>
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-          />
-          {displayErrors(formik.errors.email)}
-
-          <label htmlFor="name">
-            <strong>Username (case-sensitive) </strong>
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-          />
-          {displayErrors(formik.errors.name)}
-
           <p>
             Password need to be 8-12 characters. Must include a mix of uppercase
             letters (A-Z), lowercase letters (a-z), Numbers (0-9), special
@@ -148,7 +103,7 @@ const Signup = () => {
           </p>
 
           <label htmlFor="password">
-            <strong>Password </strong>
+            <strong>New Password </strong>
           </label>
           <input
             type="password"
@@ -160,7 +115,7 @@ const Signup = () => {
           {displayErrors(formik.errors.password)}
 
           <label htmlFor="confirmpassword">
-            <strong>Password Confirmation </strong>
+            <strong>Confirm New Password </strong>
           </label>
           <input
             type="password"
@@ -171,10 +126,12 @@ const Signup = () => {
           />
           {displayErrors(formik.errors.confirmpassword)}
         </div>
-        <button type="submit">Sign Up</button>
-        {displayErrors(errorMessage)}
+        {resMessage && displayErrors(resMessage)}
+        <button type="submit">Reset Password</button>
+        <p>Return to <span><Link to="/login">Login</Link></span></p>
       </form>
     </div>
-  );
-};
-export default Signup;
+  )
+}
+
+export default ResetPassword
