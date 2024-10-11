@@ -34,7 +34,7 @@ const NavBar = () => {
           <nav>
             <ul>
               <li>
-                <ProtectedLink to={"/"} children={"Home"}/>
+                <Link to="/">Home</Link>
               </li>
               <li>
                 <ProtectedLink to={"/quiz"} children={"Quiz Challenge"}/>
@@ -67,7 +67,7 @@ const NavBar = () => {
           </div>
           <ul>
             <li>
-              <ProtectedLink to={"/"} children={"Home"}/>
+              <Link to="/">Home</Link>
             </li>
             <li>
               <ProtectedLink to={"/quiz"} children={"Quiz Challenge"}/>
