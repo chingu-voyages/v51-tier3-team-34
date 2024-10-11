@@ -82,5 +82,7 @@ tbody {
 @media (min-width: 800px) {
   .leaderboard {
     max-width: 700px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }
