@@ -1,9 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
-
 import "../styles/achievements.css";
 
-
+// Badge images import
 import explorerGreen from "../assets/badges/explorer_green.png";
 import explorerBronze from "../assets/badges/explorer_bronze.png";
 import explorerSilver from "../assets/badges/explorer_silver.png";
@@ -20,14 +19,12 @@ import socialiteGrayed from "../assets/badges/socialite_grayed.png";
 import speedster from "../assets/badges/speedster.png";
 import speedsterGrayed from "../assets/badges/speedster_grayed.png";
 
-
-
 const Achievements = () => {
   const { currentUser } = useContext(UserContext);
-  const userPoints = currentUser?.points || 0; // Ensure you get the points from the user context
-  const userBadges = currentUser?.badges || []; // Access the user's badges array
-  const userCompleted = currentUser?.completed || [] // Looked at the completed array on the user object
-  
+  const userPoints = currentUser?.points || 0;
+  const userBadges = currentUser?.badges || [];
+  const userCompleted = currentUser?.completed || [];
+
   const badges = [
     {
       name: "Green Explorer",
@@ -64,7 +61,7 @@ const Achievements = () => {
     {
       name: "Quiz Champion",
       requirement: 300,
-      earned: userBadges.includes("Quiz Champion"), // This checks the badges array
+      earned: userBadges.includes("Quiz Champion"),
       grayImage: quizGrayed,
       colorImage: quizChampion,
       message: "Earned by getting a perfect score on the quiz.",
@@ -80,7 +77,7 @@ const Achievements = () => {
     {
       name: "Scavenger Master",
       requirement: 300,
-      earned: userCompleted.includes("sh1"), 
+      earned: userCompleted.includes("sh1"),
       grayImage: scavengerMasterGrayed,
       colorImage: scavengerMaster,
       message: "Earned by completing the scavenger hunt.",
@@ -97,12 +94,62 @@ const Achievements = () => {
     {
       name: "Speedster",
       requirement: 300,
-      earned: userBadges.includes("Speedster"), // This checks the user badges array
+      earned: userBadges.includes("Speedster"),
       grayImage: speedsterGrayed,
       colorImage: speedster,
       message: "Earned by finishing the quiz in under 1 minute.",
     },
   ];
+
+  // Initialize the Facebook SDK
+  useEffect(() => {
+    
+    // Load Facebook SDK asynchronously
+    (function (d, s, id) {
+      let js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {
+        return;
+      }
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, "script", "facebook-jssdk");
+
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: "914503083906342", // Your Facebook App ID
+        xfbml: true,
+        version: "v21.0",
+      });
+    };
+    
+  }, []);
+  
+
+  // Function to share a badge on Facebook using FBInstant
+  const handleShareOnFacebook = (badgeName, badgeImage) => {
+    if (window.FB) {
+      FB.ui(
+        {
+          method: "share",
+          href: window.location.href, // URL of the page to share
+          quote: `I just earned the ${badgeName} badge!`,
+          hashtag: "#GeoDashWorld",
+        },
+        function (response) {
+          if (response && !response.error_message) {
+            console.log("Badge shared successfully!");
+          } else {
+            console.log("Error while sharing badge:", response.error_message);
+          }
+        }
+      );
+    } else {
+      console.error("Facebook SDK not loaded.");
+    }
+  };
 
   return (
     <div className="achievements">
@@ -120,6 +167,16 @@ const Achievements = () => {
               <p>
                 {badge.earned ? "You've earned this badge!" : badge.message}
               </p>
+              <button
+                onClick={() => {
+                  if (badge.earned) {
+                    handleShareOnFacebook(badge.name, badge.colorImage);
+                  }
+                }}
+                disabled={!badge.earned}
+              >
+                Share on FB
+              </button>
             </div>
           </div>
         ))}
