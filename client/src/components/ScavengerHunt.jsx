@@ -87,6 +87,7 @@ const ScavengerHunt = () => {
       mapRef.current.panTo(center);
       mapRef.current.setZoom(16.3);
     }
+    startLocationTracking()
   };
 
   const calculateRoute = async (locations) => {
