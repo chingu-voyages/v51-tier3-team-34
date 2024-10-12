@@ -43,6 +43,10 @@ form button {
   margin-top: 5px;
 }
 
+span {
+  color: var(--btn-font-color)
+}
+
 @media (min-width: 850px) {
   form {
     width: 50%;

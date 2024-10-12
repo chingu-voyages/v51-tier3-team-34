@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/login.css";
+import { UserContext } from "../context/UserContext";
 
 const apiUrl =
   import.meta.env.MODE === "development"
@@ -11,6 +12,8 @@ const apiUrl =
 
 const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
+  const { login } = useContext(UserContext)
+  const navigate = useNavigate()
 
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Email is required"),
@@ -46,6 +49,8 @@ const Login = () => {
     },
     validationSchema: formSchema,
     onSubmit: submitform,
+    validateOnChange: false,
+    validateOnBlur: false
   });
 
   async function submitform(values) {
@@ -62,8 +67,10 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         setErrorMessage(""); // Clear previous error message if login is successful
-        console.log("Login successful", data);
-        // Handle login success, like saving tokens or redirecting the user
+        login(data)
+        navigate("/")
+
+
       } else {
         // Attempt to extract the error message from the response body
         const errorData = await response.json();
@@ -113,7 +120,11 @@ const Login = () => {
         {displayErrors(errorMessage)}
 
         <p>
-          Not a current user? <Link to="/signup">Sign Up</Link>
+          Not a current user? <span><Link to="/signup">Sign Up</Link></span>
+        </p>
+        <hr style={{border: "1px dashed #933a05", width: "50%"}}/>
+        <p>
+          Forgot password? <span><Link to="/reset">Reset Password</Link></span>
         </p>
       </form>
     </div>
