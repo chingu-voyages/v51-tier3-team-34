@@ -23,7 +23,6 @@ const PoiMarkers = () => {
         return resp.json();
       })
       .then((data) => {
-        console.log(data);
         setPointsOfInterest(data);
       })
       .catch((err) => console.error("Failed to fetch landmarks", err));

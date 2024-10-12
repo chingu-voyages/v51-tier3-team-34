@@ -37,7 +37,17 @@ MONGO_URI: mongodb+srv://<db_username>:<db_password>@geoworlddash.zosfj.mongodb.
 
 VITE_FRONTEND_URI: frontend-render-url //This will only be for deployment, not necessary during development
 
+ACCESS_TOKEN_SECRET: ####
+
+SENDGRID_API_KEY: ####
+
 ..
+## TEST USERS
+Here are some test emails/password you can use to login without needing to signup:
+1. hello@gmail.com
+2. royal23@outlook.com
+3. kytb@aol.com
+All have the same password of "testTest1!"
 
 ## Team Documents
 

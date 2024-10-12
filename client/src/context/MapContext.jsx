@@ -7,7 +7,6 @@ export const MapProvider = ({ children }) => {
   const mapRef = useRef(null);
 
   const onLoad = useCallback((map) => {
-    console.log("Map loaded:", map);
     mapRef.current = map;  // Save map instance in ref
   }, []);
 

@@ -131,3 +131,12 @@ button.auth-btn {
     font-size: 0.9rem;
   }
 }
+
+.disabled-link {
+  color: grey;
+  cursor: not-allowed;
+}
+
+.disabled-link:hover {
+  color: grey;
+}

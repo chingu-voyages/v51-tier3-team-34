@@ -3,8 +3,10 @@ const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
 const { ObjectId } = require("mongodb");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { connectToDb, getDb } = require("./db");
+const { sendThankYouEmail, sendResetEmail } = require("./mail")
 
 const app = express();
 app.use(express.json());
@@ -61,7 +63,9 @@ app.post("/api/landmarks", (req, res) => {
       res.status(201).json(result);
     })
     .catch((err) => {
-      res.status(500).json({ error: "Could not create a new landmark document" });
+      res
+        .status(500)
+        .json({ error: "Could not create a new landmark document" });
     });
 });
 
@@ -89,7 +93,9 @@ app.post("/api/hunt-locations", (req, res) => {
       res.status(201).json(result);
     })
     .catch((err) => {
-      res.status(500).json({ error: "Could not create a new hunt location document" });
+      res
+        .status(500)
+        .json({ error: "Could not create a new hunt location document" });
     });
 });
 
@@ -117,7 +123,9 @@ app.post("/api/questions", (req, res) => {
       res.status(201).json(result);
     })
     .catch((err) => {
-      res.status(500).json({ error: "Could not create a new question document" });
+      res
+        .status(500)
+        .json({ error: "Could not create a new question document" });
     });
 });
 
@@ -142,32 +150,52 @@ app.put("/api/questions/:id", (req, res) => {
     });
 });
 
-
 // Add an user
 app.post("/api/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    
+    const { email, password, name } = req.body;
+
     // Check if the email or password is missing
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: "Email, username and password are required" });
     }
 
     // Check if user already exists
     const userExists = await db.collection("users").findOne({ email });
     if (userExists) {
-      return res.status(409).json({ error: "User with this email already exists" });
+      return res
+        .status(409)
+        .json({ error: "User with this email already exists" });
+    }
+
+    const nameExists = await db.collection("users").findOne({ name });
+    if (nameExists) {
+      return res
+        .status(409)
+        .json({ error: "User with this username already exists" });
     }
 
     // Hash password
     const hash = await bcrypt.hash(password, 10);
-    const newUser = { email, password: hash, profileImg: "", point: 0}
     
     // Insert the new user into the database
-    const result = await db.collection("users").insertOne(newUser);
-    res.status(201).json(result);
-  } catch (err) {
-    res.status(500).json({ err: "Could not create a new user" });
+    const result = await db.collection("users").insertOne({
+      email,
+      password: hash,
+      name,
+      img: "",
+      badges: [],
+      points: 0
+    });
+
+    if (result.acknowledged) {
+      const newUser = await db.collection("users").findOne({_id: result.insertedId });
+      const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
+      sendThankYouEmail(newUser)
+      res.status(201).json({ accessToken: accessToken, user: newUser });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -175,14 +203,14 @@ app.post("/api/signup", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     // Check if the email or password is missing
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
   
-    const user = await db.collection("users").findOne({email})
-    console.log(user)
+    const user = await db.collection("users").findOne({ email })
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -190,13 +218,143 @@ app.post("/api/login", async (req, res) => {
     // Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-     return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
-  
+
     // If successful, you can create a session, JWT, or simply return a success message
-    res.status(200).json({ message: "Login successful", user });
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    res.status(200).json({ accessToken: accessToken, user: user });
 
   } catch (err) {
     res.status(500).json({ error: "An error occurred during login" });
+  }
+});
+
+// Get all users ranked by points
+app.get("/api/users/ranking", async (req, res) => {
+  try {
+    const users = await db
+      .collection("users")
+      .find()
+      .sort({ points: -1, name: 1 }) // Sort them by points in descending order (-1) and by name alphabetically (1)
+      .toArray(); // Convert the cursor to an array
+
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Could not retrieve users" });
+  }
+});
+
+// Get user points by user ID
+app.get("/api/users/:id/points", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await db.collection("users").findOne(
+      { _id: new ObjectId(userId) },
+      { projection: { points: 1 } }, // Only return the "point" field
+    );
+
+    if (user) {
+      res.status(200).json({ points: user.points });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Could not fetch user points" });
+  }
+});
+
+// Update user points by user ID
+app.put("/api/users/:id/points", async (req, res) => {
+  const userId = req.params.id;
+  const { points } = req.body; // New point increment (not new point value)
+
+  if (points === undefined) {
+    return res.status(400).json({ error: "Points value is required" });
+  }
+
+  try {
+    const result = await db
+      .collection("users")
+      .updateOne({ _id: new ObjectId(userId) }, { $inc: { points: points } });
+
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: "User points updated successfully" });
+    } else {
+      res.status(404).json({ error: "User not found or no changes made" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Could not update user points" });
+  }
+});
+
+
+// MiddleWare to pass to the routes that needs to be protected
+// not added, if do want backend routes to be protected, will need to add headers and token info in frontend during fetch
+function authToken(req, res, next) {
+  console.log("from authToken", req.headers)
+  const authHeader = req.headers['Authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null ) return res.status(401).json({message: "No auth token, access denied"})
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.status(403).json({message: " Token verification failed"})
+    res.user = user
+    next()  
+  })  
+}
+
+
+app.post("/api/reset", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if the email is missing
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+  
+    const user = await db.collection("users").findOne({ email })
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "30m"})
+    sendResetEmail(user.email, token)
+    res.status(201).json({ message: "Email sent. Please check your inbox."});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+})
+
+app.post("/api/reset/:token", async (req, res) => {
+  try {
+    const { password } = req.body
+    const token = req.params.token
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // If the token is invalid, return an error
+    if (!decodedToken) {
+      return res.status(401).json({message: "Invalid token"})
+    }
+
+    // Hash password
+    const hash = await bcrypt.hash(password, 10);
+    const result = await db.collection("users").updateOne(
+      { _id: new ObjectId(decodedToken.userId) },
+      { $set: { password: hash }}
+    );
+
+    // const user = await db.collection("users").findOne({_id: new ObjectId(decodedToken.userId)})
+
+    if (result.modifiedCount === 1) {
+      return res.status(200).json({ message: "Password changed "})
+    } else {
+      return res.status(401).json({ message: "User not found or password not changed"})
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 })
