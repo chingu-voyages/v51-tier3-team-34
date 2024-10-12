@@ -13,7 +13,7 @@ const Profile = () => {
   const [showImages, setShowImages] = useState(false)
 
   
-  const updateProfile = async (prop, value)=> {
+  const handleUpdate = async (prop, value)=> {
     try {
       const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`, {
         method: "PATCH",
@@ -32,29 +32,42 @@ const Profile = () => {
   }
 
   return (
-    <div className='body'>
+    <div className='profile-body'>
       <h2>Profile Page</h2>
       <div className='profile'>
-        <div className="images">
+        <div className="profile-image">
           <img src={images[currentUser.img]} alt='avatar '/>
           <button onClick={()=>setShowImages(!showImages)}>
             {showImages ? "Cancel transaction" :"Change profile picture"}
           </button>
+        </div>
+
+        <div className='right-section'>
           {showImages && 
-            <div className='all-images' >
-              {Object.keys(images).map((key, index) => (
-                <img key={index} src={images[key]} alt={key} onClick={()=>updateProfile("img", key)} />
-              ))}
+            <div className='select-image'>
+              <p>Select a new profile picture</p>
+              <div className='all-images' >
+                {Object.keys(images).map((key, index) => (
+                  <img key={index} src={images[key]} alt={key} onClick={()=>handleUpdate("img", key)} />
+                ))}
+              </div>
               <a href="http://www.freepik.com">Designed by Freepik</a>
             </div>
           }
-        </div>
+          <div className='user-info'>
+            <p><span>Username </span>{currentUser.name}</p>
+            <p><span>Email </span>{currentUser.email}</p>
+            <button>Edit</button>
+          </div>
+          <div className='points-info'>
+            <p><span>Total Points Earned</span></p>
+          </div>
 
+
+     
+          <div className='achievement-section'></div>
+        </div>
       </div>
-      <div className='achievement-section'></div>
-    <div>
-      WIP - able to select your avatar pic, and can change username. See the email you have
-    </div>
     </div>
     
   )
