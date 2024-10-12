@@ -185,7 +185,8 @@ app.post("/api/signup", async (req, res) => {
       name,
       img: "",
       badges: [],
-      points: 0
+      points: 0,
+      completed: []
     });
 
     if (result.acknowledged) {
@@ -368,12 +369,15 @@ app.patch("/api/users/:id", async (req, res) => {
       {_id: new ObjectId(id)},
       { $set: updates }
     )
-    console.log(result)
+
     if (result.modifiedCount === 0 ){
       return res.status(404).json({ message: "User not found or no changes made"})
     }
 
-    res.status(200).json({message: "Usesr updated successfully"}); 
+    //find updated User object, to have it return in the response
+    const updatedUser = await db.collection("users").findOne({ _id: new ObjectId(id) });
+    res.status(200).json({message: "User updated successfully", user: updatedUser}); 
+  
   } catch (error) {
     console.error(error)
     res.status(500).send({message: "Internal server error"})

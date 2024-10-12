@@ -9,7 +9,7 @@ const apiUrl =
     : import.meta.env.VITE_BACKEND_URL;
 
 const Profile = () => {
-  const {currentUser} = useContext(UserContext)
+  const {currentUser, updateUser} = useContext(UserContext)
   const [showImages, setShowImages] = useState(false)
 
   
@@ -24,14 +24,11 @@ const Profile = () => {
         body: JSON.stringify({[prop] : value}),
       });
       const data = await response.json()
-      console.log(data)
-      return data;
+      updateUser(data.user)
   
-  } catch (error) {
-    console.error('Error updating image:', error.message);
-    // Optionally re-throw or handle the error further
-    throw error; // Re-throw if you want to propagate the error
-  }
+    } catch (error) {
+      console.error('Error updating image:', error.message);
+    }
   }
 
   return (
@@ -59,13 +56,6 @@ const Profile = () => {
       WIP - able to select your avatar pic, and can change username. See the email you have
     </div>
     </div>
-    // If don't have time to have be able to upload picture for profile image, could allow users to choose their images instead
-    // <div>
-    //   {Object.keys(images).map((key, index) => (
-    //     <img key={index} src={images[key]} alt={key} />
-    //   ))}
-      
-    // </div>
     
   )
 }
