@@ -59,7 +59,7 @@ const Profile = () => {
         <div className="profile-image">
           <img src={images[currentUser.img]} alt='avatar '/>
           <button onClick={()=>setShowImages(!showImages)}>
-            {showImages ? "Cancel transaction" :"Change profile picture"}
+            {showImages ? "Go Back" :"Change profile picture"}
           </button>
         </div>
 
@@ -82,14 +82,18 @@ const Profile = () => {
                 <label>
                   Update your username:
                   <input type='text' value={updatedUsername} onChange={(e)=>{setUpdateUsername(e.target.value)}}/>
+                  <button onClick={handleUpdateName}>Change Username</button>
                 </label>
+          
               }
               <p><span>{currentUser.email}</span>{showChangeUsername && <span style={{fontStyle: "italic"}}>  Can not change email.</span>}</p>
             </div>
-            <button onClick={handleUpdateName}>Edit</button>
+            <button onClick={()=>setShowChangeUsername(!showChangeUsername)}>
+              {showChangeUsername ? "Cancel" : "Edit User Settings"}
+            </button>
           </div>
           <div className='points-info'>
-            <p><span>Total Points Earned</span></p>
+            <p><span>Total Points Earned</span> {currentUser.points}</p>
           </div>
      
           <div className='achievement-section'></div>
