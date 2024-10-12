@@ -11,6 +11,8 @@ const apiUrl =
 const Profile = () => {
   const {currentUser, updateUser} = useContext(UserContext)
   const [showImages, setShowImages] = useState(false)
+  const [showChangeUsername, setShowChangeUsername] = useState(true)
+  const [updatedUsername, setUpdateUsername] = useState("")
 
   
   const handleUpdate = async (prop, value)=> {
@@ -31,6 +33,25 @@ const Profile = () => {
     }
   }
 
+  const handleUpdateName = async () =>{
+    console.log(updatedUsername)
+    try {
+      const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ name : updatedUsername }),
+      });
+      const data = await response.json()
+      updateUser(data.user)
+  
+    } catch (error) {
+      console.error('Error updating image:', error.message);
+    }
+  }
+  
   return (
     <div className='profile-body'>
       <h2>Profile Page</h2>
@@ -55,15 +76,21 @@ const Profile = () => {
             </div>
           }
           <div className='user-info'>
-            <p><span>Username </span>{currentUser.name}</p>
-            <p><span>Email </span>{currentUser.email}</p>
-            <button>Edit</button>
+            <div className='info'>
+              <p><span>{currentUser.name}</span></p>
+              {showChangeUsername && 
+                <label>
+                  Update your username:
+                  <input type='text' value={updatedUsername} onChange={(e)=>{setUpdateUsername(e.target.value)}}/>
+                </label>
+              }
+              <p><span>{currentUser.email}</span>{showChangeUsername && <span style={{fontStyle: "italic"}}>  Can not change email.</span>}</p>
+            </div>
+            <button onClick={handleUpdateName}>Edit</button>
           </div>
           <div className='points-info'>
             <p><span>Total Points Earned</span></p>
           </div>
-
-
      
           <div className='achievement-section'></div>
         </div>
