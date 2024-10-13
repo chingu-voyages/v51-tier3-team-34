@@ -44,7 +44,7 @@ form button {
 }
 
 span {
-  color: var(--btn-font-color)
+  color: var(--btn-font-color);
 }
 
 @media (min-width: 850px) {

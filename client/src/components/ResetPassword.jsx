@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const apiUrl =
   import.meta.env.MODE === "development"
@@ -9,7 +9,7 @@ const apiUrl =
     : import.meta.env.VITE_BACKEND_URL;
 
 const ResetPassword = () => {
-  const [resMessage, setResMessage] = useState("")
+  const [resMessage, setResMessage] = useState("");
 
   const formSchema = yup.object().shape({
     password: yup
@@ -60,12 +60,12 @@ const ResetPassword = () => {
     validationSchema: formSchema,
     onSubmit: submitform,
     validateOnChange: false,
-    validateOnBlur: false
+    validateOnBlur: false,
   });
 
   async function submitform(values) {
     const token = window.location.pathname.split("/").pop();
-		try {
+    try {
       const response = await fetch(`${apiUrl}/api/reset/${token}`, {
         method: "POST",
         headers: {
@@ -76,8 +76,7 @@ const ResetPassword = () => {
       });
 
       const data = await response.json();
-      setResMessage(data.message); 
-
+      setResMessage(data.message);
     } catch (err) {
       // Handle network or unexpected errors
       setResMessage("An unexpected error occurred. Please try again later.");
@@ -128,10 +127,15 @@ const ResetPassword = () => {
         </div>
         {resMessage && displayErrors(resMessage)}
         <button type="submit">Reset Password</button>
-        <p>Return to <span><Link to="/login">Login</Link></span></p>
+        <p>
+          Return to{" "}
+          <span>
+            <Link to="/login">Login</Link>
+          </span>
+        </p>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default ResetPassword
+export default ResetPassword;

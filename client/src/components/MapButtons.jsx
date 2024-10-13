@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
 const MapButtons = ({
@@ -8,7 +8,7 @@ const MapButtons = ({
   showRoute,
   setShowRoute,
 }) => {
-  const { currentUser } = useContext(UserContext)
+  const { currentUser } = useContext(UserContext);
 
   return (
     <div>

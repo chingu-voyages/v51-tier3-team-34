@@ -1,146 +1,148 @@
 .right-section {
-    width: 100vw;
-    flex-grow: 1;
+  width: 100vw;
+  flex-grow: 1;
 }
 
 .select-image {
-    text-align: center;
     font-size: 1.3em;
+    text-align: center;
+}
+
+.select-image p {
+    margin-left: 0;
 }
 
 .select-image a {
-    font-style: italic;
-    font-size: 0.8em;
+  font-style: italic;
+  font-size: 0.8em;
 }
 
 .all-images img {
-    height: 25vh;
+    height: 20vh;
 }
 
-
 .all-images img:hover {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .profile-body h2 {
-    text-align: center;
-    font-size: 2em;
+  text-align: center;
+  font-size: 2em;
 }
 
 .profile {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    gap: 10px
-
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  gap: 10px;
 }
 
 .profile-image {
-    display: block;
-    margin: auto;
-    width: 60vw;
+  display: block;
+  margin: auto;
+  width: 60vw;
 }
 
-.profile-image img{
-    height: auto;
-    width: 100%;
+.profile-image img {
+  height: auto;
+  width: 100%;
 }
 
 .profile-image button {
-    display: block;
-    margin: auto;
-    font-size: large;
-    font-weight: 600;
+  display: block;
+  margin: auto;
+  font-size: large;
+  font-weight: 600;
 }
 
 .username {
-    font-size: 30px;
-    margin-bottom: 0;
+  font-size: 30px;
+  margin-bottom: 0;
 }
 
 .info {
-    font-size: 1em;
-    padding-left: 4vw;
+  font-size: 1em;
+  padding-left: 4vw;
 }
 
 .info button img {
-    width: 1em;
-    height: 1em;
+  width: 1em;
+  height: 1em;
 }
 
 .info p button {
-    padding: 0 5px;
-    margin-left: 5px;
+  padding: 0 5px;
+  margin-left: 5px;
 }
 
 .info input {
-    display: block;
-    width: 100%;
-    font-size: 1em;
+  display: block;
+  width: 100%;
+  font-size: 1em;
 }
 
-.user-info span{
-    margin-right: 3px;
+.user-info span {
+  margin-right: 3px;
 }
 
-.right-section hr{
-    border-top: 3px dashed #ebdebe;
-    width: 75%;
+.right-section hr {
+  border-top: 3px dashed #ebdebe;
+  width: 75%;
 }
 
 .points-info {
-    margin: 20px;
-    display: flex;
-    justify-content: space-between,
+  margin: 20px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .points-info div {
-    width: 40%;
-    font-size: 0.8em;
+  width: 40%;
+  font-size: 0.8em;
 }
 
 .points-info img {
-    width: 4em;
-    height: 4em
+  width: 4em;
+  height: 4em;
 }
 
 .achievement-section {
-    margin: 20px;
+  margin: 20px;
 }
 
 .tracking {
-    height: 15vh;
-    display: flex;
-    position: relative
+  height: 15vh;
+  display: flex;
+  position: relative;
 }
 
 .tracking img {
-    height: 100%;
-    width: auto;
-    margin-right: 5px;
+  height: 100%;
+  width: auto;
+  margin-right: 5px;
 }
 
 .tracking > .progress-bar-container {
-    width: 100%;
-    margin-top: 3.5vh;
+  width: 100%;
+  margin-top: 3.5vh;
 }
 
 .tracking p {
-    word-wrap: normal;
-    font-style: italic;
-    font-size: 0.7em;
-    width: 70%;
-    position: absolute;
-    left: 100px;
-    top: 40px;
+  word-wrap: normal;
+  font-style: italic;
+  font-size: 0.7em;
+  width: 70%;
+  position: absolute;
+  left: 100px;
+  top: 40px;
 }
 
-.achievement-section h3{
-    color: #933a05;
+.achievement-section h3 {
+  color: #933a05;
 }
 
 @media (min-width: 850px) {
-    .profile {
+.profile {
         flex-direction: row;
         width: 100vw;
         gap: 20px
@@ -150,6 +152,10 @@
         height: 70vh;
         width: 30vw;
         margin: 0;
+    }
+
+    .select-image p {
+        margin-left: -200px;
     }
 
     .right-section {

@@ -2,16 +2,14 @@ import { useState, useEffect } from "react";
 import { Marker, InfoWindow } from "@react-google-maps/api";
 import marker from "../assets/marker.png";
 
-
 const PoiMarkers = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
 
-
-  const apiUrl = 
-  import.meta.env.MODE === "development"
-    ? "http://localhost:8080"
-    : import.meta.env.VITE_BACKEND_URL
+  const apiUrl =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:8080"
+      : import.meta.env.VITE_BACKEND_URL;
 
   //fetching landmarks data from backend
   useEffect(() => {

@@ -150,7 +150,11 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
 
         {/* Travel mode radio buttons */}
         <div
-          style={{ display: "inline-flex", justifyContent: "center", gap: "1rem" }}
+          style={{
+            display: "inline-flex",
+            justifyContent: "center",
+            gap: "1rem",
+          }}
         >
           <label
             style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
@@ -165,7 +169,11 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             <span>Drive</span>
           </label>
           <label
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.3rem",
+            }}
           >
             <input
               type="radio"
@@ -177,7 +185,11 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
             <span>Walk</span>
           </label>
           <label
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.3rem",
+            }}
           >
             <input
               type="radio"
