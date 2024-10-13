@@ -11,18 +11,15 @@ const apiUrl =
 
 const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
-  const { currentUser, login } = useContext(UserContext)
-  const navigate = useNavigate()
+  const { currentUser, login } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const formSchema = yup.object().shape({
     email: yup
       .string()
       .required("Email is required")
       .email("Please provide a valid email"),
-    name: yup
-      .string()
-      .min(3)
-      .required(),
+    name: yup.string().min(3).required(),
     password: yup
       .string()
       .min(8, "Password must be at least 8 characters long")
@@ -73,7 +70,7 @@ const Signup = () => {
     validationSchema: formSchema,
     onSubmit: submitform,
     validateOnChange: false,
-    validateOnBlur: false
+    validateOnBlur: false,
   });
 
   async function submitform(values) {
@@ -97,10 +94,8 @@ const Signup = () => {
       const data = await response.json();
       setErrorMessage(""); // Clear any previous errors
       login(data);
-      navigate('/profile')
-      alert('Thanks for signing up!')
-
-
+      navigate("/profile");
+      alert("Thanks for signing up!");
     } catch (err) {
       // Handle errors, either from the response or network issues
       setErrorMessage(err.message || "An unexpected error occurred");
@@ -111,7 +106,7 @@ const Signup = () => {
   const displayErrors = (error) => {
     return error ? <p style={{ color: "red" }}>{error}</p> : null;
   };
-  
+
   return (
     <div className="formbody">
       <form onSubmit={formik.handleSubmit}>

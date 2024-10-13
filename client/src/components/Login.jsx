@@ -12,8 +12,8 @@ const apiUrl =
 
 const Login = () => {
   const [errorMessage, setErrorMessage] = useState("");
-  const { login } = useContext(UserContext)
-  const navigate = useNavigate()
+  const { login } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const formSchema = yup.object().shape({
     email: yup.string().email().required("Email is required"),
@@ -50,7 +50,7 @@ const Login = () => {
     validationSchema: formSchema,
     onSubmit: submitform,
     validateOnChange: false,
-    validateOnBlur: false
+    validateOnBlur: false,
   });
 
   async function submitform(values) {
@@ -67,10 +67,8 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         setErrorMessage(""); // Clear previous error message if login is successful
-        login(data)
-        navigate("/")
-
-
+        login(data);
+        navigate("/");
       } else {
         // Attempt to extract the error message from the response body
         const errorData = await response.json();
@@ -120,11 +118,17 @@ const Login = () => {
         {displayErrors(errorMessage)}
 
         <p>
-          Not a current user? <span><Link to="/signup">Sign Up</Link></span>
+          Not a current user?{" "}
+          <span>
+            <Link to="/signup">Sign Up</Link>
+          </span>
         </p>
-        <hr style={{border: "1px dashed #933a05", width: "50%"}}/>
+        <hr style={{ border: "1px dashed #933a05", width: "50%" }} />
         <p>
-          Forgot password? <span><Link to="/reset">Reset Password</Link></span>
+          Forgot password?{" "}
+          <span>
+            <Link to="/reset">Reset Password</Link>
+          </span>
         </p>
       </form>
     </div>

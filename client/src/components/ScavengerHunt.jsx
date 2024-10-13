@@ -1,16 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
-import { MapContext } from "../context/MapContext"
+import { MapContext } from "../context/MapContext";
 import MapContainer from "./MapContainer";
-import ScavengerProgress from "./ScavengerProgress"
+import ScavengerProgress from "./ScavengerProgress";
 import ScavengerMarkers from "./ScavengerMarkers";
-import { Circle, DirectionsRenderer, Marker, OverlayView } from "@react-google-maps/api";
+import {
+  Circle,
+  DirectionsRenderer,
+  Marker,
+  OverlayView,
+} from "@react-google-maps/api";
 import ScavengerList from "./ScavengerList";
-import "../styles/scavenger.css"
+import "../styles/scavenger.css";
 
-const center = {lat: 38.048172393597355, lng: -84.4964571176625}; // center of the entire scavenger area
-const center2 = { lat: 38.05224348731636, lng: -84.49533042381834}; // position of starting point
+const center = { lat: 38.048172393597355, lng: -84.4964571176625 }; // center of the entire scavenger area
+const center2 = { lat: 38.05224348731636, lng: -84.49533042381834 }; // position of starting point
 
-const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt, mapRef, setHeading) => {
+const useGeolocation = (
+  setUserLocation,
+  accuracyThreshold = 50,
+  startHunt,
+  mapRef,
+  setHeading,
+) => {
   useEffect(() => {
     if (startHunt && "geolocation" in navigator) {
       const watchId = navigator.geolocation.watchPosition(
@@ -31,19 +42,19 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt, mapR
           } else {
             console.warn(
               "Location accuracy too low:",
-              position.coords.accuracy
+              position.coords.accuracy,
             );
           }
         },
         (error) => console.error("Error fetching geolocation", error),
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true },
       );
 
       // Capture heading data from the device's compass (if supported)
       const handleOrientation = (event) => {
         if (event.alpha !== null) {
           const heading = 360 - event.alpha; // Get the compass heading (0-360)
-          console.log(event.alpha)
+          console.log(event.alpha);
           setHeading(heading); // Update heading state
         }
       };
@@ -56,28 +67,27 @@ const useGeolocation = (setUserLocation, accuracyThreshold = 50, startHunt, mapR
         window.removeEventListener("deviceorientation", handleOrientation);
       };
     }
-  }, [setUserLocation, accuracyThreshold , startHunt, mapRef, setHeading]);
+  }, [setUserLocation, accuracyThreshold, startHunt, mapRef, setHeading]);
 };
 
 const ScavengerHunt = () => {
   const { mapRef } = useContext(MapContext);
-  const [startHunt, setStartHunt] = useState(false)
+  const [startHunt, setStartHunt] = useState(false);
   const [userLocation, setUserLocation] = useState(null); // Current user location
   const [huntLocations, setHuntLocations] = useState(null); // Scavenger hunt locations
-  const [userProgress, setUserProgress] = useState(0) // keeping track of how many location user has visited, will increase by 1 after a location is found (max: 10 - completed hunt)
+  const [userProgress, setUserProgress] = useState(0); // keeping track of how many location user has visited, will increase by 1 after a location is found (max: 10 - completed hunt)
   const [userPoints, setUserPoints] = useState(0); // keeping track of user points
-  const [heading, setHeading] = useState(0) // Users compass heading
+  const [heading, setHeading] = useState(0); // Users compass heading
 
-  const [directionsResponse, setDirectionsResponse] = useState(null)
-  const [routeSegments, setRouteSegments] = useState([])
-
+  const [directionsResponse, setDirectionsResponse] = useState(null);
+  const [routeSegments, setRouteSegments] = useState([]);
 
   const apiUrl =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:8080"
-    : import.meta.env.VITE_BACKEND_URL;
+    import.meta.env.MODE === "development"
+      ? "http://localhost:8080"
+      : import.meta.env.VITE_BACKEND_URL;
 
-//fetching scavenger hunt locations from backend
+  //fetching scavenger hunt locations from backend
   useEffect(() => {
     fetch(`${apiUrl}/api/hunt-locations`)
       .then((resp) => {
@@ -88,7 +98,7 @@ const ScavengerHunt = () => {
       })
       .then((data) => {
         setHuntLocations(data);
-        calculateRoute(data)
+        calculateRoute(data);
       })
       .catch((err) => console.error("Failed to fetch hunt locations", err));
   }, []);
@@ -96,37 +106,42 @@ const ScavengerHunt = () => {
   // Use geolocation when the hunt starts
   useGeolocation(setUserLocation, 50, startHunt, mapRef, setHeading);
 
-  const handleClickHere = () =>{
-    setStartHunt(true)
-    mapRef.current.panTo(center)
-    mapRef.current.setZoom(16.3)
+  const handleClickHere = () => {
+    setStartHunt(true);
+    mapRef.current.panTo(center);
+    mapRef.current.setZoom(16.3);
   };
 
   //route calculatons
   const calculateRoute = async (locations) => {
     const sortedCoordinates = locations
-      .sort((a, b) => a.routeIndex - b.routeIndex)  // Sort by routeIndex
-      .map(location => location.location);          // Extract location after sorting
+      .sort((a, b) => a.routeIndex - b.routeIndex) // Sort by routeIndex
+      .map((location) => location.location); // Extract location after sorting
 
-    const wayPointsObj = sortedCoordinates.slice(1,-1).map((coord) => ({location: coord}));
+    const wayPointsObj = sortedCoordinates
+      .slice(1, -1)
+      .map((coord) => ({ location: coord }));
 
     const directionsServiceOptions = {
       origin: sortedCoordinates[0],
-      destination: sortedCoordinates[sortedCoordinates.length -1],
+      destination: sortedCoordinates[sortedCoordinates.length - 1],
       travelMode: "WALKING",
-      waypoints: wayPointsObj
+      waypoints: wayPointsObj,
     };
 
     try {
       const directionsService = new google.maps.DirectionsService();
       const results = await new Promise((resolve, reject) => {
-        directionsService.route(directionsServiceOptions, (response, status) => {
-          if (status === "OK"){
-            resolve(response);
-          } else {
-            reject(`Directions request failed due to ${status}`);
-          }
-        });
+        directionsService.route(
+          directionsServiceOptions,
+          (response, status) => {
+            if (status === "OK") {
+              resolve(response);
+            } else {
+              reject(`Directions request failed due to ${status}`);
+            }
+          },
+        );
       });
       setDirectionsResponse(results);
       splitRouteIntoSegments(results);
@@ -143,37 +158,49 @@ const ScavengerHunt = () => {
         segments.push({
           origin: legs[i].start_location,
           destination: legs[i].end_location,
-          steps: legs[i].steps
+          steps: legs[i].steps,
         });
       }
       setRouteSegments(segments);
-    };
-  }
-  
-  const checkLocation = () => {
-    if (!userLocation || !huntLocations || userProgress >= huntLocations.length) return;
-    
-    const nextLocation = huntLocations[userProgress];
-    const userLatLng = new window.google.maps.LatLng(userLocation.lat, userLocation.lng);
-    const huntLatLng = new window.google.maps.LatLng(nextLocation.lat, nextLocation.lng);
+    }
+  };
 
-    const distance = window.google.maps.geometry.spherical.computeDistanceBetween(userLatLng, huntLatLng);
+  const checkLocation = () => {
+    if (!userLocation || !huntLocations || userProgress >= huntLocations.length)
+      return;
+
+    const nextLocation = huntLocations[userProgress];
+    const userLatLng = new window.google.maps.LatLng(
+      userLocation.lat,
+      userLocation.lng,
+    );
+    const huntLatLng = new window.google.maps.LatLng(
+      nextLocation.lat,
+      nextLocation.lng,
+    );
+
+    const distance =
+      window.google.maps.geometry.spherical.computeDistanceBetween(
+        userLatLng,
+        huntLatLng,
+      );
 
     // If the user is within 50 meters of the next location, award points and update progress
     if (distance <= 50) {
       setUserProgress(userProgress + 1);
       setUserPoints(userPoints + 20);
-      console.log(`Location verified: ${nextLocation.name}. Points: ${userPoints + 20}`);
+      console.log(
+        `Location verified: ${nextLocation.name}. Points: ${userPoints + 20}`,
+      );
     }
   };
 
   // Check location on every geolocation update
   useEffect(() => {
     if (startHunt && userLocation) {
-      checkLocation();  
+      checkLocation();
     }
   }, [userLocation]);
-
 
   return (
     <>

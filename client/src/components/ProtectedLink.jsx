@@ -1,9 +1,9 @@
-import {useContext} from 'react'
-import { UserContext } from '../context/UserContext'
-import { Link } from 'react-router-dom';
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
+import { Link } from "react-router-dom";
 
 const ProtectedLink = ({ to, children }) => {
-  const { currentUser } = useContext(UserContext)
+  const { currentUser } = useContext(UserContext);
 
   return (
     <Link
@@ -11,14 +11,14 @@ const ProtectedLink = ({ to, children }) => {
       className={currentUser ? "" : "disabled-link"}
       onClick={(e) => {
         if (!currentUser) {
-        e.preventDefault();
-        alert("Please log in first!");
-      }
-    }}
+          e.preventDefault();
+          alert("Please log in first!");
+        }
+      }}
     >
-    {children}
+      {children}
     </Link>
   );
 };
 
-export default ProtectedLink
+export default ProtectedLink;

@@ -49,7 +49,6 @@ export const fetchGTFSData = async ({ setStops, setShapes }) => {
   });
 };
 
-
 export function drawBusRoute(map, shapes, setPolylines) {
   if (!map) {
     console.log("Map instance is null or undefined.");

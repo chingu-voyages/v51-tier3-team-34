@@ -47,7 +47,7 @@ const UserProvider = ({ children }) => {
 
   // spreading "..auth" - allow the properties of auth to be added directly to value
   return (
-    <UserContext.Provider value={{ ...auth, login, logout }}>  
+    <UserContext.Provider value={{ ...auth, login, logout }}>
       {children}
     </UserContext.Provider>
   );
@@ -57,7 +57,7 @@ export { UserContext, UserProvider };
 
 // We do not have time for this, but nice to have for security.
 //3. Optional Backend Logout (Token Invalidation)
-// Token invalidation: You typically don't need to handle anything on the backend for JWT-based logout because JWT is stateless. 
-// However, if you want to explicitly "invalidate" a token (e.g., by blacklisting it or tracking it in a database), you'd need to 
-// implement a token blacklist mechanism on the backend. This is optional but can add another layer of security, 
+// Token invalidation: You typically don't need to handle anything on the backend for JWT-based logout because JWT is stateless.
+// However, if you want to explicitly "invalidate" a token (e.g., by blacklisting it or tracking it in a database), you'd need to
+// implement a token blacklist mechanism on the backend. This is optional but can add another layer of security,
 // especially for sensitive applications.
