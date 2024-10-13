@@ -188,6 +188,7 @@ app.post("/api/signup", async (req, res) => {
       img: "",
       badges: [],
       points: 0,
+      completed: []
     });
 
     if (result.acknowledged) {
@@ -398,4 +399,28 @@ app.post("/api/reset/:token", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});
+})
+
+app.patch("/api/users/:id", async (req, res) => {
+  const id = req.params.id;
+  const updates = req.body;
+
+  try {
+    const result = await db.collection("users").updateOne(
+      {_id: new ObjectId(id)},
+      { $set: updates }
+    )
+
+    if (result.modifiedCount === 0 ){
+      return res.status(404).json({ message: "User not found or no changes made"})
+    }
+
+    //find updated User object, to have it return in the response
+    const updatedUser = await db.collection("users").findOne({ _id: new ObjectId(id) });
+    res.status(200).json({message: "User updated successfully", user: updatedUser}); 
+  
+  } catch (error) {
+    console.error(error)
+    res.status(500).send({message: "Internal server error"})
+  }
+})

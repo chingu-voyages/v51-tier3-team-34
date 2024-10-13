@@ -1,0 +1,18 @@
+.achievements {
+  padding: 20px;
+}
+
+.badges-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.badge {
+  margin: 10px;
+  text-align: center;
+}
+
+.badge-image {
+  width: 100px; /* Set the desired width */
+  height: auto; /* Maintain aspect ratio */
+}

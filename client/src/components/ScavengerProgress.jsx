@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from 'react'
+import { UserContext } from '../context/UserContext';
 
-const ScavengerProgress = ({ huntLocations, userProgress }) => {
-  const [endGame, setEndGame] = useState(false);
+const ScavengerProgress = ({huntLocations, userProgress, userPoints}) => {
+  const {currentUser, updateUser} = useContext(UserContext)
+  const [endGame, setEndGame ] = useState(false)
   const [selectLocation, setSelectLocation] = useState(null);
+  
+  const apiUrl =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:8080"
+    : import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     // Check for end game condition
@@ -14,10 +21,33 @@ const ScavengerProgress = ({ huntLocations, userProgress }) => {
       setSelectLocation(location);
     } else {
       setEndGame(true);
+      addPoints(userPoints)
     }
   }, [userProgress, huntLocations]); // Dependency array
 
   const progress = userProgress * 10;
+
+  async function addPoints(newPoints) {
+    try {
+      currentUser.completed.push("sh1")
+      const newCompleted = currentUser.completed
+      const updatedPoints = currentUser.points + newPoints
+      const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({points: updatedPoints, completed: newCompleted}),
+      });
+      const data = await response.json()
+      updateUser(data.user)
+  
+    } catch (error) {
+      console.error('Error updating image:', error.message);
+    }
+  }
+
 
   return (
     <>

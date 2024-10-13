@@ -3,20 +3,19 @@ import { UserContext } from "../context/UserContext";
 import "../styles/quiz.css";
 
 const Quiz = () => {
+  const { currentUser, updateUser } = useContext(UserContext)
   const [quizData, setQuizData] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [progress, setProgress] = useState(0);
   const [timer, setTimer] = useState(60); // Timer starts at 60 seconds
+  const [totalTimeTaken, setTotalTimeTaken] = useState(0); // Keeps track of time for entire quiz
   const [isQuizStarted, setIsQuizStarted] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0); // Track correct answers
   const [quizCompleted, setQuizCompleted] = useState(false); // Track if quiz is completed
   const [regularPoints, setRegularPoints] = useState(0); // Track regular points
   const [bonusPoints, setBonusPoints] = useState(0); // Track bonus points
-
-  const { currentUser } = useContext(UserContext);
-  console.log(currentUser._id);
 
   // Fetch questions from the backend
   useEffect(() => {
@@ -59,6 +58,7 @@ const Quiz = () => {
     setIsQuizStarted(true);
     setTimer(60); // Reset timer to 60 seconds
     setProgress(0);
+    setTotalTimeTaken(0);
   };
 
   const handleSelectAnswer = (optionKey) => {
@@ -74,6 +74,9 @@ const Quiz = () => {
     // Calculate bonus points based on the timer
     let bonusPointsAwarded = 0;
     const timeTaken = 60 - timer; // Calculate time taken in seconds
+
+    // Add the time taken for this question to the total time taken
+    setTotalTimeTaken((prevTotal) => prevTotal + (60 - timer));
 
     if (selectedAnswer === quizData[currentQuestion].answer) {
       setCorrectAnswers((prev) => prev + 1); // Increment correct answers
@@ -106,6 +109,30 @@ const Quiz = () => {
 
   const handleFinishQuiz = () => {
     setQuizCompleted(true);
+    const totalScore = regularPoints + bonusPoints;
+    const perfectScore = quizData.length * 20; // Assuming each question is worth 20 points
+
+    // Check for the perfect score
+    const isPerfectScore = correctAnswers === quizData.length;
+
+    // Check for completing under a minute
+    const completedUnderMinute = totalTimeTaken < 60;
+
+    // Update user badges based on conditions
+    if (isPerfectScore) {
+      updateUser({
+        ...currentUser,
+        badges: [...currentUser.badges, "Quiz Champion"],
+      });
+    }
+
+    if (completedUnderMinute) {
+      updateUser({
+        ...currentUser,
+        badges: [...currentUser.badges, "Speedster"],
+      });
+    }
+
 
     updateUserData(totalPoints, currentUser._id);
   };

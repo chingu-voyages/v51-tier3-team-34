@@ -1,6 +1,6 @@
 import MapContainer from "./MapContainer";
 import { useState, useEffect, useContext } from "react";
-import { Marker, DirectionsRenderer } from "@react-google-maps/api";
+import { Marker, DirectionsRenderer  } from "@react-google-maps/api";;
 import { fetchGTFSData, drawBusRoute } from "./transitfunction";
 import { MapContext } from "../context/MapContext";
 import PoiMarkers from "./PoiMarkers";
@@ -16,23 +16,23 @@ const Home = () => {
   const { mapRef } = useContext(MapContext);
   const mapInstance = mapRef.current;
 
-  // const [mapInstance, setMapInstance] = useState(null)
+  // const [mapInstance, setMapInstance] = useState(null);
   const [polylines, setPolylines] = useState([]);
   const [visibleTransit, setVisibleTransit] = useState(true);
   const [showRoute, setShowRoute] = useState(false);
 
-  // This is for creating our stops because the transit layer doesn't display them
+  // State for transit stops, shapes, and routes
   const [stops, setStops] = useState([]);
-  // This is for creating the shapes, connecting the stops together into routes
   const [shapes, setShapes] = useState([]);
+  const [routes, setRoutes] = useState({}); // Add state for routes
+  const [trips, setTrips] = useState({})
 
   const [markerPosition, setMarkerPosition] = useState(null);
-
   const [directionsResponse, setDirectionsResponse] = useState(null);
 
-  //Fetch transit system data
+  // Fetch transit system data
   useEffect(() => {
-    fetchGTFSData({ setStops, setShapes });
+    fetchGTFSData({ setStops, setShapes, setRoutes, setTrips }); // Pass setRoutes here
   }, []);
 
   useEffect(() => {
@@ -42,14 +42,14 @@ const Home = () => {
     }
 
     const delayMapInstance = setTimeout(() => {
-      if (shapes.length > 0) {
-        // console.log("drawing bus route with map instance: ");
-        drawBusRoute(mapInstance, shapes, setPolylines);
+      if (shapes.length > 0 && routes) {
+        console.log("drawing bus route with map instance: ");
+        drawBusRoute(mapInstance, shapes, routes, trips, setPolylines); // Pass routes to drawBusRoute
       }
     }, 1000);
 
     return () => clearTimeout(delayMapInstance);
-  }, [mapInstance, shapes]);
+  }, [mapInstance, shapes, routes, trips]); // Add routes as dependency
 
   // Toggle the visibility of all polylines
   const togglePolylines = () => {
