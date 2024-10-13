@@ -45,9 +45,15 @@ const UserProvider = ({ children }) => {
     sessionStorage.removeItem("token");
   };
 
+  const updateUser = (updatedUser)=> {
+    setAuth({
+      ...auth, currentUser: updatedUser,
+    })
+  }
+
   // spreading "..auth" - allow the properties of auth to be added directly to value
   return (
-    <UserContext.Provider value={{ ...auth, login, logout }}>  
+    <UserContext.Provider value={{ ...auth, login, logout, updateUser }}>  
       {children}
     </UserContext.Provider>
   );
