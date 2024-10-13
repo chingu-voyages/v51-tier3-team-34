@@ -45,6 +45,7 @@ const Profile = () => {
         percentDiff = (currentUser.points - 500) / 300;
         setBadge(explorerSilver);
       } else {
+        percentDiff = 1
         setBadge(explorerGold);
       }
 

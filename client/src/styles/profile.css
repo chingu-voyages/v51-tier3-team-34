@@ -75,7 +75,7 @@
 
 .info input {
     display: block;
-    width: 60%;
+    width: 100%;
     font-size: 1em;
 }
 
@@ -160,6 +160,10 @@
         margin-right: 20%;
     }
 
+    .info input {
+        width: 60%;
+    }    
+
     .points-info {
         margin: 40px;
     }
@@ -175,7 +179,7 @@
     .tracking p {
         word-wrap: normal;
         font-size: 1em;
-        left: 150px;
+        left: 140px;
 
     }
     
