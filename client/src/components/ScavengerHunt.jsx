@@ -180,8 +180,21 @@ const ScavengerHunt = () => {
           <ScavengerProgress
             huntLocations={huntLocations}
             userProgress={userProgress}
+            userPoints={userPoints}
           />
           <p>Points: {userPoints}</p>
+
+          {/*BUTTON can be deleted or use if gps is not working well?*/}
+            {/* <button
+            onClick={() => {
+              if (userProgress < 10) {
+                setUserProgress((prev) => prev + 1);
+                setUserPoints((prev) => prev + 20);
+              }
+            }}
+          >
+            TEST button for user progression
+          </button> */}
         </div>
       )}
       {huntLocations && (
