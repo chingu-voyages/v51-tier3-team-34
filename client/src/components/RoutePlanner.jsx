@@ -150,7 +150,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
 
         {/* Travel mode radio buttons */}
         <div
-          style={{ display: "flex", justifyContent: "center", gap: "0.5rem" }}
+          style={{ display: "inline-flex", justifyContent: "center", gap: "1rem" }}
         >
           <label
             style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
@@ -162,10 +162,10 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
               checked={travelMode === "DRIVING"}
               onChange={handleTravelModeChange}
             />
-            Drive
+            <span>Drive</span>
           </label>
           <label
-            style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
           >
             <input
               type="radio"
@@ -174,10 +174,10 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
               checked={travelMode === "WALKING"}
               onChange={handleTravelModeChange}
             />
-            Walk
+            <span>Walk</span>
           </label>
           <label
-            style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
           >
             <input
               type="radio"
@@ -186,7 +186,7 @@ const RoutePlanner = ({ mapInstance, setDirectionsResponse }) => {
               checked={travelMode === "TRANSIT"}
               onChange={handleTravelModeChange}
             />
-            Bus
+            <span>Bus</span>
           </label>
         </div>
 
