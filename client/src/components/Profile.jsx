@@ -19,13 +19,13 @@ const apiUrl =
     : import.meta.env.VITE_BACKEND_URL;
 
 const Profile = () => {
-  const { currentUser, updateUser } = useContext(UserContext);
-  const [showImages, setShowImages] = useState(false);
-  const [showChangeUsername, setShowChangeUsername] = useState(true);
-  const [updatedUsername, setUpdateUsername] = useState("");
-  const [pointsDiff, setPointsDiff] = useState(0);
-  const [percentDiff, setPercentDiff] = useState(0);
-  const [badge, setBadge] = useState(explorerGrayed);
+  const {currentUser, updateUser} = useContext(UserContext)
+  const [showImages, setShowImages] = useState(false)
+  const [showChangeUsername, setShowChangeUsername] = useState(false)
+  const [updatedUsername, setUpdateUsername] = useState("")
+  const [pointsDiff, setPointsDiff] = useState(0)
+  const [percentDiff, setPercentDiff] = useState(0)
+  const [badge, setBadge] = useState(explorerGrayed)
 
   useEffect(() => {
     const updateBadge = () => {
