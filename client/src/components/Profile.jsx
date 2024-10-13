@@ -1,5 +1,7 @@
 import React, {useContext, useState} from 'react'
 import images from "../assets/avatar/images"
+import edit from "../assets/edit.png"
+import cancel from "../assets/cancel.png"
 import { UserContext } from '../context/UserContext'
 import "../styles/profile.css"
 
@@ -77,25 +79,27 @@ const Profile = () => {
           }
           <div className='user-info'>
             <div className='info'>
-              <p><span>{currentUser.name}</span></p>
+              <p className='username'><span>{currentUser.name} </span>
+                <button onClick={()=>setShowChangeUsername(!showChangeUsername)}>
+                  {showChangeUsername ? <img src={cancel} alt="cancel-icon"/> : <img src={edit} alt='edit-icon' />}
+                </button>
+              </p>
               {showChangeUsername && 
                 <label>
-                  Update your username:
+                  Edit your username
                   <input type='text' value={updatedUsername} onChange={(e)=>{setUpdateUsername(e.target.value)}}/>
-                  <button onClick={handleUpdateName}>Change Username</button>
+                  <button onClick={handleUpdateName}>Change</button>
                 </label>
           
               }
-              <p><span>{currentUser.email}</span>{showChangeUsername && <span style={{fontStyle: "italic"}}>  Can not change email.</span>}</p>
+              <p><span>{currentUser.email}</span>{showChangeUsername && <span style={{fontStyle: "italic"}}> *Can not change email.*</span>}</p>
             </div>
-            <button onClick={()=>setShowChangeUsername(!showChangeUsername)}>
-              {showChangeUsername ? "Cancel" : "Edit User Settings"}
-            </button>
           </div>
+          <hr/>
           <div className='points-info'>
             <p><span>Total Points Earned</span> {currentUser.points}</p>
           </div>
-     
+          <hr/>
           <div className='achievement-section'></div>
         </div>
       </div>
