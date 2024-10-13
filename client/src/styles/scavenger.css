@@ -31,7 +31,7 @@
   overflow-y: auto;
   height: 40vh;
   padding: 10px;
-  width: 90vw;
+  width: 70vw;
   left: 10px;
 }
 
@@ -76,7 +76,7 @@ h2 {
       overflow-y: auto;
       height: 70vh;
       padding: 10px;
-      width: 23rem;
+      width: 20rem;
       left: 10px;
     }
   }

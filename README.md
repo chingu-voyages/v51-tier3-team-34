@@ -1,20 +1,20 @@
-# voyage-tasks
+# GeoWorld Dash
+## Overview
+This app was created for Chingu Voyage 51. It is based on an original idea where users are able to learn about a city through game activities (such as quizzes and scavenger hunts).
 
-Your project's `readme` is as important to success as your code. For 
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+## Features 
+Currently GeoDash World is only set up for one city: Lexington, KY
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point - 
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
-
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
-
-> Own it & Make it your Own!
+This project includes:
+ - Ability to log in and sign up for new users with thank you emails automatically being sent
+ - A profile page where username and profile picture can be change with a summary of points and badges earned
+ - An achievements page where users can see all available badges and the ability to share them on social media
+ - On home page, users are able to plan routes to get to one destination to another. 
+ - Incorporate GPS monitoring during scavenger hunt to verify user location
+ - Dedicated Quiz page where users can answer questions within a time limit
 
 ## How to Start
-IN DEVELOPMENT
+To run this project locally, first clone this project locally.
 
 **Client (front-end)**
 Go into client folder, run `npm install`. Make sure there is an .env file in client folder with your google maps api key. To run `npm run dev`
@@ -76,5 +76,4 @@ coding!
 - Tuyet Nguyen: [GitHub](https://github.com/hongtuyet91) / [LinkedIn](https://www.linkedin.com/in/nguyen-tuyet/)
 - Rika Miyata: [GitHub](https://github.com/Tayrika) / [LinkedIn](https://www.linkedin.com/in/rika-miyata-4bab99243/)
 - Mahyar Erfanian: [GitHub](https://github.com/Mahyar-98) / [LinkedIn](https://www.linkedin.com/in/mahyar-erfanian-67968279/)
-- Sapna Bolikal: [GitHub](https://github.com/sapnab821)
 - Greimil Nunez: [GitHub](https://github.com/Greimil) / [LinkedIn](https://www.linkedin.com/in/greimil-nu%C3%B1ez/)
