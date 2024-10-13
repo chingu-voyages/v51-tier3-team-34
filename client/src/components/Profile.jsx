@@ -1,8 +1,10 @@
 import React, {useContext, useState, useEffect} from 'react'
 import images from "../assets/avatar/images"
-import edit from "../assets/edit.png"
-import cancel from "../assets/cancel.png"
-import points from "../assets/points.png"
+import edit from "../assets/profile/edit.png"
+import cancel from "../assets/profile/cancel.png"
+import points from "../assets/profile/points.png"
+import quiz from "../assets/profile/quiz.png"
+import map from "../assets/profile/map.png"
 import explorerGreen from "../assets/badges/explorer_green.png";
 import explorerBronze from "../assets/badges/explorer_bronze.png";
 import explorerSilver from "../assets/badges/explorer_silver.png";
@@ -94,6 +96,12 @@ const Profile = () => {
       console.error('Error updating image:', error.message);
     }
   }
+
+  const completedAmt = (type) => {
+    const filteredArray = currentUser.completed.filter((completed) => completed.startsWith(type))
+    const amount = filteredArray.length;
+    return amount;
+  }
   
   return (
     <div className='profile-body'>
@@ -137,8 +145,18 @@ const Profile = () => {
           </div>
           <hr/>
           <div className='points-info'>
-            <img src={points} alt="star-icon" />
-            <p><span>Total Points Earned: </span> {currentUser.points}</p>
+            <div>
+              <img src={points} alt="star-icon" />
+              <p><span>Total Points Earned: </span> {currentUser.points}</p>
+            </div>
+            <div>
+              <img src={quiz} alt="quiz-icon" />
+              <p><span>Total Quizzes Completed: </span> {completedAmt("q")}</p>
+            </div>
+            <div>
+              <img src={map} alt="map-icon" />
+              <p><span>Total Scavenger Hunt Completed: </span> {completedAmt("s")}</p>
+            </div>
           </div>
           <hr/>
           <div className='achievement-section'>

@@ -91,8 +91,12 @@
 .points-info {
     margin: 20px;
     display: flex;
-    justify-content: flex-start;
-    gap: 5px;
+    justify-content: space-between,
+}
+
+.points-info div {
+    width: 40%;
+    font-size: 0.8em;
 }
 
 .points-info img {
@@ -152,6 +156,11 @@
         width: 40vw;
     }
 
+    .points-info div {
+        width: 40%;
+        font-size: 1em;
+    }
+
     .all-images img {
         height: 30vh;
     }
@@ -165,7 +174,7 @@
     }    
 
     .points-info {
-        margin: 40px;
+        margin: 20px 40px;
     }
 
     .achievement-section {
