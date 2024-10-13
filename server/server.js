@@ -160,8 +160,11 @@ app.post("/api/signup", async (req, res) => {
       return res.status(400).json({ error: "Email, username and password are required" });
     }
 
+    // convert user input email to lower case
+    const lowerEmail = email.toLowerCase()
+
     // Check if user already exists
-    const userExists = await db.collection("users").findOne({ email });
+    const userExists = await db.collection("users").findOne({ lowerEmail });
     if (userExists) {
       return res
         .status(409)
@@ -180,10 +183,10 @@ app.post("/api/signup", async (req, res) => {
     
     // Insert the new user into the database
     const result = await db.collection("users").insertOne({
-      email,
+      email: lowerEmail,
       password: hash,
       name,
-      img: "",
+      img: "defaultpic",
       badges: [],
       points: 0,
       completed: []
@@ -209,8 +212,11 @@ app.post("/api/login", async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
-  
-    const user = await db.collection("users").findOne({ email })
+    
+    // convert user input email to lower case
+    const lowerEmail = email.toLowerCase()
+
+    const user = await db.collection("users").findOne({ email: lowerEmail })
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -315,8 +321,11 @@ app.post("/api/reset", async (req, res) => {
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
+
+    // convert user input email to lower case
+    const lowerEmail = email.toLowerCase()
   
-    const user = await db.collection("users").findOne({ email })
+    const user = await db.collection("users").findOne({ email: lowerEmail })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

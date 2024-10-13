@@ -21,7 +21,7 @@ const apiUrl =
 const Profile = () => {
   const {currentUser, updateUser} = useContext(UserContext)
   const [showImages, setShowImages] = useState(false)
-  const [showChangeUsername, setShowChangeUsername] = useState(true)
+  const [showChangeUsername, setShowChangeUsername] = useState(false)
   const [updatedUsername, setUpdateUsername] = useState("")
   const [pointsDiff, setPointsDiff] = useState(0)
   const [percentDiff, setPercentDiff] = useState(0)

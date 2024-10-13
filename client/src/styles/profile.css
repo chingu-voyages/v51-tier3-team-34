@@ -4,8 +4,12 @@
 }
 
 .select-image {
-    text-align: center;
     font-size: 1.3em;
+    text-align: center;
+}
+
+.select-image p {
+    margin-left: 0;
 }
 
 .select-image a {
@@ -14,7 +18,7 @@
 }
 
 .all-images img {
-    height: 25vh;
+    height: 20vh;
 }
 
 
@@ -150,6 +154,10 @@
         height: 70vh;
         width: 30vw;
         margin: 0;
+    }
+
+    .select-image p {
+        margin-left: -200px;
     }
 
     .right-section {
