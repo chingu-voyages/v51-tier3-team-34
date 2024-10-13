@@ -2,6 +2,7 @@
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
+  padding: 0 15px;
 }
 
 .leaderboard-header {
@@ -84,5 +85,6 @@ tbody {
     max-width: 700px;
     padding-left: 15px;
     padding-right: 15px;
+    margin: 2em auto;
   }
 }
