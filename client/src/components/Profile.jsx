@@ -1,5 +1,15 @@
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import images from "../assets/avatar/images"
+import edit from "../assets/profile/edit.png"
+import cancel from "../assets/profile/cancel.png"
+import points from "../assets/profile/points.png"
+import quiz from "../assets/profile/quiz.png"
+import map from "../assets/profile/map.png"
+import explorerGreen from "../assets/badges/explorer_green.png";
+import explorerBronze from "../assets/badges/explorer_bronze.png";
+import explorerSilver from "../assets/badges/explorer_silver.png";
+import explorerGold from "../assets/badges/explorer_gold.png";
+import explorerGrayed from "../assets/badges/explorer_grayed.png";
 import { UserContext } from '../context/UserContext'
 import "../styles/profile.css"
 
@@ -13,6 +23,41 @@ const Profile = () => {
   const [showImages, setShowImages] = useState(false)
   const [showChangeUsername, setShowChangeUsername] = useState(true)
   const [updatedUsername, setUpdateUsername] = useState("")
+  const [pointsDiff, setPointsDiff] = useState(0)
+  const [percentDiff, setPercentDiff] = useState(0)
+  const [badge, setBadge] = useState(explorerGrayed)
+
+  useEffect(() => {
+    const updateBadge = () => {
+      let pointsDiff, percentDiff;
+      if (currentUser.points === 0) {
+        pointsDiff = 1;
+        percentDiff = 0;
+        setBadge(explorerGrayed);
+      } else if (currentUser.points >= 1 && currentUser.points < 200) {
+        pointsDiff = 200 - currentUser.points;
+        percentDiff = (currentUser.points - 1) / 300;
+        setBadge(explorerGreen);
+      } else if (currentUser.points >= 200 && currentUser.points < 500) {
+        pointsDiff = 500 - currentUser.points;
+        percentDiff = (currentUser.points - 200) / 300;
+        setBadge(explorerBronze);
+      } else if (currentUser.points >= 500 && currentUser.points < 800) {
+        pointsDiff = 800 - currentUser.points;
+        percentDiff = (currentUser.points - 500) / 300;
+        setBadge(explorerSilver);
+      } else {
+        percentDiff = 1
+        setBadge(explorerGold);
+      }
+
+      // Update the state after calculations
+      setPointsDiff(pointsDiff);
+      setPercentDiff(percentDiff * 100);
+    };
+
+    updateBadge(); // Call the function whenever points change
+  }, [currentUser.points]); // Only run effect when `currentUser.points` changes
 
   
   const handleUpdate = async (prop, value)=> {
@@ -34,7 +79,6 @@ const Profile = () => {
   }
 
   const handleUpdateName = async () =>{
-    console.log(updatedUsername)
     try {
       const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`, {
         method: "PATCH",
@@ -46,10 +90,17 @@ const Profile = () => {
       });
       const data = await response.json()
       updateUser(data.user)
+      setUpdateUsername("")
   
     } catch (error) {
       console.error('Error updating image:', error.message);
     }
+  }
+
+  const completedAmt = (type) => {
+    const filteredArray = currentUser.completed.filter((completed) => completed.startsWith(type))
+    const amount = filteredArray.length;
+    return amount;
   }
   
   return (
@@ -77,26 +128,50 @@ const Profile = () => {
           }
           <div className='user-info'>
             <div className='info'>
-              <p><span>{currentUser.name}</span></p>
+              <p className='username'><span>{currentUser.name} </span>
+                <button onClick={()=>setShowChangeUsername(!showChangeUsername)}>
+                  {showChangeUsername ? <img src={cancel} alt="cancel-icon"/> : <img src={edit} alt='edit-icon' />}
+                </button>
+              </p>
               {showChangeUsername && 
-                <label>
-                  Update your username:
+                <label style={{color: "black"}}>
+                  Edit your username
                   <input type='text' value={updatedUsername} onChange={(e)=>{setUpdateUsername(e.target.value)}}/>
-                  <button onClick={handleUpdateName}>Change Username</button>
+                  <button onClick={handleUpdateName}>Change</button>
                 </label>
-          
               }
-              <p><span>{currentUser.email}</span>{showChangeUsername && <span style={{fontStyle: "italic"}}>  Can not change email.</span>}</p>
+              <p><span>{currentUser.email}</span>{showChangeUsername && <span style={{fontStyle: "italic", color: "black"}}> *Can not change email.*</span>}</p>
             </div>
-            <button onClick={()=>setShowChangeUsername(!showChangeUsername)}>
-              {showChangeUsername ? "Cancel" : "Edit User Settings"}
-            </button>
           </div>
+          <hr/>
           <div className='points-info'>
-            <p><span>Total Points Earned</span> {currentUser.points}</p>
+            <div>
+              <img src={points} alt="star-icon" />
+              <p><span>Total Points Earned: </span> {currentUser.points}</p>
+            </div>
+            <div>
+              <img src={quiz} alt="quiz-icon" />
+              <p><span>Total Quizzes Completed: </span> {completedAmt("q")}</p>
+            </div>
+            <div>
+              <img src={map} alt="map-icon" />
+              <p><span>Total Scavenger Hunt Completed: </span> {completedAmt("s")}</p>
+            </div>
           </div>
-     
-          <div className='achievement-section'></div>
+          <hr/>
+          <div className='achievement-section'>
+            <h3>Achievement Badges Progress</h3>
+            <div className='tracking'>
+              <img src={badge} alt="explorer-badge"/>
+              <div className='progress-bar-container'>
+                <div className='progress-bar' style={{width: `${percentDiff}%`}}></div>
+              </div>
+              {badge === explorerGold ? <p>Congratulations for reaching the Gold Explorer Badge!</p> : <p>{pointsDiff} more points to the next badge. </p>}
+            </div>
+            <div className='description'>
+              <p>See Achievements Link for additional badges you can earn!</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
 .right-section {
     width: 100vw;
-    border: black solid 2px;
     flex-grow: 1;
 }
 
@@ -20,7 +19,7 @@
 
 
 .all-images img:hover {
-    border: 5px solid red;
+    opacity: 0.5;
 }
 
 .profile-body h2 {
@@ -40,7 +39,6 @@
     display: block;
     margin: auto;
     width: 60vw;
-    border: 2px solid black;
 }
 
 .profile-image img{
@@ -51,8 +49,94 @@
 .profile-image button {
     display: block;
     margin: auto;
-    font-size: larger;
+    font-size: large;
     font-weight: 600;
+}
+
+.username {
+    font-size: 30px;
+    margin-bottom: 0;
+}
+
+.info {
+    font-size: 1em;
+    padding-left: 4vw;
+}
+
+.info button img {
+    width: 1em;
+    height: 1em;
+}
+
+.info p button {
+    padding: 0 5px;
+    margin-left: 5px;
+}
+
+.info input {
+    display: block;
+    width: 100%;
+    font-size: 1em;
+}
+
+.user-info span{
+    margin-right: 3px;
+}
+
+.right-section hr{
+    border-top: 3px dashed #ebdebe;
+    width: 75%;
+}
+
+.points-info {
+    margin: 20px;
+    display: flex;
+    justify-content: space-between,
+}
+
+.points-info div {
+    width: 40%;
+    font-size: 0.8em;
+}
+
+.points-info img {
+    width: 4em;
+    height: 4em
+}
+
+.achievement-section {
+    margin: 20px;
+}
+
+.tracking {
+    height: 15vh;
+    display: flex;
+    position: relative
+}
+
+.tracking img {
+    height: 100%;
+    width: auto;
+    margin-right: 5px;
+}
+
+.tracking > .progress-bar-container {
+    width: 100%;
+    margin-top: 3.5vh;
+}
+
+.tracking p {
+    word-wrap: normal;
+    font-style: italic;
+    font-size: 0.7em;
+    width: 70%;
+    position: absolute;
+    left: 100px;
+    top: 40px;
+}
+
+.achievement-section h3{
+    color: #933a05;
 }
 
 @media (min-width: 850px) {
@@ -72,8 +156,40 @@
         width: 40vw;
     }
 
+    .points-info div {
+        width: 40%;
+        font-size: 1em;
+    }
+
     .all-images img {
         height: 30vh;
+    }
+
+    .right-section hr{
+        margin-right: 20%;
+    }
+
+    .info input {
+        width: 60%;
+    }    
+
+    .points-info {
+        margin: 20px 40px;
+    }
+
+    .achievement-section {
+        margin: 30px;
+    }
+
+    .tracking > .progress-bar-container {
+        width: 50%;
+    }
+
+    .tracking p {
+        word-wrap: normal;
+        font-size: 1em;
+        left: 140px;
+
     }
     
 }
