@@ -12,7 +12,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <LoadScriptNext
       googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
       libraries={libraries}
-      loadingElement={<div>Loading...</div>} // Provide loading element for better UX
     >
       <MapProvider>
         <UserProvider>

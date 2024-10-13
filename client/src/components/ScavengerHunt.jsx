@@ -155,7 +155,7 @@ const ScavengerHunt = () => {
     
     const nextLocation = huntLocations[userProgress];
     const userLatLng = new window.google.maps.LatLng(userLocation.lat, userLocation.lng);
-    const huntLatLng = new window.google.maps.LatLng(nextLocation.lat, nextLocation.lng);
+    const huntLatLng = new window.google.maps.LatLng(nextLocation.location.lat, nextLocation.location.lng);
 
     const distance = window.google.maps.geometry.spherical.computeDistanceBetween(userLatLng, huntLatLng);
 

@@ -12,23 +12,20 @@ import { UserContext } from "../context/UserContext";
 const center = { lat: 38.0406, lng: -84.5037 }
 
 const Home = () => {
-  const { currentUser } = useContext(UserContext)
-  const { mapRef } = useContext(MapContext)
-  const mapInstance = mapRef.current
+  const { currentUser } = useContext(UserContext);
+  const { mapRef, isMapLoaded } = useContext(MapContext);
+  const mapInstance = mapRef.current;
 
   // const [mapInstance, setMapInstance] = useState(null)
-  const [polylines, setPolylines] = useState([])
-  const [visibleTransit, setVisibleTransit] = useState(true)
-  const [showRoute, setShowRoute] = useState(false)
+  const [polylines, setPolylines] = useState([]);
+  const [visibleTransit, setVisibleTransit] = useState(true);
+  const [showRoute, setShowRoute] = useState(false);
 
   // This is for creating our stops because the transit layer doesn't display them
   const [stops, setStops] = useState([]);
   // This is for creating the shapes, connecting the stops together into routes
   const [shapes, setShapes] = useState([]);
-  
-
-  const [markerPosition, setMarkerPosition] = useState(null)
-
+  const [markerPosition, setMarkerPosition] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);
 
   //Fetch transit system data
@@ -37,19 +34,10 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (!mapInstance) {
-      // console.log("Map instance is NOT ready yet...");
-      return;
-    }
+    if (!mapInstance || shapes.length === 0) return;
 
-    const delayMapInstance = setTimeout(() => {
-      if (shapes.length > 0) {
-        // console.log("drawing bus route with map instance: ");
-        drawBusRoute(mapInstance, shapes, setPolylines);
-      }
-    }, 1000);
-
-    return () => clearTimeout(delayMapInstance);
+    // Draw the bus routes as soon as mapInstance and shapes are ready
+    drawBusRoute(mapInstance, shapes, setPolylines);
   }, [mapInstance, shapes]);
 
   // Toggle the visibility of all polylines
@@ -71,23 +59,29 @@ const Home = () => {
     mapInstance.setZoom(13);
   };
 
+  // Show loading message if the map isn't loaded yet
+  if (!isMapLoaded) {
+    return <div>Loading maps...</div>;
+  }
 
   return (
     <>
-      {currentUser && <h3 style={{textAlign:'center'}}>Welcome {currentUser.name}</h3>}
+      {currentUser && (
+        <h3 style={{ textAlign: "center" }}>Welcome {currentUser.name}</h3>
+      )}
       <div className="interaction-menu">
         {/* Toggle between route planner and search bar */}
         {showRoute ? (
           <RoutePlanner
             mapInstance={mapInstance}
             setDirectionsResponse={setDirectionsResponse}
-        />
-          ) : (
-        <SearchBar
-          mapInstance={mapInstance}
-          setMarkerPosition={setMarkerPosition}
-          clearSearch={clearSearch}
-        />
+          />
+        ) : (
+          <SearchBar
+            mapInstance={mapInstance}
+            setMarkerPosition={setMarkerPosition}
+            clearSearch={clearSearch}
+          />
         )}
         <MapButtons
           clearSearch={clearSearch}
@@ -101,9 +95,11 @@ const Home = () => {
       <MapContainer center={center} zoom={13}>
         {/* Add a marker if a place is selected */}
         {markerPosition && <Marker position={markerPosition} />}
-        <PoiMarkers/>
+        <PoiMarkers />
         {/* Render Directions on the map */}
-        {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
+        {directionsResponse && (
+          <DirectionsRenderer directions={directionsResponse} />
+        )}
       </MapContainer>
     </>
   );
