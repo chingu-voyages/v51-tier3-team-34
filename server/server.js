@@ -6,7 +6,7 @@ const { ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { connectToDb, getDb } = require("./db");
-const { sendThankYouEmail, sendResetEmail } = require("./mail")
+const { sendThankYouEmail, sendResetEmail } = require("./mail");
 
 const app = express();
 app.use(express.json());
@@ -157,7 +157,9 @@ app.post("/api/signup", async (req, res) => {
 
     // Check if the email or password is missing
     if (!email || !password || !name) {
-      return res.status(400).json({ error: "Email, username and password are required" });
+      return res
+        .status(400)
+        .json({ error: "Email, username and password are required" });
     }
 
     // convert user input email to lower case
@@ -180,7 +182,7 @@ app.post("/api/signup", async (req, res) => {
 
     // Hash password
     const hash = await bcrypt.hash(password, 10);
-    
+
     // Insert the new user into the database
     const result = await db.collection("users").insertOne({
       email: lowerEmail,
@@ -189,13 +191,15 @@ app.post("/api/signup", async (req, res) => {
       img: "defaultpic",
       badges: [],
       points: 0,
-      completed: []
+      completed: [],
     });
 
     if (result.acknowledged) {
-      const newUser = await db.collection("users").findOne({_id: result.insertedId });
-      const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET)
-      sendThankYouEmail(newUser)
+      const newUser = await db
+        .collection("users")
+        .findOne({ _id: result.insertedId });
+      const accessToken = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET);
+      sendThankYouEmail(newUser);
       res.status(201).json({ accessToken: accessToken, user: newUser });
     }
   } catch (error) {
@@ -229,9 +233,8 @@ app.post("/api/login", async (req, res) => {
     }
 
     // If successful, you can create a session, JWT, or simply return a success message
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
     res.status(200).json({ accessToken: accessToken, user: user });
-
   } catch (err) {
     res.status(500).json({ error: "An error occurred during login" });
   }
@@ -252,23 +255,22 @@ app.get("/api/users/ranking", async (req, res) => {
   }
 });
 
-// Get user points by user ID
-app.get("/api/users/:id/points", async (req, res) => {
+// Get user data by user ID
+app.get("/api/users/:id", async (req, res) => {
   const userId = req.params.id;
 
   try {
-    const user = await db.collection("users").findOne(
-      { _id: new ObjectId(userId) },
-      { projection: { points: 1 } }, // Only return the "point" field
-    );
+    const user = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(userId) });
 
     if (user) {
-      res.status(200).json({ points: user.points });
+      res.status(200).json({ user: user });
     } else {
       res.status(404).json({ error: "User not found" });
     }
   } catch (err) {
-    res.status(500).json({ error: "Could not fetch user points" });
+    res.status(500).json({ error: "Could not fetch user data" });
   }
 });
 
@@ -296,22 +298,48 @@ app.put("/api/users/:id/points", async (req, res) => {
   }
 });
 
+// Update user's completed tasks array by user ID
+app.put("/api/users/:id/completed", async (req, res) => {
+  const userId = req.params.id;
+  const { task } = req.body; // Task to be added to the completed array
+
+  if (!task) {
+    return res.status(400).json({ error: "Task is required" });
+  }
+
+  try {
+    const result = await db.collection("users").updateOne(
+      { _id: new ObjectId(userId) },
+      { $addToSet: { completed: task } } // $addToSet ensures no duplicates
+    );
+
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: "Task added to completed array successfully" });
+    } else {
+      res.status(404).json({ error: "User not found or task already completed" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Could not update completed tasks" });
+  }
+});
+
 
 // MiddleWare to pass to the routes that needs to be protected
 // not added, if do want backend routes to be protected, will need to add headers and token info in frontend during fetch
 function authToken(req, res, next) {
-  console.log("from authToken", req.headers)
-  const authHeader = req.headers['Authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-  if (token == null ) return res.status(401).json({message: "No auth token, access denied"})
+  console.log("from authToken", req.headers);
+  const authHeader = req.headers["Authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null)
+    return res.status(401).json({ message: "No auth token, access denied" });
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.status(403).json({message: " Token verification failed"})
-    res.user = user
-    next()  
-  })  
+    if (err)
+      return res.status(403).json({ message: " Token verification failed" });
+    res.user = user;
+    next();
+  });
 }
-
 
 app.post("/api/reset", async (req, res) => {
   try {
@@ -331,64 +359,76 @@ app.post("/api/reset", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "30m"})
-    sendResetEmail(user.email, token)
-    res.status(201).json({ message: "Email sent. Please check your inbox."});
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "30m" },
+    );
+    sendResetEmail(user.email, token);
+    res.status(201).json({ message: "Email sent. Please check your inbox." });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-})
+});
 
 app.post("/api/reset/:token", async (req, res) => {
   try {
-    const { password } = req.body
-    const token = req.params.token
+    const { password } = req.body;
+    const token = req.params.token;
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     // If the token is invalid, return an error
     if (!decodedToken) {
-      return res.status(401).json({message: "Invalid token"})
+      return res.status(401).json({ message: "Invalid token" });
     }
 
     // Hash password
     const hash = await bcrypt.hash(password, 10);
-    const result = await db.collection("users").updateOne(
-      { _id: new ObjectId(decodedToken.userId) },
-      { $set: { password: hash }}
-    );
+    const result = await db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(decodedToken.userId) },
+        { $set: { password: hash } },
+      );
 
     // const user = await db.collection("users").findOne({_id: new ObjectId(decodedToken.userId)})
 
     if (result.modifiedCount === 1) {
-      return res.status(200).json({ message: "Password changed "})
+      return res.status(200).json({ message: "Password changed " });
     } else {
-      return res.status(401).json({ message: "User not found or password not changed"})
+      return res
+        .status(401)
+        .json({ message: "User not found or password not changed" });
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-})
+});
 
 app.patch("/api/users/:id", async (req, res) => {
   const id = req.params.id;
   const updates = req.body;
 
   try {
-    const result = await db.collection("users").updateOne(
-      {_id: new ObjectId(id)},
-      { $set: updates }
-    )
+    const result = await db
+      .collection("users")
+      .updateOne({ _id: new ObjectId(id) }, { $set: updates });
 
-    if (result.modifiedCount === 0 ){
-      return res.status(404).json({ message: "User not found or no changes made"})
+    if (result.modifiedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "User not found or no changes made" });
     }
 
     //find updated User object, to have it return in the response
-    const updatedUser = await db.collection("users").findOne({ _id: new ObjectId(id) });
-    res.status(200).json({message: "User updated successfully", user: updatedUser}); 
-  
+    const updatedUser = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
+    res
+      .status(200)
+      .json({ message: "User updated successfully", user: updatedUser });
   } catch (error) {
-    console.error(error)
-    res.status(500).send({message: "Internal server error"})
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
   }
-})
+});

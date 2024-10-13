@@ -40,15 +40,18 @@ const Leaderboard = () => {
 
   const toggleLeaderboard = () => {
     setShowFullList(!showFullList);
-  }; 
+  };
 
   const displayedUsers = showFullList ? users : users.slice(0, 5);
 
   const getRankingIcon = (index) => {
-    if (index === 0) return <img src={ranking1} alt="Top 1" className="ranking-icon" />;
-    if (index === 1) return <img src={ranking2} alt="Top 2" className="ranking-icon" />;
-    if (index === 2) return <img src={ranking3} alt="Top 3" className="ranking-icon" />;
-    return index + 1; 
+    if (index === 0)
+      return <img src={ranking1} alt="Top 1" className="ranking-icon" />;
+    if (index === 1)
+      return <img src={ranking2} alt="Top 2" className="ranking-icon" />;
+    if (index === 2)
+      return <img src={ranking3} alt="Top 3" className="ranking-icon" />;
+    return index + 1;
   };
 
   return (
@@ -62,11 +65,13 @@ const Leaderboard = () => {
       <table className="leaderboard-table">
         <tbody>
           {displayedUsers.map((user, index) => (
-            <tr 
-              key={user._id} 
+            <tr
+              key={user._id}
               className={`leaderboard-row ${index < 5 ? "top-5" : ""} ${
-              currentUser && user._id === currentUser._id && index < 5 ? "highlight-green" : ""
-            }`}
+                currentUser && user._id === currentUser._id && index < 5
+                  ? "highlight-green"
+                  : ""
+              }`}
             >
               <td className="rank">{getRankingIcon(index)}</td>
               <td className="profile-pic">
@@ -81,7 +86,7 @@ const Leaderboard = () => {
         </tbody>
       </table>
     </div>
-  )
+  );
 };
 
 export default Leaderboard;

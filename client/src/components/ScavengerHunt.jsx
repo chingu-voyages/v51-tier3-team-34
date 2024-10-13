@@ -63,7 +63,7 @@ const ScavengerHunt = () => {
         }
       },
       (error) => console.error("Error fetching geolocation", error),
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: true },
     );
 
     // Capture heading data
@@ -91,7 +91,7 @@ const ScavengerHunt = () => {
       mapRef.current.panTo(center);
       mapRef.current.setZoom(16.3);
     }
-    startLocationTracking()
+    startLocationTracking();
   };
 
   const calculateRoute = async (locations) => {
@@ -118,7 +118,7 @@ const ScavengerHunt = () => {
           (response, status) => {
             if (status === "OK") resolve(response);
             else reject(`Directions request failed due to ${status}`);
-          }
+          },
         );
       });
       setDirectionsResponse(results);
@@ -145,17 +145,17 @@ const ScavengerHunt = () => {
     const nextLocation = huntLocations[userProgress];
     const userLatLng = new window.google.maps.LatLng(
       userLocation.lat,
-      userLocation.lng
+      userLocation.lng,
     );
     const huntLatLng = new window.google.maps.LatLng(
       nextLocation.lat,
-      nextLocation.lng
+      nextLocation.lng,
     );
 
     const distance =
       window.google.maps.geometry.spherical.computeDistanceBetween(
         userLatLng,
-        huntLatLng
+        huntLatLng,
       );
 
     if (distance <= 50) {
@@ -197,7 +197,7 @@ const ScavengerHunt = () => {
           <p>Points: {userPoints}</p>
 
           {/*BUTTON can be deleted or use if gps is not working well?*/}
-            {/* <button
+          {/* <button
             onClick={() => {
               if (userProgress < 10) {
                 setUserProgress((prev) => prev + 1);

@@ -12,9 +12,9 @@ import { UserContext } from "../context/UserContext";
 const center = { lat: 38.0406, lng: -84.5037 };
 
 const Home = () => {
-  const { currentUser } = useContext(UserContext)
-  const { mapRef } = useContext(MapContext)
-  const mapInstance = mapRef.current
+  const { currentUser } = useContext(UserContext);
+  const { mapRef } = useContext(MapContext);
+  const mapInstance = mapRef.current;
 
   // const [mapInstance, setMapInstance] = useState(null);
   const [polylines, setPolylines] = useState([]);
@@ -25,7 +25,7 @@ const Home = () => {
   const [stops, setStops] = useState([]);
   const [shapes, setShapes] = useState([]);
   const [routes, setRoutes] = useState({}); // Add state for routes
-  const [trips, setTrips] = useState({})
+  const [trips, setTrips] = useState({});
 
   const [markerPosition, setMarkerPosition] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);
@@ -72,7 +72,9 @@ const Home = () => {
 
   return (
     <>
-      {currentUser && <h3 style={{textAlign:'center'}}>Welcome {currentUser.name}</h3>}
+      {currentUser && (
+        <h3 style={{ textAlign: "center" }}>Welcome {currentUser.name}</h3>
+      )}
       <div className="interaction-menu">
         {/* Toggle between route planner and search bar */}
         {showRoute ? (

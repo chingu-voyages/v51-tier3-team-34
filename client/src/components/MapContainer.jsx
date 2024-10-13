@@ -1,10 +1,9 @@
 import { useContext } from "react";
 import { GoogleMap } from "@react-google-maps/api";
-import { MapContext } from "../context/MapContext"
+import { MapContext } from "../context/MapContext";
 
-
-const MapContainer = ({children, center, zoom}) => {
-  const { onLoad, onUnmount, mapRef } = useContext(MapContext)
+const MapContainer = ({ children, center, zoom }) => {
+  const { onLoad, onUnmount, mapRef } = useContext(MapContext);
 
   const mapStyles = [
     // Turn off points of interest that is default in googlemaps.
@@ -16,18 +15,18 @@ const MapContainer = ({children, center, zoom}) => {
   ];
 
   const containerStyle = {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   };
- 
+
   return (
     <div className="map-container">
       <GoogleMap
-          // This is the map component that can be customized
+        // This is the map component that can be customized
         mapContainerStyle={containerStyle}
-          // width: "70vh",
-          // height: "70vh",
-          // marginLeft: "26rem",
+        // width: "70vh",
+        // height: "70vh",
+        // marginLeft: "26rem",
         center={center}
         zoom={zoom}
         mapId="90d6d90b957e9186" // This helps with styling default points of interest
@@ -42,6 +41,5 @@ const MapContainer = ({children, center, zoom}) => {
     </div>
   );
 };
-
 
 export default MapContainer;

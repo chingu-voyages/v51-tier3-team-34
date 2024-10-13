@@ -103,7 +103,6 @@ const Achievements = () => {
 
   // Initialize the Facebook SDK
   useEffect(() => {
-    
     // Load Facebook SDK asynchronously
     (function (d, s, id) {
       let js,
@@ -124,9 +123,7 @@ const Achievements = () => {
         version: "v21.0",
       });
     };
-    
   }, []);
-  
 
   // Function to share a badge on Facebook using FBInstant
   const handleShareOnFacebook = (badgeName, badgeImage) => {
@@ -144,7 +141,7 @@ const Achievements = () => {
           } else {
             console.log("Error while sharing badge:", response.error_message);
           }
-        }
+        },
       );
     } else {
       console.error("Facebook SDK not loaded.");

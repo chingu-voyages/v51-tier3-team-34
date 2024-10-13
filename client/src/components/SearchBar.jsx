@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
 const SearchBar = ({ mapInstance, setMarkerPosition, clearSearch }) => {
-  const { currentUser } = useContext(UserContext)
+  const { currentUser } = useContext(UserContext);
   const searchBoxRef = useRef(null);
   const cityLocation = { lat: 38.0406, lng: -84.5037 };
   const searchRadius = 15000; // Radius in meters (15 km)
@@ -46,7 +46,7 @@ const SearchBar = ({ mapInstance, setMarkerPosition, clearSearch }) => {
           lat: location.lat(),
           lng: location.lng(),
         });
-      
+
         mapInstance.panTo(location);
         mapInstance.setZoom(14);
       });
@@ -77,7 +77,9 @@ const SearchBar = ({ mapInstance, setMarkerPosition, clearSearch }) => {
         }}
         ref={searchBoxRef}
       />
-      <button disabled={!currentUser} onClick={clearSearch}>X</button>
+      <button disabled={!currentUser} onClick={clearSearch}>
+        X
+      </button>
     </div>
   );
 };

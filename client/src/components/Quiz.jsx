@@ -3,7 +3,7 @@ import { UserContext } from "../context/UserContext";
 import "../styles/quiz.css";
 
 const Quiz = () => {
-  const { currentUser, updateUser } = useContext(UserContext)
+  const { currentUser, updateUser } = useContext(UserContext);
   const [quizData, setQuizData] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -16,6 +16,18 @@ const Quiz = () => {
   const [quizCompleted, setQuizCompleted] = useState(false); // Track if quiz is completed
   const [regularPoints, setRegularPoints] = useState(0); // Track regular points
   const [bonusPoints, setBonusPoints] = useState(0); // Track bonus points
+  const [hasTakenQuizBefore, setHasTakenQuizBefore] = useState(false); // Track if the quiz has been taken
+
+  // Check if the user has completed the quiz before
+  useEffect(() => {
+    if (
+      currentUser &&
+      currentUser.completed &&
+      currentUser.completed.includes("q1")
+    ) {
+      setHasTakenQuizBefore(true); // Set this to true if "q1" is found in completed tasks
+    }
+  }, [currentUser.completed]);
 
   // Fetch questions from the backend
   useEffect(() => {
@@ -23,7 +35,7 @@ const Quiz = () => {
       const baseURL =
         import.meta.env.MODE === "development"
           ? "http://localhost:8080"
-          : import.meta.env.VITE_BACKEND_URL;          ;
+          : import.meta.env.VITE_BACKEND_URL;
 
       try {
         const response = await fetch(`${baseURL}/api/questions/`);
@@ -132,15 +144,92 @@ const Quiz = () => {
         badges: [...currentUser.badges, "Speedster"],
       });
     }
+
+    updateUserData(totalPoints, currentUser._id);
   };
 
+  const updateUserData = async (points, userId) => {
+    const baseURL =
+      import.meta.env.MODE === "development"
+        ? "http://localhost:8080"
+        : import.meta.env.VITE_BACKEND_URL;
+
+    try {
+      // 1. Update user points
+      const pointsResponse = await fetch(
+        `${baseURL}/api/users/${userId}/points`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            points: points, // Send the total points to be added
+          }),
+        },
+      );
+
+      if (!pointsResponse.ok) {
+        throw new Error("Failed to update user points");
+      }
+
+      const pointsResult = await pointsResponse.json();
+      console.log("User points updated successfully:", pointsResult);
+
+      // 2. Update completed tasks
+      const taskResponse = await fetch(
+        `${baseURL}/api/users/${userId}/completed`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            task: "q1", // The task ("q1") to be added to the completed array
+          }),
+        },
+      );
+
+      if (!taskResponse.ok) {
+        throw new Error("Failed to update user's completed tasks");
+      }
+
+      const taskResult = await taskResponse.json();
+      console.log("User's completed tasks updated successfully:", taskResult);
+
+      // 3. Update currentUser using updateUser from UserContext
+      const userDataResponse = await fetch(`${baseURL}/api/users/${userId}`);
+      if (!userDataResponse.ok) {
+        throw new Error(
+          "Failed to fetch user data after updating points and tasks",
+        );
+      }
+
+      const userData = await userDataResponse.json();
+      updateUser(userData.user);
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
+  };
+
+  const totalQuestions = quizData.length;
+  const totalPoints = regularPoints + bonusPoints; // Calculate total points
 
   if (!quizData.length) {
     return <div>Loading questions...</div>; // Loader while fetching data
   }
 
-  const totalQuestions = quizData.length;
-  const totalPoints = regularPoints + bonusPoints; // Calculate total points
+  if (hasTakenQuizBefore & !quizCompleted) {
+    return (
+      <div className="quiz-container">
+        <h2>You've already taken the quiz challenge!</h2>
+        <p>
+          You cannot retake the quiz. Please check back for new challenges
+          later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="quiz-container">
@@ -212,7 +301,7 @@ const Quiz = () => {
                 >
                   {option}
                 </button>
-              )
+              ),
             )}
           </div>
           {!showAnswer && selectedAnswer !== null && (
