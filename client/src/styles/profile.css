@@ -69,8 +69,8 @@
 }
 
 .info p button {
-    padding: 5px;
-    margin-left: 10px;
+    padding: 0 5px;
+    margin-left: 5px;
 }
 
 .info input {
@@ -85,8 +85,54 @@
 
 .right-section hr{
     border-top: 3px dashed #ebdebe;
-    margin-right: 20%;
     width: 75%;
+}
+
+.points-info {
+    margin: 20px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.points-info img {
+    width: 4em;
+    height: 4em
+}
+
+.achievement-section {
+    margin: 20px;
+}
+
+.tracking {
+    height: 15vh;
+    display: flex;
+    position: relative
+}
+
+.tracking img {
+    height: 100%;
+    width: auto;
+    margin-right: 5px;
+}
+
+.tracking > .progress-bar-container {
+    width: 100%;
+    margin-top: 3.5vh;
+}
+
+.tracking p {
+    word-wrap: normal;
+    font-style: italic;
+    font-size: 0.7em;
+    width: 70%;
+    position: absolute;
+    left: 100px;
+    top: 40px;
+}
+
+.achievement-section h3{
+    color: #933a05;
 }
 
 @media (min-width: 850px) {
@@ -108,6 +154,29 @@
 
     .all-images img {
         height: 30vh;
+    }
+
+    .right-section hr{
+        margin-right: 20%;
+    }
+
+    .points-info {
+        margin: 40px;
+    }
+
+    .achievement-section {
+        margin: 30px;
+    }
+
+    .tracking > .progress-bar-container {
+        width: 50%;
+    }
+
+    .tracking p {
+        word-wrap: normal;
+        font-size: 1em;
+        left: 150px;
+
     }
     
 }
