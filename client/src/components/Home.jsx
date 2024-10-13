@@ -1,6 +1,6 @@
 import MapContainer from "./MapContainer";
 import { useState, useEffect, useContext } from "react";
-import { Marker, DirectionsRenderer  } from "@react-google-maps/api";;
+import { Marker, DirectionsRenderer } from "@react-google-maps/api";
 import { fetchGTFSData, drawBusRoute } from "./transitfunction";
 import { MapContext } from "../context/MapContext";
 import PoiMarkers from "./PoiMarkers";
@@ -25,7 +25,7 @@ const Home = () => {
   const [stops, setStops] = useState([]);
   const [shapes, setShapes] = useState([]);
   const [routes, setRoutes] = useState({}); // Add state for routes
-  const [trips, setTrips] = useState({})
+  const [trips, setTrips] = useState({});
 
   const [markerPosition, setMarkerPosition] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);

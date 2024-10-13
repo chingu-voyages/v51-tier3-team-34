@@ -1,15 +1,15 @@
-import React, {useState, useEffect, useContext} from 'react'
-import { UserContext } from '../context/UserContext';
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
-const ScavengerProgress = ({huntLocations, userProgress, userPoints}) => {
-  const {currentUser, updateUser} = useContext(UserContext)
-  const [endGame, setEndGame ] = useState(false)
+const ScavengerProgress = ({ huntLocations, userProgress, userPoints }) => {
+  const { currentUser, updateUser } = useContext(UserContext);
+  const [endGame, setEndGame] = useState(false);
   const [selectLocation, setSelectLocation] = useState(null);
-  
+
   const apiUrl =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:8080"
-    : import.meta.env.VITE_BACKEND_URL;
+    import.meta.env.MODE === "development"
+      ? "http://localhost:8080"
+      : import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     // Check for end game condition
@@ -21,7 +21,7 @@ const ScavengerProgress = ({huntLocations, userProgress, userPoints}) => {
       setSelectLocation(location);
     } else {
       setEndGame(true);
-      addPoints(userPoints)
+      addPoints(userPoints);
     }
   }, [userProgress, huntLocations]); // Dependency array
 
@@ -29,25 +29,26 @@ const ScavengerProgress = ({huntLocations, userProgress, userPoints}) => {
 
   async function addPoints(newPoints) {
     try {
-      currentUser.completed.push("sh1")
-      const newCompleted = currentUser.completed
-      const updatedPoints = currentUser.points + newPoints
+      currentUser.completed.push("sh1");
+      const newCompleted = currentUser.completed;
+      const updatedPoints = currentUser.points + newPoints;
       const response = await fetch(`${apiUrl}/api/users/${currentUser._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({points: updatedPoints, completed: newCompleted}),
+        body: JSON.stringify({
+          points: updatedPoints,
+          completed: newCompleted,
+        }),
       });
-      const data = await response.json()
-      updateUser(data.user)
-  
+      const data = await response.json();
+      updateUser(data.user);
     } catch (error) {
-      console.error('Error updating image:', error.message);
+      console.error("Error updating image:", error.message);
     }
   }
-
 
   return (
     <>
