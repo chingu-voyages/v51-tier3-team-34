@@ -10,11 +10,12 @@ Currently GeoDash World is only set up for one city: Lexington, KY
 
 This project includes:
  - Ability to log in and sign up for new users with thank you emails automatically being sent
- - A profile page where username and profile picture can be change with a summary of points and badges earned
+ - A profile page where username and profile picture can be changed with a summary of points and badges earned
  - An achievements page where users can see all available badges and the ability to share them on social media
- - On home page, users are able to plan routes to get to one destination to another. 
+ - On home page, users are able to plan routes to get from one destination to another. 
  - Incorporate GPS monitoring during scavenger hunt to verify user location
  - Dedicated Quiz page where users can answer questions within a time limit
+ - Real-time score updates for quiz and scavenger hunt challenges on leaderboard ranking
 
 ## How to Start
 To run this project, first clone this project locally. This project has a client (front-end) and server (back-end) folder.
