@@ -188,7 +188,7 @@ app.post("/api/signup", async (req, res) => {
       img: "",
       badges: [],
       points: 0,
-      completed: []
+      completed: [],
     });
 
     if (result.acknowledged) {
@@ -295,33 +295,28 @@ app.put("/api/users/:id/points", async (req, res) => {
 // Update user's completed tasks array by user ID
 app.put("/api/users/:id/completed", async (req, res) => {
   const userId = req.params.id;
-  const { task } = req.body; // The task to be added to completed array, e.g. "q1" or "sh1"
+  const { task } = req.body; // Task to be added to the completed array
+
+  if (!task) {
+    return res.status(400).json({ error: "Task is required" });
+  }
 
   try {
-    const user = await db
-      .collection("users")
-      .findOne({ _id: new ObjectId(userId) });
+    const result = await db.collection("users").updateOne(
+      { _id: new ObjectId(userId) },
+      { $addToSet: { completed: task } } // $addToSet ensures no duplicates
+    );
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: "Task added to completed array successfully" });
+    } else {
+      res.status(404).json({ error: "User not found or task already completed" });
     }
-    console.log(user);
-    // Check if the task is already in the completed array
-    if (!user.completed.includes(task)) {
-      user.completed.push(task);
-    }
-
-    await user.save();
-
-    res.json({
-      message: "Task updated successfully",
-      completed: user.completed,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+  } catch (err) {
+    res.status(500).json({ error: "Could not update completed tasks" });
   }
 });
+
 
 // MiddleWare to pass to the routes that needs to be protected
 // not added, if do want backend routes to be protected, will need to add headers and token info in frontend during fetch
@@ -399,28 +394,32 @@ app.post("/api/reset/:token", async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-})
+});
 
 app.patch("/api/users/:id", async (req, res) => {
   const id = req.params.id;
   const updates = req.body;
 
   try {
-    const result = await db.collection("users").updateOne(
-      {_id: new ObjectId(id)},
-      { $set: updates }
-    )
+    const result = await db
+      .collection("users")
+      .updateOne({ _id: new ObjectId(id) }, { $set: updates });
 
-    if (result.modifiedCount === 0 ){
-      return res.status(404).json({ message: "User not found or no changes made"})
+    if (result.modifiedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "User not found or no changes made" });
     }
 
     //find updated User object, to have it return in the response
-    const updatedUser = await db.collection("users").findOne({ _id: new ObjectId(id) });
-    res.status(200).json({message: "User updated successfully", user: updatedUser}); 
-  
+    const updatedUser = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(id) });
+    res
+      .status(200)
+      .json({ message: "User updated successfully", user: updatedUser });
   } catch (error) {
-    console.error(error)
-    res.status(500).send({message: "Internal server error"})
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
   }
-})
+});
