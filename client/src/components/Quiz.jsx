@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useDebugValue } from "react";
 import { UserContext } from "../context/UserContext";
 import "../styles/quiz.css";
 
@@ -17,6 +17,10 @@ const Quiz = () => {
   const [regularPoints, setRegularPoints] = useState(0); // Track regular points
   const [bonusPoints, setBonusPoints] = useState(0); // Track bonus points
   const [hasTakenQuizBefore, setHasTakenQuizBefore] = useState(false); // Track if the quiz has been taken
+
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser, currentUser.highestQuizScore]);
 
   // Check if the user has completed the quiz before
   useEffect(() => {
@@ -145,7 +149,9 @@ const Quiz = () => {
       });
     }
 
-    updateUserData(totalPoints, currentUser._id);
+    if (totalPoints > currentUser.highestQuizScore) {
+      updateUserData(totalPoints, currentUser._id);
+    }
   };
 
   const updateUserData = async (points, userId) => {
@@ -164,7 +170,7 @@ const Quiz = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            points: points, // Send the total points to be added
+            points: points - currentUser.highestQuizScore, // Update points to the new highest score
           }),
         },
       );
@@ -177,25 +183,39 @@ const Quiz = () => {
       console.log("User points updated successfully:", pointsResult);
 
       // 2. Update completed tasks
-      const taskResponse = await fetch(
-        `${baseURL}/api/users/${userId}/completed`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
+      if (!currentUser.completed.includes("q1")) {
+        const taskResponse = await fetch(
+          `${baseURL}/api/users/${userId}/completed`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              task: "q1", // The task ("q1") to be added to the completed array
+            }),
           },
-          body: JSON.stringify({
-            task: "q1", // The task ("q1") to be added to the completed array
-          }),
-        },
-      );
+        );
 
-      if (!taskResponse.ok) {
-        throw new Error("Failed to update user's completed tasks");
+        if (!taskResponse.ok) {
+          throw new Error("Failed to update user's completed tasks");
+        }
+
+        const taskResult = await taskResponse.json();
+        console.log("User's completed tasks updated successfully:", taskResult);
       }
 
-      const taskResult = await taskResponse.json();
-      console.log("User's completed tasks updated successfully:", taskResult);
+      // Update user's highest quiz score
+      const response = await fetch(`${baseURL}/api/users/${currentUser._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          highestQuizScore: points,
+        }),
+      });
 
       // 3. Update currentUser using updateUser from UserContext
       const userDataResponse = await fetch(`${baseURL}/api/users/${userId}`);
@@ -219,18 +239,6 @@ const Quiz = () => {
     return <div>Loading questions...</div>; // Loader while fetching data
   }
 
-  if (hasTakenQuizBefore & !quizCompleted) {
-    return (
-      <div className="quiz-container">
-        <h2>You've already taken the quiz challenge!</h2>
-        <p>
-          You cannot retake the quiz. Please check back for new challenges
-          later.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="quiz-container">
       {!isQuizStarted ? (
@@ -246,7 +254,9 @@ const Quiz = () => {
             whether you were right or wrong, along with an explanation. Good
             luck!
           </p>
-          <button onClick={handleStartQuiz}>Start Quiz</button>
+          <button onClick={handleStartQuiz}>
+            {hasTakenQuizBefore ? "Retake Quiz" : "Start Quiz"}
+          </button>
         </div>
       ) : quizCompleted ? (
         <div className="results">
@@ -255,6 +265,7 @@ const Quiz = () => {
           <p>Score: {regularPoints} points</p>
           <p>Bonus Points: {bonusPoints} points</p>
           <p>Total Score: {totalPoints} points</p>
+          <p>Best Score: {currentUser.highestQuizScore} points</p>
           <h3>
             {totalPoints >= totalQuestions * 10
               ? "Good job!"
