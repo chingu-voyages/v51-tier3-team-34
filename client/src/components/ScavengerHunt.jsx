@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { MapContext } from "../context/MapContext";
+import { UserContext } from "../context/UserContext";
 import MapContainer from "./MapContainer";
 import ScavengerProgress from "./ScavengerProgress";
 import ScavengerMarkers from "./ScavengerMarkers";
@@ -17,6 +18,7 @@ const center2 = { lat: 38.05224348731636, lng: -84.49533042381834 }; // Starting
 
 const ScavengerHunt = () => {
   const { mapRef } = useContext(MapContext);
+  const { currentUser } = useContext(UserContext);
   const [startHunt, setStartHunt] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [huntLocations, setHuntLocations] = useState(null);
@@ -30,6 +32,8 @@ const ScavengerHunt = () => {
     import.meta.env.MODE === "development"
       ? "http://localhost:8080"
       : import.meta.env.VITE_BACKEND_URL;
+
+  const checkIfCompleted = currentUser.completed.includes("sh1")  
 
   useEffect(() => {
     fetch(`${apiUrl}/api/hunt-locations`)
@@ -169,11 +173,19 @@ const ScavengerHunt = () => {
       {!startHunt ? (
         <div className="information">
           <h2>Scavenger Hunt</h2>
-          <p>
-            Ready to test your knowledge of Lexington, KY? Earn points playing
-            our scavenger hunt.
-          </p>
-          <button onClick={handleClickHere}>I am here!</button>
+            {checkIfCompleted ? 
+            <p style={{fontSize: "1.3em", border: "2px solid red", textAlign: "center"}}>
+              This scavenger hunt has already been completed. Thank you for playing!.
+            </p> 
+            :
+            <>
+              <p>
+                Ready to test your knowledge of Lexington, KY? Earn points playing
+                our scavenger hunt.
+              </p>
+              <button onClick={handleClickHere}>I am here!</button>
+            </>
+            }
         </div>
       ) : (
         <div className="hunt-interface">

@@ -4,8 +4,12 @@
 }
 
 .select-image {
-  text-align: center;
-  font-size: 1.3em;
+    font-size: 1.3em;
+    text-align: center;
+}
+
+.select-image p {
+    margin-left: 0;
 }
 
 .select-image a {
@@ -14,7 +18,7 @@
 }
 
 .all-images img {
-  height: 25vh;
+    height: 20vh;
 }
 
 .all-images img:hover {
@@ -138,54 +142,60 @@
 }
 
 @media (min-width: 850px) {
-  .profile {
-    flex-direction: row;
-    width: 100vw;
-    gap: 20px;
-  }
+.profile {
+        flex-direction: row;
+        width: 100vw;
+        gap: 20px
+    }
 
-  .profile-image {
-    height: 70vh;
-    width: 30vw;
-    margin: 0;
-  }
+    .profile-image {
+        height: 70vh;
+        width: 30vw;
+        margin: 0;
+    }
 
-  .right-section {
-    width: 40vw;
-  }
+    .select-image p {
+        margin-left: -200px;
+    }
 
-  .points-info div {
-    width: 40%;
-    font-size: 1em;
-  }
+    .right-section {
+        width: 40vw;
+    }
 
-  .all-images img {
-    height: 30vh;
-  }
+    .points-info div {
+        width: 40%;
+        font-size: 1em;
+    }
 
-  .right-section hr {
-    margin-right: 20%;
-  }
+    .all-images img {
+        height: 30vh;
+    }
 
-  .info input {
-    width: 60%;
-  }
+    .right-section hr{
+        margin-right: 20%;
+    }
 
-  .points-info {
-    margin: 20px 40px;
-  }
+    .info input {
+        width: 60%;
+    }    
 
-  .achievement-section {
-    margin: 30px;
-  }
+    .points-info {
+        margin: 20px 40px;
+    }
 
-  .tracking > .progress-bar-container {
-    width: 50%;
-  }
+    .achievement-section {
+        margin: 30px;
+    }
 
-  .tracking p {
-    word-wrap: normal;
-    font-size: 1em;
-    left: 140px;
-  }
+    .tracking > .progress-bar-container {
+        width: 50%;
+    }
+
+    .tracking p {
+        word-wrap: normal;
+        font-size: 1em;
+        left: 140px;
+
+    }
+    
 }
