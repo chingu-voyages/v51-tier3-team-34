@@ -192,6 +192,7 @@ app.post("/api/signup", async (req, res) => {
       badges: [],
       points: 0,
       completed: [],
+      highestQuizScore: 0,
     });
 
     if (result.acknowledged) {
@@ -310,19 +311,22 @@ app.put("/api/users/:id/completed", async (req, res) => {
   try {
     const result = await db.collection("users").updateOne(
       { _id: new ObjectId(userId) },
-      { $addToSet: { completed: task } } // $addToSet ensures no duplicates
+      { $addToSet: { completed: task } }, // $addToSet ensures no duplicates
     );
 
     if (result.modifiedCount === 1) {
-      res.status(200).json({ message: "Task added to completed array successfully" });
+      res
+        .status(200)
+        .json({ message: "Task added to completed array successfully" });
     } else {
-      res.status(404).json({ error: "User not found or task already completed" });
+      res
+        .status(404)
+        .json({ error: "User not found or task already completed" });
     }
   } catch (err) {
     res.status(500).json({ error: "Could not update completed tasks" });
   }
 });
-
 
 // MiddleWare to pass to the routes that needs to be protected
 // not added, if do want backend routes to be protected, will need to add headers and token info in frontend during fetch
