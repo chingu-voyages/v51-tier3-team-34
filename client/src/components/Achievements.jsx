@@ -82,15 +82,15 @@ const Achievements = () => {
       colorImage: scavengerMaster,
       message: "Earned by completing the scavenger hunt.",
     },
-    {
-      name: "Socialite",
-      requirement: 300,
-      earned: userPoints >= 300,
-      grayImage: socialiteGrayed,
-      colorImage: socialite,
-      message:
-        "Earned by sharing a badge or your leaderboard standing on social media.",
-    },
+    // {
+    //   name: "Socialite",
+    //   requirement: 300,
+    //   earned: userPoints >= 300,
+    //   grayImage: socialiteGrayed,
+    //   colorImage: socialite,
+    //   message:
+    //     "Earned by sharing a badge or your leaderboard standing on social media.",
+    // },
     {
       name: "Speedster",
       requirement: 300,
@@ -164,7 +164,7 @@ const Achievements = () => {
               <p>
                 {badge.earned ? "You've earned this badge!" : badge.message}
               </p>
-              <button
+              {/* <button
                 onClick={() => {
                   if (badge.earned) {
                     handleShareOnFacebook(badge.name, badge.colorImage);
@@ -173,7 +173,7 @@ const Achievements = () => {
                 disabled={!badge.earned}
               >
                 Share on FB
-              </button>
+              </button> */}
             </div>
           </div>
         ))}

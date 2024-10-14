@@ -108,7 +108,7 @@ h2 {
 }
 
 /* Directional Cone */
-.directional-cone {
+/* .directional-cone {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -132,4 +132,4 @@ h2 {
   );
   transform: translateX(-50%);
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-}
+} */

@@ -245,10 +245,10 @@ const ScavengerHunt = () => {
                         style={{ position: "relative", width: 0, height: 0 }}
                       >
                         <div className="pulse-circle" />
-                        <div
+                        {/* <div
                           className="directional-cone"
                           style={{ transform: `rotate(${heading - 26}deg)` }}
-                        />
+                        /> */}
                       </div>
                     </OverlayView>
                   </>
