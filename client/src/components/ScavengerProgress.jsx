@@ -5,6 +5,7 @@ const ScavengerProgress = ({ huntLocations, userProgress, userPoints }) => {
   const { currentUser, updateUser } = useContext(UserContext);
   const [endGame, setEndGame] = useState(false);
   const [selectLocation, setSelectLocation] = useState(null);
+  const checkIfCompleted = currentUser.completed.includes("sh1")  
 
   const apiUrl =
     import.meta.env.MODE === "development"
@@ -21,7 +22,9 @@ const ScavengerProgress = ({ huntLocations, userProgress, userPoints }) => {
       setSelectLocation(location);
     } else {
       setEndGame(true);
-      addPoints(userPoints);
+      if (!checkIfCompleted) {
+        addPoints(userPoints);
+      }
     }
   }, [userProgress, huntLocations]); // Dependency array
 
@@ -68,6 +71,7 @@ const ScavengerProgress = ({ huntLocations, userProgress, userPoints }) => {
       ) : (
         <div>
           <p>You completed our scavenger hunt! Thanks for playing.</p>
+          {checkIfCompleted && <p>You have already played before. Points will not be added</p>}
         </div>
       )}
     </>
