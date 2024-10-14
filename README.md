@@ -1,5 +1,5 @@
-# GeoWorld Dash
-[GeoWorld Dash](https://geodash-world-client.onrender.com/)
+# GeoDash World
+[GeoDash World](https://geodash-world-client.onrender.com/)
 ## Overview
 This app was created for Chingu Voyage 51. It is based on an original idea where users are able to learn about a city through game activities (such as quizzes and scavenger hunts).
 
